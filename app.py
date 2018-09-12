@@ -3,7 +3,7 @@ from gui.GuiHandler import GuiHandler
 
 class App:
     def __init__(self):
-        self.gui = GuiHandler()
+        self.gui = GuiHandler(self)
         self.gui.start()
-
+        
 app = App()
