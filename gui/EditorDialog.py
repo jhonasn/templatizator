@@ -7,7 +7,7 @@ class EditorDialog:
 
         self.elements.variables_combobox.connect('changed', self.variable_selected)
         self.elements.add_variable_button.connect('clicked', self.add_variable_to_template)
-        self.elements.cancel_button.connect('clicked', self.dialog.hide)
+        self.elements.cancel_button.connect('clicked', self.cancel)
         self.elements.save_button.connect('clicked', self.save_template)
 
         self.dialog.set_transient_for(self.elements.window)
@@ -23,3 +23,15 @@ class EditorDialog:
 
     def save_template(self, button):
         return None
+
+    def cancel(self, button):
+        if self.node.is_new:
+            self.node.remove()
+        self.dialog.hide()
+        self.cb()
+
+    def show(self, node, cb):
+        self.node = node
+        self.cb = cb
+        self.elements.editor_filename_entry.set_text(self.node.name)
+        self.dialog.show()
