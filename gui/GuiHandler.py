@@ -30,13 +30,11 @@ class GuiHandler:
         self.elements.destination_filechooserbutton.set_uri(self.configuration.destination_path)
 
     def destination_selected(self, file_chooser):
-        uri = file_chooser.get_uri()
-        uri = uri if uri else self.configuration.destination_path
-        print('destination selected uri: ' + str(uri))
+        path = file_chooser.get_filename()
+        path = path if path else self.configuration.destination_path
 
-        parent_node = Node.from_path(uri)
-        print('nodes: ' + str(len(parent_node.children)))
-        parent_node.print_node()
+        parent_node = Node.from_path(path)
+        #parent_node.print_node()
 
     def configuration_selected(self, file_chooser):
         return None

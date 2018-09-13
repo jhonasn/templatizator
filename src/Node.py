@@ -1,26 +1,37 @@
 import os
 
 class Node:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, path):
+        self.path = path
+        self.name = os.path.basename(path)
         self.children = []
 
     def add_child(self, child):
         self.children.append(child)
 
-    def find_parent(self, parent_name):
-        if self.name == parent_name:
+    def find_node(self, path):
+        if self.path == path:
             return self
         else:
             for c in self.children:
-                p = None
-                if len(c.children) > 0:
-                    p = c.find_parent(parent_name)
-                if p != None:
-                    return p
-                if c.name == parent_name:
+                if c.path == path:
                     return c
+                elif len(c.children) > 0:
+                    p = c.find_node(path)
+                    if p != None:
+                        return p
             return None
+
+    def from_path(path):
+        parent = Node(path)
+        for root, directories, files in os.walk(path):
+            node = parent.find_node(root)
+
+            for directory in directories:
+                path = os.path.join(root, directory)
+                node.add_child(Node(path))
+
+        return parent
 
     def print_node(self, tabs = ''):
         print(tabs + self.name if self.name else 'Parent')
@@ -29,15 +40,14 @@ class Node:
                 c.print_node(tabs + '\t')
             else:
                 print(tabs + '\t' + c.name)
+'''
+    def fill_treeview(self, treeview, is_parent = True):
+        if is_parent
+            parent_row = treeview.append(self.name)
 
-    #@staticmethod
-    def from_path(path):
-        parent = Node('')
-        for root, directories, files in os.walk(path):
-            name = root.replace(path, '').replace('\\', '')
-            p = parent.find_parent(name)
+        for c in self.children:
+            parent_row.append(c.name) 
+            if len(c.children) > 0:
+                c.fill_treeview(treeview, False)
+'''
 
-            for directory in directories:
-                p.add_child(Node(directory))
-
-        return parent
