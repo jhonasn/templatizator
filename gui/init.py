@@ -7,7 +7,7 @@ from gui.Window import Window
 class GtkElements:
     def __init__(self, elements):
         for el in elements:
-            if not isinstance(el, Gtk.CellRendererText):
+            if isinstance(el, Gtk.Buildable):
                 self.__dict__[Gtk.Buildable.get_name(el)] = el
 
     def new_button(label):
