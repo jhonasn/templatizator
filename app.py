@@ -1,3 +1,4 @@
+import gui.init
 from src.Configuration import Configuration
 
 class App:
@@ -5,5 +6,3 @@ class App:
         self.configuration = Configuration()
 
 app = App()
-
-import gui.init
