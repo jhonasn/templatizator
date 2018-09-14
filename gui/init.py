@@ -10,15 +10,19 @@ class GtkElements:
             if isinstance(el, Gtk.Buildable):
                 self.__dict__[Gtk.Buildable.get_name(el)] = el
 
-    def new_button(label):
-        return Gtk.Button.new_with_label(label)
+    def alert(self, message, detail = ''):
+        dialog = Gtk.MessageDialog(self.window,
+            0, Gtk.MessageType.WARNING,
+            Gtk.ButtonsType.OK,
+            message)
+        dialog.format_secondary_text(detail)
+        dialog.run()
+        dialog.destroy()
 
 builder = Gtk.Builder()
 
 builder.add_from_file('./gui/gui.glade')
 elements = GtkElements(builder.get_objects())
-
-# elements.variables_treeview.get_selection().set_mode(Gtk.SELECTION_SINGLE)
 
 window = Window(elements)
 window.show(Gtk)

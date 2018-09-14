@@ -1,3 +1,5 @@
+from app import app
+
 class EditorDialog:
     def __init__(self, elements):
         self.elements = elements
@@ -22,15 +24,21 @@ class EditorDialog:
         return None
 
     def save_template(self, button):
-        return None
+        buff = self.editor.get_buffer()
+        b = buff.get_bounds()
+
+        filename = self.elements.editor_filename_entry.get_text()
+        app.configuration.save_template(self.node, filename, buff.get_text(b.start, b.end, True))
+        self.dialog.hide()
 
     def cancel(self, button):
-        if self.node.is_new:
+        if self.is_new:
             self.node.remove()
         self.dialog.hide()
         self.cb()
 
-    def show(self, node, cb):
+    def show(self, node, is_new, cb):
+        self.is_new = is_new
         self.node = node
         self.cb = cb
         self.elements.editor_filename_entry.set_text(self.node.name)

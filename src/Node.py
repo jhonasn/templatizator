@@ -1,4 +1,5 @@
 import os
+from copy import copy
 
 class Node:
     def __init__(self, path, is_directory = True):
@@ -54,10 +55,25 @@ class Node:
     def get_actions(self):
         return '+' if self.is_directory else '-'
 
+    def as_dict(self):
+        parent = copy(self)
+        del parent.parent
+
+        for c in parent.children:
+            i = parent.children.index(c)
+            if len(c.children):
+                parent.children[i] = c.as_dict()
+            else:
+                cc = copy(c)
+                del cc.parent
+                parent.children[i] = cc.__dict__
+
+        return parent.__dict__
+
     def print_node(self, tabs = ''):
         print(tabs + self.name if self.name else 'Parent')
         for c in self.children:
-            if len(c.children) > 0:
+            if len(c.children):
                 c.print_node(tabs + '\t')
             else:
                 print(tabs + '\t' + c.name)
@@ -68,5 +84,5 @@ class Node:
 
         for c in self.children:
             child_parent_iter = store.append(parent_iter, [c.get_name(), c.get_actions(), c.path])
-            if len(c.children) > 0:
+            if len(c.children):
                 c.fill_treestore(store, child_parent_iter)
