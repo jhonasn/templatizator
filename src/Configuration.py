@@ -2,6 +2,8 @@ import os
 import json
 from copy import deepcopy
 
+from src.Node import Node
+
 class Configuration:
     history_path = './history.json'
     # {project_path: configuration_path}
@@ -23,14 +25,22 @@ class Configuration:
             self.project_path = next(iter(Configuration.history))
             self.configuration_path = Configuration.history[self.project_path]
             self.load()
-
+        else:
+            #default variables on application start
+            self.__dict__['ext'] = 'py'
+            
     def get_configuration_json_path(self):
         return os.path.join(self.configuration_path, 'configuration.json')
 
     def load(self):
         if os.path.exists(self.get_configuration_json_path()):
-            configuration = json.loads(open(self.get_configuration_json_path()))
-            for key, value in configuration:
+            configuration = json.loads(open(self.get_configuration_json_path()).read())
+            # TODO: comparison beetween json nodes and project path nodes
+            # self.nodes = Node.from_path(configuration['nodes']['path'])
+            self.nodes = Node.from_dict(configuration['nodes']) #json_nodes
+            # Node.diff(self.nodes, json_nodes)
+            del configuration['nodes']
+            for key, value in configuration.items():
                 self.__dict__[key] = value
 
     def save_history(self):
@@ -52,6 +62,13 @@ class Configuration:
             self.save()
             self.save_history()
 
+    def get_variables(self):
+        cfg = deepcopy(self)
+        del cfg.nodes
+        del cfg.project_path
+        del cfg.configuration_path
+        return cfg.__dict__.items()
+
     def add_variable(self, name, value):
         self.__dict__[name] = value
         self.save()
@@ -68,18 +85,34 @@ class Configuration:
         del self.__dict__[name]
         self.save()
 
-    def save_template(self, node, filename, content):
-        if node.name != filename:
-            old_path = node.path
-            self.path = os.path.join(node.path, filename)
-            self.name = filename
+    def get_template_path(self, filename):
+        return os.path.join(self.configuration_path, filename)
 
-            if os.path.exists(old_path):
-                os.rename(old_path, self.path)
+    def get_template_content(self, node):
+        return open(self.get_template_path(node.name)).read()
+
+    def save_template(self, node, filename, content):
+        old_name = node.name
+        dir_path = os.path.dirname(node.path)
+        node.path = os.path.join(dir_path, filename)
+        node.name = filename
 
         if self.configuration_path:
-            open(os.path.join(self.configuration_path, node.name), 'w+').write(content)
+            old_path = self.get_template_path(old_name)
+            new_path = self.get_template_path(filename)
 
+            if os.path.exists(old_path):
+                os.rename(old_path, new_path)
+
+            open(new_path, 'w+').write(content)
+
+        self.save()
+
+    def remove_template(self, node):
+        path = self.get_template_path(node.name)
+        if os.path.exists(path):
+            os.remove(path)
+        node.remove()
         self.save()
 
     def save(self):
@@ -88,3 +121,4 @@ class Configuration:
             cfg.nodes = cfg.nodes.as_dict()
             open(self.get_configuration_json_path(), 'w+').write(json.dumps(cfg.__dict__))
             del cfg
+

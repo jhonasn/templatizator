@@ -21,10 +21,11 @@ class GtkElements:
 
 builder = Gtk.Builder()
 
-builder.add_from_file('./gui/gui.glade')
+builder.add_from_file('./gui/gui_new.glade')
 elements = GtkElements(builder.get_objects())
 
 window = Window(elements)
 window.show(Gtk)
 
 Gtk.main()
+

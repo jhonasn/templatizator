@@ -18,12 +18,15 @@ class Window:
         self.elements.project_filechooserbutton.connect('selection-changed', self.project_selected)
         self.elements.configuration_filechooserbutton.connect('selection-changed', self.configuration_selected)
         self.treeview.connect('row-activated', self.row_selected)
+        self.elements.templates_save_button.connect('clicked', self.save_templates)
 
         self.treeview.set_activate_on_single_click(True)
 
         if app.configuration.configuration_path:
+            self.initializing = True
             self.elements.configuration_filechooserbutton.set_uri(app.configuration.configuration_path)
             self.elements.project_filechooserbutton.set_uri(app.configuration.project_path)
+        self.initializing = False
 
     def render_treeview(self):
         self.store.clear()
@@ -32,15 +35,18 @@ class Window:
         self.treeview.expand_all()
 
     def project_selected(self, file_chooser):
-        path = file_chooser.get_filename()
+        if not self.initializing:
+            path = file_chooser.get_filename()
 
-        app.configuration.nodes = Node.from_path(path)
+            app.configuration.nodes = Node.from_path(path)
+            app.configuration.change_project(path)
+
         self.render_treeview()
 
-        app.configuration.change_project(path)
 
     def configuration_selected(self, file_chooser):
-        app.configuration.change_configuration(file_chooser.get_filename())
+        if not self.initializing:
+            app.configuration.change_configuration(file_chooser.get_filename())
 
     def row_selected(self, treeview, row, col):
         node = app.configuration.nodes.find_node(self.store[row][2])
@@ -56,14 +62,18 @@ class Window:
                     self.elements.alert('Selecione onde salvar os templates primeiramente')
             # remove
             else:
-                node.remove()
-                app.configuration.save()
+                app.configuration.remove_template(node)
 
             self.render_treeview()
         # edit
         elif not node.is_directory:
             self.editor_dialog.show(node, False, lambda: self.render_treeview())
 
+    def save_templates(self, button):
+        # TODO: implement save templates on project
+        raise NotImplementedError
+
     def show(self, gtk):
         self.elements.window.show_all()
         self.elements.window.connect('destroy', gtk.main_quit)
+

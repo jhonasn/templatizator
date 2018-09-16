@@ -49,6 +49,23 @@ class Node:
 
         return parent
 
+    def from_dict(node_dict):
+        parent = Node(node_dict['path'])
+        parent.is_directory = node_dict['is_directory']
+        if hasattr(node_dict, 'parent'):
+            parent.parent = node_dict['parent']
+        for c in node_dict['children']:
+            if len(c['children']):
+                c['parent'] = parent
+                parent.children.append(Node.from_dict(c))
+            else:
+                cn = Node(c['path'])
+                cn.is_directory = c['is_directory']
+                cn.parent = parent
+                parent.children.append(cn)
+
+        return parent
+
     def get_name(self):
         return f'📂 {self.name}' if self.is_directory else f'⌹ {self.name}'
 
@@ -86,3 +103,4 @@ class Node:
             child_parent_iter = store.append(parent_iter, [c.get_name(), c.get_actions(), c.path])
             if len(c.children):
                 c.fill_treestore(store, child_parent_iter)
+

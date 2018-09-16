@@ -7,10 +7,10 @@ class EditorDialog:
         self.dialog = self.elements.editor_dialog
         self.editor = self.elements.editor_textview
 
-        self.elements.variables_combobox.connect('changed', self.variable_selected)
-        self.elements.add_variable_button.connect('clicked', self.add_variable_to_template)
-        self.elements.cancel_button.connect('clicked', self.cancel)
-        self.elements.save_button.connect('clicked', self.save_template)
+        self.elements.editor_variable_combobox.connect('changed', self.variable_selected)
+        self.elements.editor_variable_add_button.connect('clicked', self.add_variable_to_template)
+        self.elements.editor_cancel_button.connect('clicked', self.cancel)
+        self.elements.editor_save_button.connect('clicked', self.save_template)
 
         self.dialog.set_transient_for(self.elements.window)
 
@@ -29,6 +29,7 @@ class EditorDialog:
 
         filename = self.elements.editor_filename_entry.get_text()
         app.configuration.save_template(self.node, filename, buff.get_text(b.start, b.end, True))
+        self.cb()
         self.dialog.hide()
 
     def cancel(self, button):
@@ -42,4 +43,10 @@ class EditorDialog:
         self.node = node
         self.cb = cb
         self.elements.editor_filename_entry.set_text(self.node.name)
+
+        buff = self.editor.get_buffer()
+        buff.set_text(
+            '' if is_new else app.configuration.get_template_content(node)
+        )
         self.dialog.show()
+
