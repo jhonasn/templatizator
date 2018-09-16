@@ -62,8 +62,11 @@ class Window:
                     self.elements.alert('Selecione onde salvar os templates primeiramente')
             # remove
             else:
-                # TODO: implement confirm dialog to delete
-                app.configuration.remove_template(node)
+                if self.elements.alert(
+                    'Deseja realmente remover o template?',
+                    message_type = 'question'
+                ):
+                    app.configuration.remove_template(node)
 
             self.render_treeview()
         # edit
