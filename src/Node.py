@@ -87,6 +87,18 @@ class Node:
 
         return parent.__dict__
 
+    def get_file_nodes(self, files = []):
+        if not self.is_directory:
+            files.append(self)
+
+        for c in self.children:
+            if len(c.children):
+                c.get_file_nodes(files)
+            elif not c.is_directory:
+                files.append(c)
+        
+        return files
+
     def print_node(self, tabs = ''):
         print(tabs + self.name if self.name else 'Parent')
         for c in self.children:

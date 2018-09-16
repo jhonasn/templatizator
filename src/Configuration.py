@@ -1,6 +1,6 @@
 import os
 import json
-from copy import deepcopy
+from copy import copy, deepcopy
 
 from src.Node import Node
 
@@ -114,6 +114,26 @@ class Configuration:
             os.remove(path)
         node.remove()
         self.save()
+
+    def replace_variables(self, text):
+        variables = self.get_variables()
+        new_text = copy(text)
+        for key, value in variables:
+            new_text = new_text.replace(f'[{key}]', value)
+
+        return new_text
+
+    def save_templates_into_project(self):
+        templates = self.nodes.get_file_nodes()
+
+        for t in templates:
+            path = os.path.dirname(t.path)
+            path = os.path.join(path, self.replace_variables(t.name))
+            open(path, 'w+').write(
+                self.replace_variables(
+                    self.get_template_content(t)
+                )
+            )
 
     def save(self):
         if self.configuration_path:

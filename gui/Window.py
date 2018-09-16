@@ -74,8 +74,17 @@ class Window:
             self.editor_dialog.show(node, False, lambda: self.render_treeview())
 
     def save_templates(self, button):
-        # TODO: implement save templates on project
-        raise NotImplementedError
+        try:
+            app.configuration.save_templates_into_project()
+            self.elements.alert(
+                'Templates salvos com sucesso no projeto',
+                message_type = 'info'
+            )
+        except Exception:
+            self.elements.alert(
+                'Não foi possível salvar os templates no projeto',
+                message_type = 'error'
+            )
 
     def show(self, gtk):
         self.elements.window.show_all()
