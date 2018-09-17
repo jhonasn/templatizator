@@ -23,15 +23,15 @@ class Window:
         self.treeview.set_activate_on_single_click(True)
 
         self.initializing = True if app.configuration.configuration_path else False
+        self.configuration_initialized = not self.initializing
+        self.project_initialized = not self.initializing
 
         if self.initializing:
-            self.configuration_initialized = False
-            self.project_initialized = False
             self.elements.configuration_filechooserbutton.set_uri(app.configuration.configuration_path)
             self.elements.project_filechooserbutton.set_uri(app.configuration.project_path)
 
     def set_initialized(self):
-        self.initializing = self.project_initialized and self.configuration_initialized
+        self.initializing = not (self.project_initialized and self.configuration_initialized)
 
     def render_treeview(self):
         self.store.clear()
