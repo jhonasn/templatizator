@@ -56,7 +56,7 @@ class Configuration:
 
     def change_configuration(self, path):
         if self.configuration_path:
-            os.path.remove(self.configuration_path)
+            os.remove(self.get_configuration_json_path())
         self.configuration_path = path
         if (self.project_path):
             self.save()
