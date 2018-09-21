@@ -45,7 +45,6 @@
         </child>
         <child>
           <object class="ttk.Button" id="project_file_button">
-            <property name="command">select_project</property>
             <property name="text" translatable="yes">Selecione</property>
             <layout>
               <property name="column">1</property>
@@ -84,7 +83,6 @@
         </child>
         <child>
           <object class="ttk.Button" id="configuration_file_button">
-            <property name="command">select_configuration</property>
             <property name="text" translatable="yes">Selecione</property>
             <layout>
               <property name="column">1</property>
@@ -171,7 +169,7 @@
         <child>
           <object class="ttk.Treeview" id="variables_treeview">
             <property name="cursor">arrow</property>
-            <property name="selectmode">extended</property>
+            <property name="selectmode">browse</property>
             <property name="show">headings</property>
             <property name="takefocus">false</property>
             <layout>
@@ -232,7 +230,7 @@
         </layout>
         <child>
           <object class="ttk.Treeview" id="project_treeview">
-            <property name="selectmode">extended</property>
+            <property name="selectmode">browse</property>
             <property name="show">tree</property>
             <layout>
               <property name="column">0</property>
@@ -306,7 +304,7 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Label" id="editor_variable_add_label">
+      <object class="ttk.Label" id="editor_variable_label">
         <property name="text" translatable="yes">Adicionar variável:</property>
         <layout>
           <property name="column">0</property>
@@ -317,7 +315,7 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Combobox" id="editor_variable_add_combobox">
+      <object class="ttk.Combobox" id="editor_variable_combobox">
         <layout>
           <property name="column">1</property>
           <property name="propagate">True</property>
@@ -327,7 +325,7 @@
       </object>
     </child>
     <child>
-      <object class="ttk.Button" id="editor_variable_add_button">
+      <object class="ttk.Button" id="editor_variable_button">
         <property name="compound">top</property>
         <property name="cursor">arrow</property>
         <property name="takefocus">false</property>

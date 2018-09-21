@@ -1,18 +1,16 @@
-from app import app
+from src.Configuration import configuration
 
 class EditorDialog:
-    def __init__(self, elements):
-        self.elements = elements
+    def __init__(self, builder):
+        self.dialog = builder.get_object('editor_toplevel')
+        
+        self.filename = builder.get_object('editor_filename_entry')
+        self.editor = builder.get_object('editor_text')
 
-        self.dialog = self.elements.editor_dialog
-        self.editor = self.elements.editor_textview
-
-        self.elements.editor_variable_combobox.connect('changed', self.variable_selected)
-        self.elements.editor_variable_add_button.connect('clicked', self.add_variable_to_template)
-        self.elements.editor_cancel_button.connect('clicked', self.cancel)
-        self.elements.editor_save_button.connect('clicked', self.save_template)
-
-        self.dialog.set_transient_for(self.elements.window)
+        builder.get_object('editor_variable_combobox')#['command'] = self.variable_selected
+        builder.get_object('editor_variable_button')['command'] = self.add_variable_to_template
+        builder.get_object('editor_cancel_button')['command'] = self.cancel
+        builder.get_object('editor_save_button')['command'] = self.save_template
 
     def add_variable(self, button):
         return None
@@ -27,8 +25,8 @@ class EditorDialog:
         buff = self.editor.get_buffer()
         b = buff.get_bounds()
 
-        filename = self.elements.editor_filename_entry.get_text()
-        app.configuration.save_template(self.node, filename, buff.get_text(b.start, b.end, True))
+        filename = self.editor_filename_entry['text']
+        configuration.save_template(self.node, filename, buff.get_text(b.start, b.end, True))
         self.cb()
         self.dialog.hide()
 
@@ -46,7 +44,7 @@ class EditorDialog:
 
         buff = self.editor.get_buffer()
         buff.set_text(
-            '' if is_new else app.configuration.get_template_content(node)
+            '' if is_new else configuration.get_template_content(node)
         )
         self.dialog.show()
 

@@ -66,11 +66,13 @@ class Node:
 
         return parent
 
+    #some unicode 4len chars: ▨ ✕ ☒ ✖ ❌ ➕ ➖ ⨂ ⨁
+    #5len chars: 📂
     def get_name(self):
-        return f'📂 {self.name}' if self.is_directory else f'⌹ {self.name}'
+        return f'⌹ {self.name}' if self.is_directory else f'⛁ {self.name}'
 
     def get_actions(self):
-        return '+' if self.is_directory else '-'
+        return '➕' if self.is_directory else '❌' #
 
     def as_dict(self):
         parent = copy(self)
@@ -107,12 +109,16 @@ class Node:
             else:
                 print(tabs + '\t' + c.name)
 
-    def fill_treestore(self, store, parent_iter = None):
-        if not parent_iter:
-            parent_iter = store.append(None, [self.get_name(), self.get_actions(), self.path])
+    def fill_treeview(self, treeview, parent_id = ''):
+        if not parent_id:
+            parent_id = treeview.insert(
+                parent_id, 1, self.path, text=self.get_name(),
+                values=self.get_actions(), open=True)
 
         for c in self.children:
-            child_parent_iter = store.append(parent_iter, [c.get_name(), c.get_actions(), c.path])
+            child_parent_id = treeview.insert(
+                parent_id, 1, c.path, text=c.get_name(),
+                values=c.get_actions(), open=True)
             if len(c.children):
-                c.fill_treestore(store, child_parent_iter)
+                c.fill_treeview(treeview, child_parent_id)
 

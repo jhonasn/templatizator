@@ -1,4 +1,6 @@
-from app import app
+from tkinter import filedialog, messagebox, Button
+
+from src.Configuration import configuration
 
 from src.Node import Node
 
@@ -6,97 +8,92 @@ from gui.VariablesSection import VariablesSection
 from gui.EditorDialog import EditorDialog
 
 class Window:
-    def __init__(self, elements):
-        self.elements = elements
+    def __init__(self, builder):
+        self.variables_section = VariablesSection(builder)
+        self.editor_dialog = EditorDialog(builder)
 
-        VariablesSection(self.elements)
-        self.editor_dialog = EditorDialog(self.elements)
+        self.treeview = builder.get_object('project_treeview')
 
-        self.store = self.elements.project_treestore
-        self.treeview = self.elements.project_treeview
+        self.label = {
+            'project': builder.get_object('project_file_label'),
+            'configuration': builder.get_object('configuration_file_label')
+        }
 
-        self.elements.project_filechooserbutton.connect('selection-changed', self.project_selected)
-        self.elements.configuration_filechooserbutton.connect('selection-changed', self.configuration_selected)
-        self.treeview.connect('row-activated', self.row_selected)
-        self.elements.templates_save_button.connect('clicked', self.save_templates)
+        builder.get_object('project_file_button')['command'] = self.select_project
+        builder.get_object('configuration_file_button')['command'] = self.select_configuration
+        builder.get_object('templates_save_button')['command'] = self.save_templates
+        self.treeview.bind('<ButtonRelease-1>', self.row_selected)
 
-        self.treeview.set_activate_on_single_click(True)
-
-        self.initializing = True if app.configuration.configuration_path else False
-        self.configuration_initialized = not self.initializing
-        self.project_initialized = not self.initializing
-
-        if self.initializing:
-            self.elements.configuration_filechooserbutton.set_uri(app.configuration.configuration_path)
-            self.elements.project_filechooserbutton.set_uri(app.configuration.project_path)
-
-    def set_initialized(self):
-        self.initializing = not (self.project_initialized and self.configuration_initialized)
+        if configuration.configuration_path:
+            self.label['configuration']['text'] = configuration.configuration_path
+            self.label['project']['text'] = configuration.project_path
+            self.render_treeview()
 
     def render_treeview(self):
-        self.store.clear()
-        #app.configuration.nodes.print_node()
-        app.configuration.nodes.fill_treestore(self.store)
-        self.treeview.expand_all()
+        if configuration.nodes:
+            self.treeview.delete(*self.treeview.get_children())
+            configuration.nodes.fill_treeview(self.treeview)
 
-    def project_selected(self, file_chooser):
-        if not self.initializing:
-            path = file_chooser.get_filename()
+    def select_project(self):
+        path = filedialog.askdirectory()
+        if path:
+            self.label['project']['text'] = path
+            self.project_selected(path)
 
-            app.configuration.nodes = Node.from_path(path)
-            app.configuration.change_project(path)
-
-            self.project_initialized = True
-            self.set_initialized()
+    def project_selected(self, path):
+        configuration.nodes = Node.from_path(path)
+        configuration.change_project(path)
 
         self.render_treeview()
 
-    def configuration_selected(self, file_chooser):
-        if not self.initializing:
-            app.configuration.change_configuration(file_chooser.get_filename())
+    def select_configuration(self):
+        path = filedialog.askdirectory()
+        if path:
+            self.label['configuration']['text'] = path
+            self.configuration_selected(path)
 
-            self.configuration_initialized = True
-            self.set_initialized()
+    def configuration_selected(self, path):
+        configuration.change_configuration(path)
 
-    def row_selected(self, treeview, row, col):
-        node = app.configuration.nodes.find_node(self.store[row][2])
+    def row_selected(self, event):
+        selected_path = self.treeview.focus()
+        node = configuration.nodes.find_node(selected_path)
+        col = self.treeview.identify_column(event.x)
 
         # add | remove
-        if col == self.elements.project_actions_treeviewcolumn:
+        if col == '#1':
             # add
             if node.is_directory:
-                if app.configuration.configuration_path:
+                if configuration.configuration_path:
                     child = node.create_child('novotemplate.[ext]')
-                    self.editor_dialog.show(child, True, lambda: self.render_treeview())
+                    #TODO: implement show/hide editor window
+                    #self.editor_dialog.show(child, True, lambda: self.render_treeview())
                 else:
-                    self.elements.alert('Selecione onde salvar os templates primeiramente')
+                    messagebox.showwarning('Atenção:', 'Selecione onde salvar os templates primeiramente')
             # remove
             else:
-                if self.elements.alert(
-                    'Deseja realmente remover o template?',
-                    message_type = 'question'
+                if messagebox.askyesno(
+                    'Pergunta:',
+                    'Deseja realmente remover o template?'
                 ):
-                    app.configuration.remove_template(node)
+                    configuration.remove_template(node)
 
             self.render_treeview()
         # edit
         elif not node.is_directory:
-            self.editor_dialog.show(node, False, lambda: self.render_treeview())
+            print('implement show editor dialog')
+            #self.editor_dialog.show(node, False, lambda: self.render_treeview())
 
     def save_templates(self, button):
         try:
-            app.configuration.save_templates_into_project()
-            self.elements.alert(
-                'Templates salvos com sucesso no projeto',
-                message_type = 'info'
+            configuration.save_templates_into_project()
+            messagebox.showinfo(
+                'Informação:',
+                'Templates salvos com sucesso no projeto'
             )
         except Exception:
-            self.elements.alert(
-                'Não foi possível salvar os templates no projeto',
-                message_type = 'error'
+            messagebox.showerror(
+                'Erro:',
+                'Não foi possível salvar os templates no projeto'
             )
-
-    def show(self, gtk):
-        self.elements.window.show_all()
-        self.elements.window.connect('destroy', gtk.main_quit)
 

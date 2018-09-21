@@ -1,7 +1,9 @@
-from app import app
+#from app import app
 
 class VariablesSection:
-    def __init__(self, elements):
+    def __init__(self, builder):
+        self.builder = builder
+        '''
         self.elements = elements
 
         self.name = self.elements.variable_name_entry
@@ -21,8 +23,14 @@ class VariablesSection:
         self.old_name = None
 
         self.treeview.set_activate_on_single_click(True)
+        '''
 
-    def variable_action(self, button):
+    def config(self):
+        print('config')
+
+    def variable_action(self):
+        print('variable action called')
+        '''
         name = self.name.get_text()
         value = self.value.get_text()
 
@@ -43,6 +51,7 @@ class VariablesSection:
             app.configuration.change_variable(self.old_name, name, value)
 
         self.cancel_action(None)
+        '''
 
     def row_selected(self, treeview, row, col):
         # remove

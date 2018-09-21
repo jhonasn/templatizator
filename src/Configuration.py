@@ -142,3 +142,5 @@ class Configuration:
             open(self.get_configuration_json_path(), 'w+').write(json.dumps(cfg.__dict__))
             del cfg
 
+configuration = Configuration()
+
