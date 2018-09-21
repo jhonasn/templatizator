@@ -1,73 +1,73 @@
-#from app import app
+from tkinter import messagebox
+
+from src.Configuration import configuration
 
 class VariablesSection:
     def __init__(self, builder):
-        self.builder = builder
-        '''
-        self.elements = elements
+        self.name = builder.get_object('variable_name_entry')
+        self.value = builder.get_object('variable_value_entry')
+        self.action = builder.get_object('variable_action_button')
+        self.cancel = builder.get_object('variable_cancel_button')
+        self.treeview = builder.get_object('variables_treeview')
 
-        self.name = self.elements.variable_name_entry
-        self.value = self.elements.variable_value_entry
-        self.action = self.elements.variable_action_button
-        self.cancel = self.elements.variable_cancel_button
-        self.treeview = self.elements.variables_treeview
-        self.store = self.elements.variables_liststore
+        for key, value in configuration.get_variables():
+            self.treeview.insert('', 'end', values=[key, value, 'x'])
 
-        for key, value in app.configuration.get_variables():
-            self.store.append([key, value, 'x'])
-
-        self.treeview.connect('row-activated', self.row_selected)
-        self.action.connect('clicked', self.variable_action)
-        self.cancel.connect('clicked', self.cancel_action)
+        self.treeview.bind('<ButtonRelease-1>', self.row_selected)
+        self.action['command'] = self.variable_action
+        self.cancel['command'] = self.cancel_action
         self.row = None
         self.old_name = None
 
-        self.treeview.set_activate_on_single_click(True)
-        '''
-
-    def config(self):
-        print('config')
+    def set_entry_text(self, entry, text):
+        entry.delete(0, 'end')
+        entry.insert(0, text)
 
     def variable_action(self):
-        print('variable action called')
-        '''
-        name = self.name.get_text()
-        value = self.value.get_text()
+        name = self.name.get()
+        value = self.value.get()
+        selected_id = self.treeview.focus()
+        item = self.treeview.item(selected_id)
 
         if not name or not value:
-            self.elements.alert('Preencha o nome e o valor da variavel')
+            messagebox.showwarning('Atenção:', 'Preencha o nome e o valor da variavel')
             return
 
         # add
         if not self.row:
-            self.store.append([name, value, 'x'])
-            app.configuration.add_variable(name, value)
+            self.treeview.insert('', 'end', values=[name, value, 'x'])
+            configuration.add_variable(name, value)
         # edit
         else:
-            self.store[self.row][0] = name
-            self.store[self.row][1] = value
-            self.row = None
-            self.action.set_label('+')
-            app.configuration.change_variable(self.old_name, name, value)
+            self.treeview.item(selected_id, values=[name, value, 'x'])
+            configuration.change_variable(self.old_name, name, value)
 
-        self.cancel_action(None)
-        '''
+        self.cancel_action()
 
-    def row_selected(self, treeview, row, col):
+    def row_selected(self, event):
+        selected_id = self.treeview.focus()
+        item = self.treeview.item(selected_id)
+        col = self.treeview.identify_column(event.x)
+
+        row_name = item['values'][0]
+        row_value = item['values'][1]
+
         # remove
-        if col == self.elements.variables_actions_treeviewcolumn:
-            app.configuration.remove_variable(self.store[row][0])
-            self.store.remove(self.store[row].iter)
+        if col == '#3':
+            configuration.remove_variable(row_name)
+            self.treeview.delete(selected_id)
         # edit
         else:
-            self.name.set_text(self.store[row][0])
-            self.value.set_text(self.store[row][1])
-            self.action.set_label('Salvar')
-            self.row = row
-            self.old_name = self.store[row][0]
+            self.set_entry_text(self.name, row_name)
+            self.set_entry_text(self.value, row_value)
+            self.action['text'] = 'Salvar'
+            self.row = selected_id
+            self.old_name = row_name
 
-    def cancel_action(self, button):
+    def cancel_action(self):
         self.row = None
-        self.name.set_text('')
-        self.value.set_text('')
+        self.old_name = None
+        self.action['text'] = '+'
+        self.name.delete(0, 'end')
+        self.value.delete(0, 'end')
 

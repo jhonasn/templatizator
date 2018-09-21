@@ -132,7 +132,7 @@
           </object>
         </child>
         <child>
-          <object class="ttk.Entry" id="variable_nome_entry">
+          <object class="ttk.Entry" id="variable_name_entry">
             <property name="justify">left</property>
             <layout>
               <property name="column">0</property>
@@ -167,6 +167,17 @@
           </object>
         </child>
         <child>
+          <object class="ttk.Button" id="variable_cancel_button">
+            <property name="text" translatable="yes">x</property>
+            <property name="width">0</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
           <object class="ttk.Treeview" id="variables_treeview">
             <property name="cursor">arrow</property>
             <property name="selectmode">browse</property>
@@ -174,7 +185,7 @@
             <property name="takefocus">false</property>
             <layout>
               <property name="column">0</property>
-              <property name="columnspan">3</property>
+              <property name="columnspan">4</property>
               <property name="propagate">True</property>
               <property name="row">3</property>
               <property name="sticky">nw</property>
