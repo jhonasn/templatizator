@@ -66,8 +66,7 @@ class Window:
             if node.is_directory:
                 if configuration.configuration_path:
                     child = node.create_child('novotemplate.[ext]')
-                    #TODO: implement show/hide editor window
-                    #self.editor_dialog.show(child, True, lambda: self.render_treeview())
+                    self.editor_dialog.show(child, True, lambda: self.render_treeview())
                 else:
                     messagebox.showwarning('Atenção:', 'Selecione onde salvar os templates primeiramente')
             # remove
@@ -81,10 +80,9 @@ class Window:
             self.render_treeview()
         # edit
         elif not node.is_directory:
-            print('implement show editor dialog')
-            #self.editor_dialog.show(node, False, lambda: self.render_treeview())
+            self.editor_dialog.show(node, False, lambda: self.render_treeview())
 
-    def save_templates(self, button):
+    def save_templates(self):
         try:
             configuration.save_templates_into_project()
             messagebox.showinfo(
