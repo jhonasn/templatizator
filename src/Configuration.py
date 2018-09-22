@@ -6,8 +6,8 @@ from src.Node import Node
 
 class Configuration:
     history_path = './history.json'
-    # {project_path: configuration_path}
-    history = {}
+    # history is a list of last configuration paths
+    history = []
 
     def __init__(self):
         self.nodes = None
@@ -22,52 +22,72 @@ class Configuration:
 
         #load configuration
         if len(Configuration.history):
-            self.project_path = next(iter(Configuration.history))
-            self.configuration_path = Configuration.history[self.project_path]
+            self.configuration_path = Configuration.history[-1]
             self.load()
         else:
-            #default variables on application start
-            self.__dict__['ext'] = 'py'
+            self.set_default_variables()
+
+    def set_default_variables(self):
+        self.__dict__['ext'] = 'py'
             
     def get_configuration_json_path(self):
         return os.path.join(self.configuration_path, 'configuration.json')
 
     def load(self):
-        if os.path.exists(self.get_configuration_json_path()):
-            configuration = json.loads(open(self.get_configuration_json_path()).read())
+        path = self.get_configuration_json_path()
+        will_load = os.path.exists(path)
+
+        self.clear_variables()
+        self.set_default_variables()
+        self.project_path = None
+        self.nodes = None
+
+        if will_load:
+            configuration = json.loads(open(path).read())
+
             # TODO: comparison beetween json nodes and project path nodes
             # self.nodes = Node.from_path(configuration['nodes']['path'])
             self.nodes = Node.from_dict(configuration['nodes']) #json_nodes
             # Node.diff(self.nodes, json_nodes)
             del configuration['nodes']
             for key, value in configuration.items():
+                # project_path is loaded (or not) here too
                 self.__dict__[key] = value
 
+        return will_load
+
     def save_history(self):
-        if self.project_path and self.configuration_path:
-            Configuration.history[self.project_path] = self.configuration_path
+        if self.configuration_path and self.configuration_path not in Configuration.history:
+            Configuration.history.append(self.configuration_path)
+        elif self.configuration_path:
+            # The configuration already exists in history and it was selected again
+            # so we append it in de history to be the most recent configuration
+            Configuration.history.remove(self.configuration_path)
+            Configuration.history.append(self.configuration_path)
         open(Configuration.history_path, 'w+').write(json.dumps(Configuration.history))
 
     def change_project(self, path):
         self.project_path = path
-        if (self.configuration_path):
+        self.nodes = Node.from_path(path)
+        if self.configuration_path:
             self.save()
-            self.save_history()
 
     def change_configuration(self, path):
-        if self.configuration_path:
-            os.remove(self.get_configuration_json_path())
         self.configuration_path = path
-        if (self.project_path):
-            self.save()
-            self.save_history()
+        self.save_history()
+        self.load()
+
+    def clear_variables(self):
+        variables = self.get_variables()
+        for key in list(variables):
+            del self.__dict__[key]
 
     def get_variables(self):
         cfg = deepcopy(self)
         del cfg.nodes
         del cfg.project_path
         del cfg.configuration_path
-        return cfg.__dict__.items()
+        return cfg.__dict__
 
     def add_variable(self, name, value):
         self.__dict__[name] = value
@@ -118,7 +138,7 @@ class Configuration:
     def replace_variables(self, text):
         variables = self.get_variables()
         new_text = copy(text)
-        for key, value in variables:
+        for key, value in variables.items():
             new_text = new_text.replace(f'[{key}]', value)
 
         return new_text

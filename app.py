@@ -9,14 +9,15 @@ class App(pygubu.TkApplication):
         builder.add_from_file('./gui/gui.ui')
 
         window = builder.get_object('window', self.master)
-
         Window(builder)
 
-        builder.connect_callbacks(window)
+        self.set_title('Templatizator')
 
         window.mainloop()
 
 if __name__ == '__main__':
-    app = App(Tk())
+    root = Tk()
+    root.resizable(False, False)
+    app = App(root)
     app.start()
 

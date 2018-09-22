@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <interface>
   <object class="ttk.Frame" id="window">
+    <property name="borderwidth">10</property>
     <property name="height">200</property>
-    <property name="padding">5</property>
+    <property name="padding">0</property>
     <property name="takefocus">true</property>
     <property name="width">200</property>
     <layout>
@@ -25,7 +26,7 @@
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
-          <property name="row">0</property>
+          <property name="row">1</property>
           <property name="sticky">nw</property>
         </layout>
         <child>
@@ -34,7 +35,7 @@
             <property name="cursor">arrow</property>
             <property name="relief">sunken</property>
             <property name="takefocus">true</property>
-            <property name="text" translatable="yes">Selecione um arquivo...</property>
+            <property name="text" translatable="yes">Selecione um diretório...</property>
             <property name="width">34</property>
             <layout>
               <property name="column">0</property>
@@ -63,7 +64,7 @@
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
-          <property name="row">1</property>
+          <property name="row">0</property>
           <property name="sticky">nw</property>
         </layout>
         <child>
@@ -72,7 +73,7 @@
             <property name="cursor">arrow</property>
             <property name="relief">sunken</property>
             <property name="takefocus">true</property>
-            <property name="text" translatable="yes">Selecione um arquivo...</property>
+            <property name="text" translatable="yes">Selecione um diretório...</property>
             <property name="width">34</property>
             <layout>
               <property name="column">0</property>
@@ -134,6 +135,7 @@
         <child>
           <object class="ttk.Entry" id="variable_name_entry">
             <property name="justify">left</property>
+            <property name="width">15</property>
             <layout>
               <property name="column">0</property>
               <property name="padx">2</property>
@@ -146,6 +148,7 @@
         <child>
           <object class="ttk.Entry" id="variable_value_entry">
             <property name="justify">left</property>
+            <property name="width">15</property>
             <layout>
               <property name="column">1</property>
               <property name="padx">2</property>
@@ -172,14 +175,14 @@
             <property name="width">0</property>
             <layout>
               <property name="column">3</property>
-              <property name="propagate">True</property>
+              <property name="propagate">False</property>
               <property name="row">1</property>
             </layout>
           </object>
         </child>
         <child>
           <object class="ttk.Treeview" id="variables_treeview">
-            <property name="cursor">arrow</property>
+            <property name="height">5</property>
             <property name="selectmode">browse</property>
             <property name="show">headings</property>
             <property name="takefocus">false</property>
@@ -280,6 +283,7 @@
         <property name="text" translatable="yes">Salvar templates no projeto</property>
         <layout>
           <property name="column">0</property>
+          <property name="pady">5</property>
           <property name="propagate">True</property>
           <property name="row">4</property>
           <property name="sticky">se</property>
@@ -291,97 +295,115 @@
     <property name="height">200</property>
     <property name="padx">5</property>
     <property name="pady">5</property>
+    <property name="title" translatable="yes">Templatizator | Editar template</property>
     <property name="width">200</property>
     <child>
-      <object class="ttk.Label" id="editor_filename_label">
-        <property name="text" translatable="yes">Nome arquivo:</property>
+      <object class="ttk.Frame" id="editor_frame">
+        <property name="height">200</property>
+        <property name="width">200</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
           <property name="row">0</property>
-          <property name="sticky">w</property>
         </layout>
-      </object>
-    </child>
-    <child>
-      <object class="ttk.Entry" id="editor_filename_entry">
-        <layout>
-          <property name="column">1</property>
-          <property name="columnspan">2</property>
-          <property name="propagate">True</property>
-          <property name="row">0</property>
-          <property name="sticky">w</property>
-        </layout>
-      </object>
-    </child>
-    <child>
-      <object class="ttk.Label" id="editor_variable_label">
-        <property name="text" translatable="yes">Adicionar variável:</property>
-        <layout>
-          <property name="column">0</property>
-          <property name="propagate">True</property>
-          <property name="row">1</property>
-          <property name="sticky">w</property>
-        </layout>
-      </object>
-    </child>
-    <child>
-      <object class="ttk.Combobox" id="editor_variable_combobox">
-        <layout>
-          <property name="column">1</property>
-          <property name="propagate">True</property>
-          <property name="row">1</property>
-          <property name="sticky">w</property>
-        </layout>
-      </object>
-    </child>
-    <child>
-      <object class="ttk.Button" id="editor_variable_button">
-        <property name="compound">top</property>
-        <property name="cursor">arrow</property>
-        <property name="takefocus">false</property>
-        <property name="text" translatable="yes">+</property>
-        <property name="width">0</property>
-        <layout>
-          <property name="column">2</property>
-          <property name="propagate">True</property>
-          <property name="row">1</property>
-          <property name="sticky">w</property>
-        </layout>
-      </object>
-    </child>
-    <child>
-      <object class="tk.Text" id="editor_text">
-        <property name="height">10</property>
-        <property name="width">50</property>
-        <layout>
-          <property name="column">0</property>
-          <property name="columnspan">3</property>
-          <property name="propagate">True</property>
-          <property name="row">2</property>
-        </layout>
-      </object>
-    </child>
-    <child>
-      <object class="ttk.Button" id="editor_cancel_button">
-        <property name="text" translatable="yes">Cancelar</property>
-        <layout>
-          <property name="column">1</property>
-          <property name="propagate">True</property>
-          <property name="row">3</property>
-          <property name="sticky">se</property>
-        </layout>
-      </object>
-    </child>
-    <child>
-      <object class="ttk.Button" id="editor_save_button">
-        <property name="text" translatable="yes">Salvar</property>
-        <layout>
-          <property name="column">2</property>
-          <property name="propagate">True</property>
-          <property name="row">3</property>
-          <property name="sticky">se</property>
-        </layout>
+        <child>
+          <object class="ttk.Label" id="editor_filename_label">
+            <property name="text" translatable="yes">Nome arquivo:</property>
+            <property name="width">14</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="editor_filename_entry">
+            <property name="cursor">arrow</property>
+            <property name="justify">left</property>
+            <property name="takefocus">false</property>
+            <property name="width">34</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="editor_variable_label">
+            <property name="text" translatable="yes">Adicionar variável:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Combobox" id="editor_variable_combobox">
+            <property name="width">33</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Text" id="editor_text">
+            <property name="height">10</property>
+            <property name="width">50</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="columnspan">2</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Frame" id="editor_buttons_frame">
+            <property name="height">200</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="columnspan">2</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">3</property>
+              <property name="sticky">se</property>
+            </layout>
+            <child>
+              <object class="ttk.Button" id="editor_cancel_button">
+                <property name="text" translatable="yes">Cancelar</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">s</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="editor_save_button">
+                <property name="text" translatable="yes">Salvar</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">se</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
   </object>

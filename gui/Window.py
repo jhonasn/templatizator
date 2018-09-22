@@ -1,8 +1,7 @@
+from os.path import expanduser as get_path
 from tkinter import filedialog, messagebox, Button
 
 from src.Configuration import configuration
-
-from src.Node import Node
 
 from gui.VariablesSection import VariablesSection
 from gui.EditorDialog import EditorDialog
@@ -12,6 +11,7 @@ class Window:
         self.variables_section = VariablesSection(builder)
         self.editor_dialog = EditorDialog(builder)
 
+        self.window = builder.get_object('window')
         self.treeview = builder.get_object('project_treeview')
 
         self.label = {
@@ -30,30 +30,44 @@ class Window:
             self.render_treeview()
 
     def render_treeview(self):
+        self.treeview.delete(*self.treeview.get_children())
         if configuration.nodes:
-            self.treeview.delete(*self.treeview.get_children())
             configuration.nodes.fill_treeview(self.treeview)
 
     def select_project(self):
-        path = filedialog.askdirectory()
+        path = configuration.project_path
+        path = filedialog.askdirectory(
+            title='Diretório do projeto',
+            initialdir=path if path else get_path('~'),
+            mustexist=True,
+            parent=self.window
+        )
         if path:
             self.label['project']['text'] = path
             self.project_selected(path)
 
     def project_selected(self, path):
-        configuration.nodes = Node.from_path(path)
         configuration.change_project(path)
-
         self.render_treeview()
 
     def select_configuration(self):
-        path = filedialog.askdirectory()
+        path = configuration.configuration_path
+        path = filedialog.askdirectory(
+            title='Diretório dos templates',
+            initialdir=path if path else get_path('~'),
+            mustexist=True,
+            parent=self.window
+        )
         if path:
             self.label['configuration']['text'] = path
             self.configuration_selected(path)
 
     def configuration_selected(self, path):
         configuration.change_configuration(path)
+        ppath = configuration.project_path
+        self.label['project']['text'] = ppath if ppath else 'Selecione um diretório...'
+        self.variables_section.reload()
+        self.render_treeview()
 
     def row_selected(self, event):
         selected_path = self.treeview.focus()

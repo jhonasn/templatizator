@@ -10,14 +10,19 @@ class VariablesSection:
         self.cancel = builder.get_object('variable_cancel_button')
         self.treeview = builder.get_object('variables_treeview')
 
-        for key, value in configuration.get_variables():
-            self.treeview.insert('', 'end', values=[key, value, 'x'])
+        self.reload()
 
         self.treeview.bind('<ButtonRelease-1>', self.row_selected)
         self.action['command'] = self.variable_action
         self.cancel['command'] = self.cancel_action
         self.row = None
         self.old_name = None
+
+    def reload(self):
+        self.treeview.delete(*self.treeview.get_children())
+
+        for key, value in configuration.get_variables().items():
+            self.treeview.insert('', 'end', values=[key, value, 'x'])
 
     def set_entry_text(self, entry, text):
         entry.delete(0, 'end')
