@@ -20,5 +20,6 @@ We have only two windows in this app:
 ## TODO:
 - [ ] Change file structure to bring open just the root folder
 - [ ] Change save templates in project success dialog to ask if the user wants to open the project folder
+- [ ] Add checkbox to save template on project directory
 - [ ] Add option to add created files from templates into xml (csproj) or json files
 - [ ] Diff into configuration and project folder structure
