@@ -18,7 +18,8 @@ We have only two windows in this app:
   - 2.4 This window will be used to edit your templates too
 
 ## TODO:
-- [ ] Change file structure to bring open just the root folder
+- [x] Change file structure to bring open just the root folder
+  - [x] Save opened file tree structure when templates are saved
 - [ ] Change save templates in project success dialog to ask if the user wants to open the project folder
 - [ ] Add checkbox to save template on project directory
 - [ ] Add option to add created files from templates into xml (csproj) or json files

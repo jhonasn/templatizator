@@ -23,6 +23,8 @@ class Window:
         builder.get_object('configuration_file_button')['command'] = self.select_configuration
         builder.get_object('templates_save_button')['command'] = self.save_templates
         self.treeview.bind('<ButtonRelease-1>', self.row_selected)
+        self.treeview.bind('<<TreeviewOpen>>', self.row_opened)
+        self.treeview.bind('<<TreeviewClose>>', self.row_closed)
 
         if configuration.configuration_path:
             self.label['configuration']['text'] = configuration.configuration_path
@@ -95,6 +97,16 @@ class Window:
         # edit
         elif not node.is_directory:
             self.editor_dialog.show(node, False, lambda: self.render_treeview())
+
+    def row_opened(self, event):
+        selected_path = self.treeview.focus()
+        node = configuration.nodes.find_node(selected_path)
+        node.open = True
+
+    def row_closed(self, event):
+        selected_path = self.treeview.focus()
+        node = configuration.nodes.find_node(selected_path)
+        node.open = False
 
     def save_templates(self):
         try:

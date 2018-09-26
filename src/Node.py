@@ -6,6 +6,7 @@ class Node:
         self.path = path
         self.name = os.path.basename(path)
         self.is_directory = is_directory
+        self.open = False
         self.children = []
         self.parent = None
 
@@ -51,16 +52,18 @@ class Node:
 
     def from_dict(node_dict):
         parent = Node(node_dict['path'])
-        parent.is_directory = node_dict['is_directory']
-        if hasattr(node_dict, 'parent'):
-            parent.parent = node_dict['parent']
+        parent.__dict__ = node_dict.copy()
+        if not hasattr(parent, 'parent'):
+            parent.parent = None
+        parent.children = []
         for c in node_dict['children']:
             if len(c['children']):
                 c['parent'] = parent
                 parent.children.append(Node.from_dict(c))
             else:
                 cn = Node(c['path'])
-                cn.is_directory = c['is_directory']
+                cn.__dict__ = c.copy()
+                cn.children = []
                 cn.parent = parent
                 parent.children.append(cn)
 
@@ -118,7 +121,7 @@ class Node:
         for c in self.children:
             child_parent_id = treeview.insert(
                 parent_id, 1, c.path, text=c.get_name(),
-                values=c.get_actions(), open=True)
+                values=c.get_actions(), open=c.open)
             if len(c.children):
                 c.fill_treeview(treeview, child_parent_id)
 

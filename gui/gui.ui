@@ -15,6 +15,7 @@
       <columns>
         <column id="0">
           <property name="pad">0</property>
+          <property name="weight">1</property>
         </column>
       </columns>
     </layout>
@@ -28,6 +29,16 @@
           <property name="propagate">True</property>
           <property name="row">1</property>
           <property name="sticky">nw</property>
+          <rows>
+            <row id="0">
+              <property name="weight">0</property>
+            </row>
+          </rows>
+          <columns>
+            <column id="0">
+              <property name="weight">0</property>
+            </column>
+          </columns>
         </layout>
         <child>
           <object class="ttk.Label" id="project_file_label">
@@ -36,7 +47,6 @@
             <property name="relief">sunken</property>
             <property name="takefocus">true</property>
             <property name="text" translatable="yes">Selecione um diretório...</property>
-            <property name="width">34</property>
             <layout>
               <property name="column">0</property>
               <property name="propagate">True</property>
@@ -60,12 +70,20 @@
       <object class="ttk.Labelframe" id="configuration_labelframe">
         <property name="height">50</property>
         <property name="text" translatable="yes">Salvar templates em:</property>
-        <property name="width">0</property>
+        <property name="width">300</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
           <property name="row">0</property>
           <property name="sticky">nw</property>
+          <columns>
+            <column id="0">
+              <property name="weight">0</property>
+            </column>
+            <column id="1">
+              <property name="weight">0</property>
+            </column>
+          </columns>
         </layout>
         <child>
           <object class="ttk.Label" id="configuration_file_label">
@@ -74,7 +92,6 @@
             <property name="relief">sunken</property>
             <property name="takefocus">true</property>
             <property name="text" translatable="yes">Selecione um diretório...</property>
-            <property name="width">34</property>
             <layout>
               <property name="column">0</property>
               <property name="propagate">True</property>
