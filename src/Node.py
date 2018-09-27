@@ -75,7 +75,7 @@ class Node:
         return f'⌹ {self.name}' if self.is_directory else f'⛁ {self.name}'
 
     def get_actions(self):
-        return '➕' if self.is_directory else '❌' #
+        return '➕' if self.is_directory else'❌'
 
     def as_dict(self):
         parent = copy(self)
@@ -115,12 +115,12 @@ class Node:
     def fill_treeview(self, treeview, parent_id = ''):
         if not parent_id:
             parent_id = treeview.insert(
-                parent_id, 1, self.path, text=self.get_name(),
+                parent_id, 'end', self.path, text=self.get_name(),
                 values=self.get_actions(), open=True)
 
         for c in self.children:
             child_parent_id = treeview.insert(
-                parent_id, 1, c.path, text=c.get_name(),
+                parent_id, 'end', c.path, text=c.get_name(),
                 values=c.get_actions(), open=c.open)
             if len(c.children):
                 c.fill_treeview(treeview, child_parent_id)

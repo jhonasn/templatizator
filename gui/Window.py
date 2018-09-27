@@ -82,6 +82,7 @@ class Window:
             # add
             if node.is_directory:
                 if configuration.configuration_path:
+                    node.open = True
                     child = node.create_child('novotemplate.[ext]')
                     self.editor_dialog.show(child, True, lambda: self.render_treeview())
                 else:

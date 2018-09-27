@@ -22,7 +22,7 @@ class VariablesSection:
         self.treeview.delete(*self.treeview.get_children())
 
         for key, value in configuration.get_variables().items():
-            self.treeview.insert('', 'end', values=[key, value, 'x'])
+            self.treeview.insert('', 'end', values=[key, value, '❌'])
 
     def set_entry_text(self, entry, text):
         entry.delete(0, 'end')
@@ -40,11 +40,11 @@ class VariablesSection:
 
         # add
         if not self.row:
-            self.treeview.insert('', 'end', values=[name, value, 'x'])
+            self.treeview.insert('', 'end', values=[name, value, '❌'])
             configuration.add_variable(name, value)
         # edit
         else:
-            self.treeview.item(selected_id, values=[name, value, 'x'])
+            self.treeview.item(selected_id, values=[name, value, '❌'])
             configuration.change_variable(self.old_name, name, value)
 
         self.cancel_action()
