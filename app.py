@@ -13,7 +13,7 @@ class App(pygubu.TkApplication):
         window = builder.get_object('window', self.master)
         Window(builder)
 
-        self.set_title('Templatizator')
+        self.set_title('[Templatizator]')
 
         window.mainloop()
 

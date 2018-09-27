@@ -72,7 +72,7 @@ class VariablesSection:
     def cancel_action(self):
         self.row = None
         self.old_name = None
-        self.action['text'] = '+'
+        self.action['text'] = '➕'
         self.name.delete(0, 'end')
         self.value.delete(0, 'end')
 
