@@ -22,8 +22,12 @@ We have only two windows in this app:
   - [x] Save opened file tree structure when templates are saved
 - [x] Change save templates in project success dialog to ask if the user wants to open the project folder
 - [ ] Add linux styles
-- [ ] Change configuration save method. Stop to save all in configuration json file, create a directory for every project with unique name registered in a configuration file in order to have many projects saved in the same configuration folder. Stop saving the entire tree node and save only the templates or relevant nodes in a separate file into the project folder, that way we can save a list of node object without children only pointing location with its path. Start to save variables in a separated file. Refactor the Configuration class into various files.
-    The reason to do this is because when we change the project directory and return to the previous project we loose the previous project configuration mainly the templates.
+- [ ] Change configuration save method:  
+  - Stop to save all in configuration json file, create a directory for every project with a unique friendly name registered in a configuration file in order to have many projects saved in the same configuration folder.  
+  - Stop saving the entire tree node and save only the templates or relevant nodes in a separate file into the project folder, that way we can save a list of node object without children only pointing location with its path.  
+  - Start to save variables in a separated file.  
+  - Refactor the Configuration class into various files.  
+  > The reason to do this is because when we change the project directory and return to the previous project we loose the previous project configuration mainly the templates.
 - [ ] Add an option to open and edit templates with another application
 - [ ] Add checkbox to save template on project directory
 - [ ] Add option to add created files from templates into xml (csproj) or json files
