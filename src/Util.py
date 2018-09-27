@@ -11,3 +11,9 @@ class Util:
         elif sys.platform.find('linux') > -1:
             subprocess.check_call(['open', path])
 
+    def is_dark_theme():
+        if os.path.exists('~/.config/gtk-3.0/settings.ini'):
+            settings = open('~/.config/gtk-3.0/settings.ini').read()
+            return settings.find('gtk-application-prefer-dark-theme=1')
+
+

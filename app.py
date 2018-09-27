@@ -1,4 +1,5 @@
-from tkinter import Tk
+import sys
+from tkinter import Tk, ttk
 import pygubu
 from pygubu.builder import ttkstdwidgets
 
@@ -19,6 +20,16 @@ class App(pygubu.TkApplication):
 
 if __name__ == '__main__':
     root = Tk()
+    if sys.platform.find('linux') > -1:
+        root.style = ttk.Style()
+        theme = 'clam' #or awlight, clearlooks, arc
+        if Util.is_dark_theme():
+            from ttkthemes import ThemedStyle
+            root.style = ThemedStyle(root)
+            root.style.set_theme('equilux') #or awdark
+        else:
+            root.style.theme_use(theme)
+
     root.resizable(False, False)
     app = App(root)
     app.start()

@@ -65,7 +65,7 @@ class VariablesSection:
         else:
             self.set_entry_text(self.name, row_name)
             self.set_entry_text(self.value, row_value)
-            self.action['text'] = 'Salvar'
+            self.action['text'] = '✓'
             self.row = selected_id
             self.old_name = row_name
 
