@@ -2,6 +2,7 @@ from os.path import expanduser as get_path
 from tkinter import filedialog, messagebox, Button
 
 from src.Configuration import configuration
+from src.Util import Util
 
 from gui.VariablesSection import VariablesSection
 from gui.EditorDialog import EditorDialog
@@ -111,10 +112,13 @@ class Window:
     def save_templates(self):
         try:
             configuration.save_templates_into_project()
-            messagebox.showinfo(
-                'Informação:',
-                'Templates salvos com sucesso no projeto'
+            openProject = messagebox.askyesno(
+                'Templates salvos com sucesso no projeto!',
+                'Deseja abrir a pasta do projeto?',
+                icon='info'
             )
+            if openProject:
+                Util.open_path_with_os(configuration.project_path)
         except Exception:
             messagebox.showerror(
                 'Erro:',
