@@ -1,5 +1,11 @@
 # templatizator
-A desktop program to create a set of template files on some directory tree structure and save this set of files into the directory with some differences configured with variables into the application. The first motivation to create this app was by using DDD/TDD where we need to create a large set of files everytime when we create a new table for example. The app very configurable and free from programing language that you use in your system, by the way the program can be used in any way you want, it only creates a set of configurable templates and save them all at the directory pointed in project field.
+This is desktop program to create a set of template files on some directory tree structure and save this set of files into the directory with some differences configured with variables into the application.  
+
+The first motivation to create this app was by using DDD/TDD where we need to create a large set of files everytime when we create a new table for example.  
+
+The app very configurable and free from programing language that you use in your system, by the way, the program can be used in any way you want, it only creates a set of configurable templates and save them all at the directory pointed in project field.  
+
+The app is made for windows and linux, but it can be used into mac although it's currently not tested/supported in this OS.
 
 ## How this app works?
 We have only two windows in this app:
