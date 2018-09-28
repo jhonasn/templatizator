@@ -12,8 +12,17 @@ class Util:
             subprocess.check_call(['open', path])
 
     def is_dark_theme():
-        if os.path.exists('~/.config/gtk-3.0/settings.ini'):
-            settings = open('~/.config/gtk-3.0/settings.ini').read()
-            return settings.find('gtk-application-prefer-dark-theme=1')
+        try:
+            #GTK
+            process = subprocess.Popen(['gsettings', 'get',
+                'org.gnome.desktop.interface', 'gtk-theme'],
+                stdout=subprocess.PIPE
+            )
+            res = str(process.communicate()[0])
 
+            return res.find('dark') > -1
+        except Exception:
+            pass
+
+        return False
 
