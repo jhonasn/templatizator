@@ -36,6 +36,7 @@ We have only two windows in this app:
   > The reason to do this is because when we change the project directory and return to the previous project we loose the previous project configuration mainly the templates.
 - [ ] Add an option to open and edit templates with another application
 - [ ] Add checkbox to save template on project directory
-- [ ] Add option to add created files from templates into xml (csproj) or json files
+- [ ] Add option to add created files from templates into any text file with a line template with placeholders. To set location to add files, use a search into the file and then select to append or prepend the line template. Every template can use the same line template in the file or a specific template for each template.
+  > In that way we don't need to make a new GUI nor a implementation for every type of file (for ex.: json, xml, yml, etc).
 - [ ] Diff into configuration and project folder structure
 
