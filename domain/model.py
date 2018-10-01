@@ -1,6 +1,3 @@
-#import os
-#from copy import copy
-
 class Node:
     # node from a graph/node tree
     def __init__(self, path):
@@ -11,6 +8,11 @@ class Node:
     def add_child(self, child):
         self.children.append(child)
         child.parent = self
+
+    def create_child(self, name):
+        child = Node(os.path.join(self.path, name))
+        self.add_child(child)
+        return child
 
     def remove_child(self, child):
         self.children.remove(child)

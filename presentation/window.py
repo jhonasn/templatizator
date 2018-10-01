@@ -1,18 +1,13 @@
-from os.path import expanduser as get_path
 from tkinter import filedialog, messagebox, Button
-
-from presentation.application import builder
-
-#from src.Configuration import configuration
-#from src.Util import Util
-
-#from gui.VariablesSection import VariablesSection
-#from gui.EditorDialog import EditorDialog
+from domain.model import Directory, Template, ConfigurableFile
 
 class Window:
-    def __init__(self):
-        #self.variables_section = VariablesSection(builder)
-        #self.editor_dialog = EditorDialog(builder)
+    def __init__(self, builder, variables, editor, application, configurationApplication):
+        self.application = application
+        self.configurationApplication = configurationApplication
+
+        self.variables = variables
+        self.editor = editor
 
         self.window = builder.get_object('window_toplevel')
         self.treeview = builder.get_object('project_treeview')
@@ -29,27 +24,46 @@ class Window:
         self.treeview.bind('<<TreeviewOpen>>', self.row_opened)
         self.treeview.bind('<<TreeviewClose>>', self.row_closed)
 
-        '''
-        if configuration.configuration_path:
+        if configurationApplication.path:
             self.label['configuration']['text'] = configuration.configuration_path
             self.label['project']['text'] = configuration.project_path
             self.render_treeview()
-        '''
 
-'''
     #some unicode 4len chars: ✕ ✖ ❌ ➕ ➖ ⨂ ⨁
     #5len chars: 📂
-    def get_name(self):
-        return f'⌹ {self.name}' if self.is_directory else f'⛁ {self.name}'
+    def get_filetree_icon(self, node):
+        if node is Directory:
+            return '⌹'
+        elif node is Template:
+            return '⛁'
+        elif node is ConfigurableFile:
+            return ''
 
-    def get_actions(self):
-        return '➕' if self.is_directory else'❌'
-'''
+    def get_filetree_action_icon(self, node):
+        if node is Directory:
+            return '➕'
+        elif node is Template:
+            return '❌'
+        elif node is ConfigurableFile:
+            return ''
 
     def render_treeview(self):
         self.treeview.delete(*self.treeview.get_children())
-        if configuration.nodes:
-            configuration.nodes.fill_treeview(self.treeview)
+        if self.application.filetree:
+            self.fill_treeview(self.application.filetree)
+
+    def fill_treeview(self, node, parent_id = ''):
+        if not parent_id:
+            parent_id = treeview.insert(
+                parent_id, 'end', node.path, text=f'{self.get_filetree_icon(node)} {node.name}',
+                values=self.get_filetree_action_icon(node), open=True)
+
+        for c in self.children:
+            child_parent_id = treeview.insert(
+                parent_id, 'end', c.path, text=f'{self.get_filetree_icon(c)} {c.name}',
+                values=self.get_filetree_action_icon(node), open=c.open)
+            if len(c.children):
+                c.fill_treeview(treeview, child_parent_id)
 
     def select_project(self):
         path = configuration.project_path

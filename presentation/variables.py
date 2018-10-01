@@ -1,10 +1,7 @@
 from tkinter import messagebox
 
-#from src.Configuration import configuration
-from presentation.application import builder
-
 class Variables:
-    def __init__(self):
+    def __init__(self, builder, variablesApplication):
         self.name = builder.get_object('variable_name_entry')
         self.value = builder.get_object('variable_value_entry')
         self.action = builder.get_object('variable_action_button')

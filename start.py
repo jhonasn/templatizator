@@ -1,5 +1,6 @@
-from presentation.application import app
+from presentation.start import initialize
+from domain.container import Container
 
-if __name__ == '__main__':
-    app.start()
+Container.configure()
+initialize()
 

@@ -1,20 +1,19 @@
-'''
-import os
-import json
-from copy import copy, deepcopy
-
-from src.Node import Node
-'''
-
 class BaseApplication:
-    def __init__(self, service, repository):
+    def __init__(self, service):
         self.service = service
-        self.repository = repository
 
 class ProjectApplication(BaseApplication):
-    def __init__(self, service, repository, configuration_repository):
-        super().__init__(service, repository)
-        self.configuration_repository = configuration_repository 
+    def __init__(self, service, configuration_service):
+        super().__init__(service)
+        self.configuration_service = configuration_service 
+        self.filetree = None
+
+    def change_path(self, path):
+        self.service.change_path(path)
+        self.filetree = self.service.get_filetree(path)
+
+    def change_configuration_path(self, path):
+        self.configuration_service.set_path(path)
 
 class VariablesApplication(BaseApplication):
     pass
@@ -26,20 +25,10 @@ class ConfigurableFileApplication(BaseApplication):
     pass
 
 class Configuration:
-    history_path = './history.json'
-    # history is a list of last configuration paths
-    history = []
-
     def __init__(self):
         self.nodes = None
         self.project_path = None
         self.configuration_path = None
-
-        #init history
-        if os.path.exists(Configuration.history_path):
-            Configuration.history = json.loads(open(Configuration.history_path).read())
-        else:
-            self.save_history()
 
         #load configuration
         if len(Configuration.history):
@@ -47,12 +36,6 @@ class Configuration:
             self.load()
         else:
             self.set_default_variables()
-
-    def set_default_variables(self):
-        self.__dict__['ext'] = 'py'
-            
-    def get_configuration_json_path(self):
-        return os.path.join(self.configuration_path, 'configuration.json')
 
     def load(self):
         path = self.get_configuration_json_path()
@@ -86,12 +69,6 @@ class Configuration:
             Configuration.history.remove(self.configuration_path)
             Configuration.history.append(self.configuration_path)
         open(Configuration.history_path, 'w+').write(json.dumps(Configuration.history))
-
-    def change_project(self, path):
-        self.project_path = path
-        self.nodes = Node.from_path(path)
-        if self.configuration_path:
-            self.save()
 
     def change_configuration(self, path):
         self.configuration_path = path
@@ -182,6 +159,4 @@ class Configuration:
             cfg.nodes = cfg.nodes.as_dict()
             open(self.get_configuration_json_path(), 'w+').write(json.dumps(cfg.__dict__))
             del cfg
-
-configuration = Configuration()
 
