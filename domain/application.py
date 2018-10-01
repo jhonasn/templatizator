@@ -1,8 +1,29 @@
+'''
 import os
 import json
 from copy import copy, deepcopy
 
 from src.Node import Node
+'''
+
+class BaseApplication:
+    def __init__(self, service, repository):
+        self.service = service
+        self.repository = repository
+
+class ProjectApplication(BaseApplication):
+    def __init__(self, service, repository, configuration_repository):
+        super().__init__(service, repository)
+        self.configuration_repository = configuration_repository 
+
+class VariablesApplication(BaseApplication):
+    pass
+
+class TemplateApplication(BaseApplication):
+    pass
+
+class ConfigurableFileApplication(BaseApplication):
+    pass
 
 class Configuration:
     history_path = './history.json'

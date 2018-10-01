@@ -1,18 +1,20 @@
 from os.path import expanduser as get_path
 from tkinter import filedialog, messagebox, Button
 
-from src.Configuration import configuration
-from src.Util import Util
+from presentation.application import builder
 
-from gui.VariablesSection import VariablesSection
-from gui.EditorDialog import EditorDialog
+#from src.Configuration import configuration
+#from src.Util import Util
+
+#from gui.VariablesSection import VariablesSection
+#from gui.EditorDialog import EditorDialog
 
 class Window:
-    def __init__(self, builder):
-        self.variables_section = VariablesSection(builder)
-        self.editor_dialog = EditorDialog(builder)
+    def __init__(self):
+        #self.variables_section = VariablesSection(builder)
+        #self.editor_dialog = EditorDialog(builder)
 
-        self.window = builder.get_object('window')
+        self.window = builder.get_object('window_toplevel')
         self.treeview = builder.get_object('project_treeview')
 
         self.label = {
@@ -27,10 +29,22 @@ class Window:
         self.treeview.bind('<<TreeviewOpen>>', self.row_opened)
         self.treeview.bind('<<TreeviewClose>>', self.row_closed)
 
+        '''
         if configuration.configuration_path:
             self.label['configuration']['text'] = configuration.configuration_path
             self.label['project']['text'] = configuration.project_path
             self.render_treeview()
+        '''
+
+'''
+    #some unicode 4len chars: ✕ ✖ ❌ ➕ ➖ ⨂ ⨁
+    #5len chars: 📂
+    def get_name(self):
+        return f'⌹ {self.name}' if self.is_directory else f'⛁ {self.name}'
+
+    def get_actions(self):
+        return '➕' if self.is_directory else'❌'
+'''
 
     def render_treeview(self):
         self.treeview.delete(*self.treeview.get_children())

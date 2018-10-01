@@ -1,9 +1,10 @@
 from tkinter import messagebox
 
-from src.Configuration import configuration
+#from src.Configuration import configuration
+from presentation.application import builder
 
-class VariablesSection:
-    def __init__(self, builder):
+class Variables:
+    def __init__(self):
         self.name = builder.get_object('variable_name_entry')
         self.value = builder.get_object('variable_value_entry')
         self.action = builder.get_object('variable_action_button')
@@ -21,8 +22,10 @@ class VariablesSection:
     def reload(self):
         self.treeview.delete(*self.treeview.get_children())
 
+        '''
         for key, value in configuration.get_variables().items():
             self.treeview.insert('', 'end', values=[key, value, '❌'])
+        '''
 
     def set_entry_text(self, entry, text):
         entry.delete(0, 'end')

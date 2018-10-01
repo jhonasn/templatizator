@@ -1,0 +1,507 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="tk.Toplevel" id="window_toplevel">
+    <property name="height">200</property>
+    <property name="resizable">none</property>
+    <property name="title" translatable="yes">[Templatizator]</property>
+    <property name="width">200</property>
+    <child>
+      <object class="ttk.Frame" id="window">
+        <property name="borderwidth">10</property>
+        <property name="height">200</property>
+        <property name="padding">0</property>
+        <property name="takefocus">true</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="columnspan">1</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+          <property name="rowspan">1</property>
+          <columns>
+            <column id="0">
+              <property name="pad">0</property>
+              <property name="weight">1</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="ttk.Labelframe" id="configuration_labelframe">
+            <property name="height">50</property>
+            <property name="text" translatable="yes">Salvar templates em:</property>
+            <property name="width">365</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">False</property>
+              <property name="row">0</property>
+              <property name="sticky">nw</property>
+              <columns>
+                <column id="0">
+                  <property name="weight">1</property>
+                </column>
+                <column id="1">
+                  <property name="weight">0</property>
+                </column>
+              </columns>
+            </layout>
+            <child>
+              <object class="ttk.Label" id="configuration_file_label">
+                <property name="anchor">w</property>
+                <property name="cursor">arrow</property>
+                <property name="padding">3</property>
+                <property name="relief">sunken</property>
+                <property name="takefocus">true</property>
+                <property name="text" translatable="yes">Selecione um diretório...</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="padx">4</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">ew</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="configuration_file_button">
+                <property name="text" translatable="yes">Selecione</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="padx">4</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">ne</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="project_labelframe">
+            <property name="height">50</property>
+            <property name="text" translatable="yes">Projeto:</property>
+            <property name="width">365</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">False</property>
+              <property name="row">1</property>
+              <property name="sticky">nw</property>
+              <rows>
+                <row id="0">
+                  <property name="weight">0</property>
+                </row>
+              </rows>
+              <columns>
+                <column id="0">
+                  <property name="weight">1</property>
+                </column>
+              </columns>
+            </layout>
+            <child>
+              <object class="ttk.Label" id="project_file_label">
+                <property name="anchor">w</property>
+                <property name="cursor">arrow</property>
+                <property name="padding">3</property>
+                <property name="relief">sunken</property>
+                <property name="takefocus">true</property>
+                <property name="text" translatable="yes">Selecione um diretório...</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="padx">4</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">ew</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="project_file_button">
+                <property name="text" translatable="yes">Selecione</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="padx">4</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">ne</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="variables_labelframe">
+            <property name="height">200</property>
+            <property name="text" translatable="yes">Variáveis de substituição:</property>
+            <property name="width">365</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">False</property>
+              <property name="row">2</property>
+              <property name="sticky">nw</property>
+              <rows>
+                <row id="2">
+                  <property name="weight">1</property>
+                </row>
+                <row id="3">
+                  <property name="weight">0</property>
+                </row>
+              </rows>
+              <columns>
+                <column id="0">
+                  <property name="weight">1</property>
+                </column>
+                <column id="1">
+                  <property name="weight">1</property>
+                </column>
+              </columns>
+            </layout>
+            <child>
+              <object class="ttk.Label" id="Label_3">
+                <property name="text" translatable="yes">Nome:</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Entry" id="variable_name_entry">
+                <property name="justify">left</property>
+                <property name="width">23</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="row">1</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Label" id="Label_4">
+                <property name="text" translatable="yes">Valor:</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Entry" id="variable_value_entry">
+                <property name="justify">left</property>
+                <property name="width">23</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="padx">2</property>
+                  <property name="propagate">False</property>
+                  <property name="row">1</property>
+                  <property name="sticky">w</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="variable_action_button">
+                <property name="text" translatable="yes">➕</property>
+                <property name="width">3</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="propagate">False</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="variable_cancel_button">
+                <property name="text" translatable="yes">❌</property>
+                <property name="width">3</property>
+                <layout>
+                  <property name="column">3</property>
+                  <property name="padx">5</property>
+                  <property name="propagate">False</property>
+                  <property name="row">1</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="pygubu.builder.widgets.scrollbarhelper" id="variables_treeview_scrollbarhelper">
+                <property name="padding">5</property>
+                <property name="scrolltype">vertical</property>
+                <property name="usemousewheel">true</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="columnspan">4</property>
+                  <property name="propagate">True</property>
+                  <property name="row">2</property>
+                  <property name="sticky">nsew</property>
+                </layout>
+                <child>
+                  <object class="ttk.Treeview" id="variables_treeview">
+                    <property name="selectmode">browse</property>
+                    <property name="show">headings</property>
+                    <property name="takefocus">false</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">0</property>
+                      <property name="sticky">nw</property>
+                    </layout>
+                    <child>
+                      <object class="ttk.Treeview.Column" id="variable_name_treeviewcolumn">
+                        <property name="column_anchor">w</property>
+                        <property name="heading_anchor">w</property>
+                        <property name="minwidth">0</property>
+                        <property name="stretch">true</property>
+                        <property name="text" translatable="yes">Nome</property>
+                        <property name="tree_column">false</property>
+                        <property name="visible">true</property>
+                        <property name="width">150</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Treeview.Column" id="variable_value_treeviewcolumn">
+                        <property name="column_anchor">w</property>
+                        <property name="minwidth">0</property>
+                        <property name="stretch">true</property>
+                        <property name="text" translatable="yes">Valor</property>
+                        <property name="tree_column">false</property>
+                        <property name="visible">true</property>
+                        <property name="width">160</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Treeview.Column" id="variable_action_treeviewcolumn">
+                        <property name="column_anchor">w</property>
+                        <property name="heading_anchor">w</property>
+                        <property name="minwidth">0</property>
+                        <property name="stretch">true</property>
+                        <property name="tree_column">false</property>
+                        <property name="visible">true</property>
+                        <property name="width">30</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="project_selected_labelframe">
+            <property name="height">300</property>
+            <property name="text" translatable="yes">Projeto selecionado:</property>
+            <property name="width">365</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">False</property>
+              <property name="row">3</property>
+              <property name="sticky">nw</property>
+              <rows>
+                <row id="0">
+                  <property name="minsize">0</property>
+                  <property name="weight">1</property>
+                </row>
+              </rows>
+              <columns>
+                <column id="0">
+                  <property name="weight">1</property>
+                </column>
+              </columns>
+            </layout>
+            <child>
+              <object class="pygubu.builder.widgets.scrollbarhelper" id="project_treeview_scrollbarhelper">
+                <property name="padding">5</property>
+                <property name="scrolltype">vertical</property>
+                <property name="usemousewheel">true</property>
+                <property name="width">350</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">nsew</property>
+                </layout>
+                <child>
+                  <object class="ttk.Treeview" id="project_treeview">
+                    <property name="selectmode">browse</property>
+                    <property name="show">tree</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">True</property>
+                      <property name="row">0</property>
+                      <property name="sticky">nw</property>
+                    </layout>
+                    <child>
+                      <object class="ttk.Treeview.Column" id="project_files_treeviewcolumn">
+                        <property name="column_anchor">w</property>
+                        <property name="heading_anchor">w</property>
+                        <property name="minwidth">20</property>
+                        <property name="stretch">true</property>
+                        <property name="tree_column">true</property>
+                        <property name="visible">true</property>
+                        <property name="width">310</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Treeview.Column" id="project_actions_treeviewcolumn">
+                        <property name="column_anchor">w</property>
+                        <property name="heading_anchor">w</property>
+                        <property name="minwidth">20</property>
+                        <property name="stretch">true</property>
+                        <property name="tree_column">false</property>
+                        <property name="visible">true</property>
+                        <property name="width">25</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="templates_save_button">
+            <property name="takefocus">false</property>
+            <property name="text" translatable="yes">Salvar templates no projeto</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">4</property>
+              <property name="sticky">se</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="tk.Toplevel" id="editor_toplevel">
+    <property name="height">200</property>
+    <property name="padx">5</property>
+    <property name="pady">5</property>
+    <property name="title" translatable="yes">[Templatizator] Edição de template</property>
+    <property name="width">200</property>
+    <child>
+      <object class="ttk.Frame" id="editor_frame">
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="editor_filename_label">
+            <property name="text" translatable="yes">Nome arquivo:</property>
+            <property name="width">14</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="editor_filename_entry">
+            <property name="cursor">arrow</property>
+            <property name="justify">left</property>
+            <property name="takefocus">false</property>
+            <property name="width">34</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="editor_variable_label">
+            <property name="text" translatable="yes">Adicionar variável:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Combobox" id="editor_variable_combobox">
+            <property name="width">33</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="pygubu.builder.widgets.scrollbarhelper" id="editor_scrollbarhelper">
+            <property name="scrolltype">both</property>
+            <property name="usemousewheel">false</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="columnspan">2</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+            </layout>
+            <child>
+              <object class="tk.Text" id="editor_text">
+                <property name="height">10</property>
+                <property name="width">50</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Frame" id="editor_buttons_frame">
+            <property name="height">200</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="columnspan">2</property>
+              <property name="propagate">True</property>
+              <property name="row">3</property>
+              <property name="sticky">se</property>
+            </layout>
+            <child>
+              <object class="ttk.Button" id="editor_cancel_button">
+                <property name="text" translatable="yes">Cancelar</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">s</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="editor_save_button">
+                <property name="text" translatable="yes">Salvar</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">se</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

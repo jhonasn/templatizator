@@ -1,7 +1,8 @@
-from src.Configuration import configuration
+#from src.Configuration import configuration
+from presentation.application import builder
 
-class EditorDialog:
-    def __init__(self, builder):
+class Editor:
+    def __init__(self):
         self.dialog = builder.get_object('editor_toplevel')
         #self.window = builder.get_object('window')
         self.dialog.resizable(False, False)
