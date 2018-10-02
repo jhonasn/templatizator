@@ -1,9 +1,12 @@
 import os
 import json
 from domain.model import *
+from abc import ABC
 
-class FileRepository:
+class FileRepository(ABC):
     # save files
+
+    name = None
 
     def __init__(self, path = None, name = None):
         self.path = path
@@ -21,10 +24,11 @@ class FileRepository:
     def full_path(self):
         if self.path and self.name:
             return os.path.join(self.path, self.name)
-        else
+        else:
             return None
 
     def exists(self):
+        if not self.full_path: return False
         return os.path.exists(self.full_path)
 
     def get(self):
@@ -34,10 +38,23 @@ class FileRepository:
             return ''
 
     def save(self, content):
-        open(self.full_path, 'w').write(content)
+        if self.full_path:
+            open(self.full_path, 'w').write(content)
+
+    def drop(self):
+        if self.full_path:
+            os.remove(self.full_path)
+
+    def save_file(self, old_name, new_name, content):
+        if old_name != new_name:
+            self.name = old_name
+            self.drop()
+
+        self.name = new_name
+        self.save(content)
 
 class JsonRepository(FileRepository):
-    # save json files
+    # save object list as json
 
     # deserialization type
     of_type = None
@@ -52,37 +69,42 @@ class JsonRepository(FileRepository):
         else:
             return None
 
-    def save(self, obj):
-        super().save(json.dumps(obj))
+    def save(self, collection):
+        super().save(json.dumps(
+                list(map(
+                    lambda i: i.serialize() if isinstance(i, Serializable) else i.__dict__,
+                    collection
+                ))
+        ))
 
     def get(self):
         result = self.get_json()
-        value = None
+        value = []
         deserialization_type = type(self).of_type
 
-        if not deserialization_type:
-            value = result
-        elif isinstance(result, list):
-            value = []
-            for i in result:
-                v = deserialization_type()
-                v.__dict__ = i
-        else:
-            value = deserialization_type()
-            value.__dict__ = result
+        if result:
+            if not deserialization_type:
+                value = result
+            else:
+                for i in result:
+                    v = deserialization_type()
+                    v.__dict__ = i
+                    value.append(v)
 
         return value
 
     def first(self, expression, collection = None):
-        if not collection
+        if not collection:
             collection = self.get()
-        iterable = find(expression, collection)
-        return next(iterable)
+        results = self.filter(expression, collection)
+        return results[0] if len(results) else None
 
-    def find(self, expression, collection = None):
-        if not collection
+    def filter(self, expression, collection = None):
+        if not collection:
             collection = self.get()
-        return find(expression, collection)
+        if not collection:
+            collection = []
+        return list(filter(expression, collection))
 
     def add(self, model):
         collection = self.get()
@@ -105,26 +127,43 @@ class ConfigurationRepository(JsonRepository):
     name = 'configuration.json'
     of_type = Project
 
-    def __init__(self, path = None, name = None):
+    def __init__(self, path = None):
         if not path:
             path = self.default_path()
 
-        super().__init__(path, name)
+        super().__init__(path)
 
     def default_path(self):
-        return os.path.join(os.get_path('~'), 'templatizator')
+        return os.path.join(self.get_home_path(), 'templatizator')
 
-    def set_project_path(self, path):
+    def get_home_path(self):
+        return os.path.expanduser('~')
+
+    def change_project(self, path):
         i = 0
-        project_path = path
-        while(os.path.exists(project_path)):
-            i += 1
-            project_path = path + i
-
-        super().set_path(project_path)
+        project = self.first(lambda p: p.path == path)
+        if not project:
+            # set friendly project name
+            name = os.path.basename(path)
+            localpath = os.path.join(self.path, name)
+            while(os.path.exists(localpath)):
+                i += 1
+                name += f'-{i}'
+                localpath = os.path.join(self.path, name)
+            project = Project(path, name, True)
+            projects = self.get()
+            for p in projects:
+                p.selected = False
+            projects.append(project)
+            self.save(projects)
+        return project
 
     def get_filetree_iter(self, path):
         return os.walk(path)
+
+    def get_selected(self):
+        selected = self.first(lambda p: p.selected)
+        return selected if selected else Project()
 
 class VariableRepository(JsonRepository):
     # save variables json

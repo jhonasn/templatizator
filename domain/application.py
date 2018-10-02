@@ -8,16 +8,26 @@ class ProjectApplication(BaseApplication):
     def __init__(self, service, configuration_service):
         super().__init__(service)
         self.configuration_service = configuration_service 
+        self.project = None
         self.filetree = None
+        self.configuration_path = configuration_service.get_path()
+        if self.configuration_path:
+            self.project = self.service.get()
+            self.filetree = self.service.get_filetree()
 
     def change_path(self, path):
-        self.service.change_path(path)
+        self.project = self.service.change_path(path)
         self.filetree = self.service.get_filetree()
 
     def change_configuration_path(self, path):
         self.configuration_service.set_path(path)
+        self.change_path(self, path)
 
-class VariablesApplication(BaseApplication):
+    @property
+    def home_path(self):
+        return self.service.get_home_path()
+
+class VariableApplication(BaseApplication):
     def __init__(self, service):
         super().__init__(service)
         self.get()
@@ -44,5 +54,4 @@ class TemplateApplication(BaseApplication):
 
 class ConfigurableFileApplication(BaseApplication):
     pass
-
 

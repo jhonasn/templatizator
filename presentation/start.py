@@ -3,7 +3,7 @@ import pygubu
 from pygubu.builder import ttkstdwidgets
 
 from domain.helper import OS
-from presentation.container import Container, set_instance
+from presentation.container import Container
 
 builder = pygubu.Builder()
 

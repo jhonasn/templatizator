@@ -2,9 +2,8 @@ from tkinter import filedialog, messagebox, Button
 from domain.model import Directory, Template, ConfigurableFile
 
 class Window:
-    def __init__(self, builder, variables, editor, application, configuration_application):
+    def __init__(self, builder, variables, editor, application):
         self.application = application
-        self.configuration_application = configuration_application
 
         self.variables = variables
         self.editor = editor
@@ -24,9 +23,11 @@ class Window:
         self.treeview.bind('<<TreeviewOpen>>', self.row_opened)
         self.treeview.bind('<<TreeviewClose>>', self.row_closed)
 
-        if configurationApplication.path:
-            self.label['configuration']['text'] = configuration.configuration_path
-            self.label['project']['text'] = configuration.project_path
+        if application.configuration_path:
+            self.label['configuration']['text'] = application.configuration_path
+
+        if application.project.path:
+            self.label['project']['text'] = application.project.path
             self.render_treeview()
 
     #some unicode 4len chars: ✕ ✖ ❌ ➕ ➖ ⨂ ⨁
@@ -66,10 +67,10 @@ class Window:
                 c.fill_treeview(treeview, child_parent_id)
 
     def select_project(self):
-        path = configuration.project_path
+        path = self.application.project.path
         path = filedialog.askdirectory(
             title='Diretório do projeto',
-            initialdir=path if path else get_path('~'),
+            initialdir=path if path else self.application.home_path,
             mustexist=True,
             parent=self.window
         )
@@ -78,14 +79,14 @@ class Window:
             self.project_selected(path)
 
     def project_selected(self, path):
-        configuration.change_project(path)
+        self.application.change_path(path)
         self.render_treeview()
 
     def select_configuration(self):
-        path = configuration.configuration_path
+        path = self.application.configuration_path
         path = filedialog.askdirectory(
             title='Diretório dos templates',
-            initialdir=path if path else get_path('~'),
+            initialdir=path if path else self.application.home_path,
             mustexist=True,
             parent=self.window
         )
@@ -94,8 +95,8 @@ class Window:
             self.configuration_selected(path)
 
     def configuration_selected(self, path):
-        configuration.change_configuration(path)
-        ppath = configuration.project_path
+        self.application.change_configuration_path(path)
+        ppath = self.application.project.path
         self.label['project']['text'] = ppath if ppath else 'Selecione um diretório...'
         self.variables_section.reload()
         self.render_treeview()

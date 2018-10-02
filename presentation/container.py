@@ -1,11 +1,9 @@
-from domain.container import Container
-from presentation.window import Window
-from presentation.variables import Variables
-from presentation.editor import Editor
+from domain.container import Container as DomainContainer
+from presentation import Window, Variables, Editor
 
 class Container:
     def configure(builder):
-        Container.variables = Variables(builder, Container.variables_application)
-        Container.editor = Editor(builder, Container.template_application)
-        Container.window = Window(builder, self.variables, self.editor, Container.project_application)
+        Container.variables = Variables(builder, DomainContainer.variable_application)
+        Container.editor = Editor(builder, DomainContainer.template_application)
+        Container.window = Window(builder, Container.variables, Container.editor, DomainContainer.project_application)
 

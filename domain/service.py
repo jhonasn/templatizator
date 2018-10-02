@@ -11,8 +11,8 @@ class BaseService:
     def first(self, expression, collection = None):
         return self.repository.first(expression, collection)
 
-    def find(self, expression, collection = None):
-        return self.repository.find(expression, collection)
+    def filter(self, expression, collection = None):
+        return self.repository.filter(expression, collection)
 
     def add(self, model):
         self.repository.add(model)
@@ -20,18 +20,34 @@ class BaseService:
     def remove(self, expression):
         self.repository.remove(expression)
 
+# TODO: verify if will be needed, maybe this goes into the project service
 class ConfigurationService(BaseService):
     def change_configuration(self, path):
         self.configuration_path = path
         self.save_history()
         self.load()
 
+    def get_path(self):
+        return self.repository.path
+
 class ProjectService(BaseService):
-    def __init__(self, repository, template_repository, configurable_repository, project_change_event):
-        super().__init__(repository)
+    def __init__(self, configuration_repository, variable_repository,
+            template_repository, configurable_repository,
+            template_file_repository, configurable_file_repository,
+            project_change_event):
+        self.configuration_repository = configuration_repository
+        self.variable_repository = variable_repository
         self.template_repository = template_repository
         self.configurable_repository = configurable_repository
+        self.template_file_repository = template_file_repository
+        self.configurable_file_repository = configurable_file_repository
         self.event = project_change_event
+
+    def get(self):
+        return self.configuration_repository.get_selected()
+
+    def get_home_path(self):
+        return self.configuration_repository.get_home_path()
 
     def find_node(self, node, path):
         if node.path == path:
@@ -47,8 +63,11 @@ class ProjectService(BaseService):
             return None
 
     def get_filetree(self):
-        parent = Project(self.repository.path)
-        for root, directories, files in self.repository.get_filetree_iter(path):
+        parent = self.get()
+        if not parent.path:
+            return parent
+        iterator = self.configuration_repository.get_filetree_iter(parent.path)
+        for root, directories, files in iterator:
             node = self.find_node(root, parent)
 
             for directory in directories:
@@ -69,32 +88,41 @@ class ProjectService(BaseService):
         return parent
 
     def change_path(self, path):
-        self.repository.path = path
+        project = self.configuration_repository.change_project(path)
         self.event.publish(path)
+        return project
 
-    '''
-    def save_templates_into_project(self):
-        templates = self.nodes.get_file_nodes()
+    def replace_variables(self, text):
+        new_text = copy(text)
+        for v in self.variable_repository.get():
+            new_text = new_text.replace(f'[{v.key}]', v.value)
 
-        for t in templates:
-            path = os.path.dirname(t.path)
-            path = os.path.join(path, self.replace_variables(t.name))
-            open(path, 'w+').write(
-                self.replace_variables(
-                    self.get_template_content(t)
-                )
-            )
-    '''
+        return new_text
+
+    def save_into_project(self):
+        for t in self.template_repository.get():
+            self.template_file_repository.path = t.path
+            self.template_file_repository.name = self.replace_variables(t.name)
+            content = self.template_file_repository.get(t.path)
+            content = self.replace_variables(content)
+            self.template_file_repository.save(content)
+
+        for c in self.configurable_file_repository.get():
+            self.configurable_file_repository.path = c.path
+            self.configurable_file_repository.name = self.replace_variables(c.name)
+            content = self.configurable_file_repository.get(c.path)
+            content = self.replace_variables(content)
+            self.configurable_file_repository.save(content)
 
 class VariableService(BaseService):
     def __init__(self, repository, project_change_event):
-        self.load()
+        super().__init__(repository)
         project_change_event.subscribe(self.project_changed)
 
     def get(self):
         variables = self.repository.get()
-        if not self.variables or not len(self.variables):
-            return get_defaults()
+        if not variables or not len(variables):
+            return self.get_defaults()
         else:
             return variables
 
@@ -115,39 +143,32 @@ class VariableService(BaseService):
     def remove(self, name):
         self.repository.remove(name)
 
-    def replace_variables(self, text):
-        new_text = copy(text)
-        for v in self.get():
-            new_text = new_text.replace(f'[{v.key}]', v.value)
-
-        return new_text
-
-    def project_changed(name, path):
+    def project_changed(self, name, path):
         self.repository.path = path
-        self.variables.clear()
-        self.load()
 
-class TemplateFileService(BaseService):
-    '''
-    def save_template(self, node, filename, content):
-        old_name = node.name
-        dir_path = os.path.dirname(node.path)
-        node.path = os.path.join(dir_path, filename)
-        node.name = filename
+class TemplateService(BaseService):
+    def __init__(self, repository, template_repository, project_change_event):
+        # repository = template_file_repository
+        super().__init__(repository)
+        self.template_repository = template_repository
+        project_change_event.subscribe(self.project_changed)
 
-        if self.configuration_path:
-            old_path = self.get_template_path(old_name)
-            new_path = self.get_template_path(filename)
+    def save(self, template, filename, content):
+        self.save_file(template.name, filename, content)
 
-            if os.path.exists(old_path):
-                os.rename(old_path, new_path)
+    def project_changed(self, name, path):
+        self.repository.path = path
 
-            open(new_path, 'w+').write(content)
+class ConfigurableService(BaseService):
+    def __init__(self, repository, configurable_repository, project_change_event):
+        # repository = configurable_file_repository
+        super().__init__(repository)
+        self.configurable_repository = configurable_repository
+        project_change_event.subscribe(self.project_changed)
 
-        self.save()
-    '''
-    pass
+    def save(self, configurable):
+        self.save(configurable)
 
-class ConfigurableFileService(BaseService):
-    pass
+    def project_changed(self, name, path):
+        self.repository.path = path
 
