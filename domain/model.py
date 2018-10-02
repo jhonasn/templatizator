@@ -40,11 +40,13 @@ class ConfigurableFile(File):
     # that receives template files
     pass
 
-class Project(Directory):
-    pass
-
-class Configuration(Directory):
-    pass
+class Project:
+    def __init__(self, name, path, selected = False):
+        # friendly project name
+        self.name = name
+        # project path
+        self.path = path
+        self.selected = selected
 
 class Variable:
     def __init__(self, key, value):

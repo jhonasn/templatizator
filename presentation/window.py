@@ -2,9 +2,9 @@ from tkinter import filedialog, messagebox, Button
 from domain.model import Directory, Template, ConfigurableFile
 
 class Window:
-    def __init__(self, builder, variables, editor, application, configurationApplication):
+    def __init__(self, builder, variables, editor, application, configuration_application):
         self.application = application
-        self.configurationApplication = configurationApplication
+        self.configuration_application = configuration_application
 
         self.variables = variables
         self.editor = editor

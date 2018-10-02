@@ -30,6 +30,21 @@ class OS:
 
         return False
 
+class Event:
+    def __init__(self, name):
+        self.name = name
+        self.subscribers = []
+
+    def subscribe(self, cb):
+        self.subscribers.append(cb)
+
+    def unsubscribe(self, cb):
+        self.subscribers.remove(cb)
+
+    def publish(self, data):
+        for cb in self.subscribers:
+            cb(self.name, data)
+
 if sys.platform.find('linux') > -1:
     OS.is_linux = True
 elif sys.platform.find('win') > -1:
