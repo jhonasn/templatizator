@@ -1,11 +1,12 @@
 class Editor:
-    def __init__(self, builder, application):
+    def __init__(self, builder, application, variable_application):
         self.application = application
+        self.variable_application = variable_application
 
         self.dialog = builder.get_object('editor_toplevel')
         #self.window = builder.get_object('window')
         self.dialog.resizable(False, False)
-        
+
         self.filename = builder.get_object('editor_filename_entry')
         self.editor = builder.get_object('editor_text')
         self.combobox = builder.get_object('editor_variable_combobox')
@@ -31,8 +32,8 @@ class Editor:
 
     def save_template(self):
         filename = self.filename.get()
-        configuration.save_template(
-            self.node,
+        self.application.save(
+            self.node.name,
             filename,
             self.editor.get('1.0', 'end')
         )
@@ -55,10 +56,11 @@ class Editor:
 
         self.editor.delete('1.0', 'end')
         self.editor.insert('1.0',
-            '' if is_new else configuration.get_template_content(node)
+            '' if is_new else self.application.get(node)
         )
 
-        self.combobox['values'] = list(configuration.get_variables())
+        self.variable_application.get()
+        self.combobox['values'] = list(self.variable_application.variables)
 
         self.dialog.deiconify()
         #self.dialog.transient(self.window)

@@ -3,6 +3,7 @@
   <object class="tk.Toplevel" id="window_toplevel">
     <property name="height">200</property>
     <property name="resizable">none</property>
+    <property name="takefocus">true</property>
     <property name="title" translatable="yes">[Templatizator]</property>
     <property name="width">200</property>
     <child>

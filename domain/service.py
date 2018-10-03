@@ -24,21 +24,27 @@ class NodeService(BaseService):
     def remove(self, node):
         self.repository.remove(node)
 
+class FileService(NodeService):
+    def get(self, file):
+        self.name = file.name
+        return self.get()
+
+    def save(self, old_name, new_name, content):
+        self.repository.save_file(old_name, new_name, content)
+
 # TODO: verify if will be needed, maybe this goes into the project service
 class ConfigurationService(BaseService):
     def change_configuration(self, path):
         self.configuration_path = path
-        self.save_history()
-        self.load()
 
     def get_path(self):
         return self.repository.path
 
 class ProjectService(BaseService):
     def __init__(self, configuration_repository, variable_repository,
-            template_repository, configurable_repository,
-            template_file_repository, configurable_file_repository,
-            project_change_event):
+                 template_repository, configurable_repository,
+                 template_file_repository, configurable_file_repository,
+                 project_change_event):
         self.configuration_repository = configuration_repository
         self.variable_repository = variable_repository
         self.template_repository = template_repository
@@ -60,11 +66,11 @@ class ProjectService(BaseService):
         configurables = self.configurable_repository.get()
 
         for t in templates:
-            parent = self.find_node(self.repository.get_parent_path(t.path))
+            parent = self.repository.find_node(self.repository.get_parent_path(t.path))
             parent.add_child(t)
 
         for cf in configurables:
-            parent = self.service.find_node(self.repository.get_parent_path(cf.path))
+            parent = self.repository.find_node(self.repository.get_parent_path(cf.path))
             parent.add_child(cf)
 
         return filetree
@@ -128,7 +134,7 @@ class VariableService(BaseService):
     def project_changed(self, name, path):
         self.repository.path = path
 
-class TemplateService(NodeService):
+class TemplateService(FileService):
     def __init__(self, repository, template_repository, project_change_event):
         # repository = template_file_repository
         super().__init__(repository)
@@ -141,7 +147,11 @@ class TemplateService(NodeService):
     def project_changed(self, name, path):
         self.repository.path = path
 
-class ConfigurableService(NodeService):
+    def create_child(self, parent, name):
+        return self.template_repository.create_child(parent, name)
+
+
+class ConfigurableService(FileService):
     def __init__(self, repository, configurable_repository, project_change_event):
         # repository = configurable_file_repository
         super().__init__(repository)
@@ -153,4 +163,7 @@ class ConfigurableService(NodeService):
 
     def project_changed(self, name, path):
         self.repository.path = path
+
+    def create_child(self, parent, name):
+        return self.configurable_repository.create_child(parent, name)
 

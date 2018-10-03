@@ -17,11 +17,6 @@ class Node(Serializable):
         self.children.append(child)
         child.parent = self
 
-    def create_child(self, name):
-        child = Node(os.path.join(self.path, name))
-        self.add_child(child)
-        return child
-
     def remove_child(self, child):
         self.children.remove(child)
 
@@ -74,7 +69,8 @@ class Project(Directory):
 
     def serialize(self):
         obj = super().serialize()
-        obj['name'] = self.path_name
+        del obj['open']
+        obj['path_name'] = self.path_name
         obj['selected'] = self.selected
         return obj
 

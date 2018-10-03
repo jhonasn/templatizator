@@ -23,10 +23,20 @@ class NodeApplication(BaseApplication):
     def remove(self, node):
         self.service.remove(node)
 
+class FileApplication(NodeApplication):
+    def get(self, file):
+        return self.service.get(file)
+
+    def save(self, old_name, new_name, content):
+        self.service.save_file(old_name, new_name, content)
+
+    def create_child(self, parent, name):
+        return self.service.create_child(parent, name)
+
 class ProjectApplication(BaseApplication):
     def __init__(self, service, configuration_service):
         super().__init__(service)
-        self.configuration_service = configuration_service 
+        self.configuration_service = configuration_service
         self.configuration_path = configuration_service.get_path()
         if self.configuration_path:
             self.filetree = self.service.get_filetree()
@@ -37,7 +47,7 @@ class ProjectApplication(BaseApplication):
 
     def change_configuration_path(self, path):
         self.configuration_service.set_path(path)
-        self.change_path(self, path)
+        self.configuration_service.change_path(self, path)
 
     @property
     def home_path(self):
@@ -71,9 +81,9 @@ class VariableApplication(BaseApplication):
         self.service.remove(name)
         self.get()
 
-class TemplateApplication(NodeApplication):
+class TemplateApplication(FileApplication):
     pass
 
-class ConfigurableFileApplication(NodeApplication):
+class ConfigurableFileApplication(FileApplication):
     pass
 

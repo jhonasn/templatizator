@@ -14,11 +14,8 @@ class FileRepository(ABC):
             self.name = type(self).name
         self.name = name
 
-    def get_parent_path(path):
-        return os.path.dirname(path)
-
     def get_parent_path(self, path):
-        return FileRepository.get_parent_path(self.path)
+        return os.path.dirname(path)
 
     def get_basename(self, path):
         return os.path.basename(path)
@@ -74,7 +71,7 @@ class JsonRepository(FileRepository):
         if self.exists():
             return json.loads(super().get())
         else:
-            return None
+            return []
 
     def save(self, collection):
         super().save(json.dumps(
@@ -94,10 +91,11 @@ class JsonRepository(FileRepository):
                 value = result
             else:
                 for item in result:
-                    v = deserialization_type()
+                    # pylint: disable=not-callable
+                    value_item = deserialization_type()
                     for key, val in item.items():
-                        v.__dict__[key] = val
-                    value.append(v)
+                        value_item.__dict__[key] = val
+                    value.append(value_item)
 
         return value
 
@@ -141,6 +139,12 @@ class NodeRepository(JsonRepository):
     def remove(self, node):
         super().remove(lambda n: n.path == node.path)
 
+    def create_child(self, parent, name):
+        # pylint: disable=not-callable
+        child = type(self).of_type(os.path.join(parent.path, name), name)
+        parent.add_child(child)
+        return child
+
 class ConfigurationRepository(JsonRepository):
     # save projects in the configuration directory
     name = 'configuration.json'
@@ -151,6 +155,13 @@ class ConfigurationRepository(JsonRepository):
             path = self.default_path()
 
         super().__init__(path)
+
+    def get(self):
+        projects = super().get()
+        for p in projects:
+            p.name = self.get_basename(p.path)
+
+        return projects
 
     def default_path(self):
         return os.path.join(self.get_home_path(), 'templatizator')
@@ -200,25 +211,22 @@ class ConfigurationRepository(JsonRepository):
             # set friendly project name
             path_name = self.get_basename(path)
             name = path_name
-            localpath = os.path.join(self.path, path_name)
             i = 0
-            while(os.path.exists(localpath)):
+            while(self.first(lambda p: p.name == path_name)):
                 i += 1
-                path_name += f'-{i}'
-                localpath = os.path.join(self.path, path_name)
+                path_name = f'{name}-{i}'
             project = Project(path, name, path_name, True)
             projects.append(project)
         else:
             # project already exist, select project
             project.selected = True
-            project.name = self.get_basename(project.path)
 
         self.save(projects)
 
         return project
 
     def get_filetree_iter(self, path):
-        return 
+        return
 
     def get_selected(self):
         selected = self.first(lambda p: p.selected)
