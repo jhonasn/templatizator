@@ -7,8 +7,9 @@ class Serializable(ABC):
 
 class Node(Serializable):
     # node from a graph/node tree
-    def __init__(self, path = None):
+    def __init__(self, path = None, name = None):
         self.path = path
+        self.name = name
         self.children = []
         self.parent = None
 
@@ -33,8 +34,8 @@ class Node(Serializable):
 
 class Directory(Node):
     # directory from a file tree
-    def __init__(self, path = None, opened = False):
-        super().__init__(path)
+    def __init__(self, path = None, name = None, opened = False):
+        super().__init__(path, name)
         self.open = opened
 
     def serialize(self):
@@ -53,8 +54,8 @@ class Template(File):
 class ConfigurableFile(File):
     # configurable file like xml or json or another
     # that receives template files
-    def __init__(self, path = None, expression = None, after = True):
-        super().__init__(path)
+    def __init__(self, path = None, name = None, expression = None, after = True):
+        super().__init__(path, name)
         self.expression = expression
         self.after = after
 
@@ -65,15 +66,15 @@ class ConfigurableFile(File):
         return obj
 
 class Project(Directory):
-    def __init__(self, path = None, name = None, selected = False):
-        super().__init__(path, True)
+    def __init__(self, path = None, name = None, path_name = None, selected = False):
+        super().__init__(path, name, True)
         # friendly project name
-        self.name = name
+        self.path_name = path_name
         self.selected = selected
 
     def serialize(self):
         obj = super().serialize()
-        obj['name'] = self.name
+        obj['name'] = self.path_name
         obj['selected'] = self.selected
         return obj
 

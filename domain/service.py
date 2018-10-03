@@ -20,6 +20,10 @@ class BaseService:
     def remove(self, expression):
         self.repository.remove(expression)
 
+class NodeService(BaseService):
+    def remove(self, node):
+        self.repository.remove(node)
+
 # TODO: verify if will be needed, maybe this goes into the project service
 class ConfigurationService(BaseService):
     def change_configuration(self, path):
@@ -43,36 +47,14 @@ class ProjectService(BaseService):
         self.configurable_file_repository = configurable_file_repository
         self.event = project_change_event
 
-    def get(self):
-        return self.configuration_repository.get_selected()
-
     def get_home_path(self):
         return self.configuration_repository.get_home_path()
 
-    def find_node(self, node, path):
-        if node.path == path:
-            return node
-        else:
-            for c in node.children:
-                if c.path == path:
-                    return c
-                elif len(c.children) > 0:
-                    p = self.find_node(c, path)
-                    if p != None:
-                        return p
-            return None
+    def find_node(self, filetree, path):
+        return self.configuration_repository.find_node(filetree, path)
 
     def get_filetree(self):
-        parent = self.get()
-        if not parent.path:
-            return parent
-        iterator = self.configuration_repository.get_filetree_iter(parent.path)
-        for root, directories, files in iterator:
-            node = self.find_node(root, parent)
-
-            for directory in directories:
-                path = os.path.join(root, directory)
-                node.add_child(Directory(path))
+        filetree = self.configuration_repository.get_filetree()
 
         templates = self.template_repository.get()
         configurables = self.configurable_repository.get()
@@ -85,7 +67,7 @@ class ProjectService(BaseService):
             parent = self.service.find_node(self.repository.get_parent_path(cf.path))
             parent.add_child(cf)
 
-        return parent
+        return filetree
 
     def change_path(self, path):
         project = self.configuration_repository.change_project(path)
@@ -146,7 +128,7 @@ class VariableService(BaseService):
     def project_changed(self, name, path):
         self.repository.path = path
 
-class TemplateService(BaseService):
+class TemplateService(NodeService):
     def __init__(self, repository, template_repository, project_change_event):
         # repository = template_file_repository
         super().__init__(repository)
@@ -159,7 +141,7 @@ class TemplateService(BaseService):
     def project_changed(self, name, path):
         self.repository.path = path
 
-class ConfigurableService(BaseService):
+class ConfigurableService(NodeService):
     def __init__(self, repository, configurable_repository, project_change_event):
         # repository = configurable_file_repository
         super().__init__(repository)

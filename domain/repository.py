@@ -20,9 +20,13 @@ class FileRepository(ABC):
     def get_parent_path(self, path):
         return FileRepository.get_parent_path(self.path)
 
+    def get_basename(self, path):
+        return os.path.basename(path)
+
     @property
     def full_path(self):
-        if self.path and self.name:
+        name = self.name if hasattr(self, 'name') and self.name else type(self).name
+        if self.path and name:
             return os.path.join(self.path, self.name)
         else:
             return None
@@ -39,6 +43,8 @@ class FileRepository(ABC):
 
     def save(self, content):
         if self.full_path:
+            if not os.path.exists(self.path):
+                os.makedirs(self.path)
             open(self.full_path, 'w').write(content)
 
     def drop(self):
@@ -61,6 +67,7 @@ class JsonRepository(FileRepository):
 
     def __init__(self, path = None):
         super().__init__(path)
+        del self.name
 
     # get untyped
     def get_json(self):
@@ -86,9 +93,10 @@ class JsonRepository(FileRepository):
             if not deserialization_type:
                 value = result
             else:
-                for i in result:
+                for item in result:
                     v = deserialization_type()
-                    v.__dict__ = i
+                    for key, val in item.items():
+                        v.__dict__[key] = val
                     value.append(v)
 
         return value
@@ -122,6 +130,17 @@ class JsonRepository(FileRepository):
             collection.remove(m)
         self.save(collection)
 
+class NodeRepository(JsonRepository):
+    def get(self):
+        nodes = super().get()
+        for node in nodes:
+            node.name = self.get_basename(node.path)
+
+        return nodes
+
+    def remove(self, node):
+        super().remove(lambda n: n.path == node.path)
+
 class ConfigurationRepository(JsonRepository):
     # save projects in the configuration directory
     name = 'configuration.json'
@@ -139,27 +158,67 @@ class ConfigurationRepository(JsonRepository):
     def get_home_path(self):
         return os.path.expanduser('~')
 
+    def find_node(self, node, path):
+        if node.path == path:
+            return node
+        else:
+            for c in node.children:
+                if c.path == path:
+                    return c
+                elif len(c.children) > 0:
+                    p = self.find_node(c, path)
+                    if p != None:
+                        return p
+            return None
+
+    def get_filetree(self):
+        parent = self.get_selected()
+        if not parent.path:
+            return parent
+        parent.name = self.get_basename(parent.path)
+
+        for root, directories, files in os.walk(parent.path):
+            node = self.find_node(parent, root)
+
+            for directory in directories:
+                path = os.path.join(root, directory)
+                node.add_child(Directory(path, directory))
+
+        return parent
+
     def change_project(self, path):
-        i = 0
-        project = self.first(lambda p: p.path == path)
+        projects = self.get()
+        project = self.first(lambda p: p.path == path, projects)
+
+        # unselect projects
+        for p in projects:
+            p.selected = False
+
         if not project:
+            # add new project
+
             # set friendly project name
-            name = os.path.basename(path)
-            localpath = os.path.join(self.path, name)
+            path_name = self.get_basename(path)
+            name = path_name
+            localpath = os.path.join(self.path, path_name)
+            i = 0
             while(os.path.exists(localpath)):
                 i += 1
-                name += f'-{i}'
-                localpath = os.path.join(self.path, name)
-            project = Project(path, name, True)
-            projects = self.get()
-            for p in projects:
-                p.selected = False
+                path_name += f'-{i}'
+                localpath = os.path.join(self.path, path_name)
+            project = Project(path, name, path_name, True)
             projects.append(project)
-            self.save(projects)
+        else:
+            # project already exist, select project
+            project.selected = True
+            project.name = self.get_basename(project.path)
+
+        self.save(projects)
+
         return project
 
     def get_filetree_iter(self, path):
-        return os.walk(path)
+        return 
 
     def get_selected(self):
         selected = self.first(lambda p: p.selected)
@@ -176,7 +235,7 @@ class VariableRepository(JsonRepository):
     def remove(self, name):
         super().remove(lambda v: v.name == name)
 
-class TemplateRepository(JsonRepository):
+class TemplateRepository(NodeRepository):
     # save json templates
     name = 'templates.json'
     of_type = Template
@@ -185,7 +244,7 @@ class TemplateFileRepository(FileRepository):
     # save template files
     pass
 
-class ConfigurableRepository(JsonRepository):
+class ConfigurableRepository(NodeRepository):
     # save configurable files json
     name = 'configurablefiles.json'
     of_type = ConfigurableFile

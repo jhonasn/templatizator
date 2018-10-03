@@ -5,5 +5,7 @@ class Container:
     def configure(builder):
         Container.variables = Variables(builder, DomainContainer.variable_application)
         Container.editor = Editor(builder, DomainContainer.template_application)
-        Container.window = Window(builder, Container.variables, Container.editor, DomainContainer.project_application)
+        Container.window = Window(builder, Container.variables, Container.editor,
+                DomainContainer.project_application, DomainContainer.template_application,
+                DomainContainer.configurable_file_application)
 

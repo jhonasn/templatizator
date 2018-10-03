@@ -1,9 +1,12 @@
 from tkinter import filedialog, messagebox, Button
 from domain.model import Directory, Template, ConfigurableFile
+from domain.helper import OS
 
 class Window:
-    def __init__(self, builder, variables, editor, application):
+    def __init__(self, builder, variables, editor, application, template_application, configurable_application):
         self.application = application
+        self.template_application = template_application
+        self.configurable_application = configurable_application
 
         self.variables = variables
         self.editor = editor
@@ -26,14 +29,14 @@ class Window:
         if application.configuration_path:
             self.label['configuration']['text'] = application.configuration_path
 
-        if application.project.path:
-            self.label['project']['text'] = application.project.path
+        if application.filetree.path:
+            self.label['project']['text'] = application.filetree.path
             self.render_treeview()
 
     #some unicode 4len chars: ✕ ✖ ❌ ➕ ➖ ⨂ ⨁
     #5len chars: 📂
     def get_filetree_icon(self, node):
-        if node is Directory:
+        if isinstance(node, Directory):
             return '⌹'
         elif node is Template:
             return '⛁'
@@ -41,7 +44,7 @@ class Window:
             return ''
 
     def get_filetree_action_icon(self, node):
-        if node is Directory:
+        if isinstance(node, Directory):
             return '➕'
         elif node is Template:
             return '❌'
@@ -55,19 +58,19 @@ class Window:
 
     def fill_treeview(self, node, parent_id = ''):
         if not parent_id:
-            parent_id = treeview.insert(
+            parent_id = self.treeview.insert(
                 parent_id, 'end', node.path, text=f'{self.get_filetree_icon(node)} {node.name}',
                 values=self.get_filetree_action_icon(node), open=True)
 
-        for c in self.children:
-            child_parent_id = treeview.insert(
+        for c in node.children:
+            child_parent_id = self.treeview.insert(
                 parent_id, 'end', c.path, text=f'{self.get_filetree_icon(c)} {c.name}',
                 values=self.get_filetree_action_icon(node), open=c.open)
             if len(c.children):
-                c.fill_treeview(treeview, child_parent_id)
+                self.fill_treeview(c, child_parent_id)
 
     def select_project(self):
-        path = self.application.project.path
+        path = self.application.filetree.path
         path = filedialog.askdirectory(
             title='Diretório do projeto',
             initialdir=path if path else self.application.home_path,
@@ -96,21 +99,21 @@ class Window:
 
     def configuration_selected(self, path):
         self.application.change_configuration_path(path)
-        ppath = self.application.project.path
+        ppath = self.application.filetree.path
         self.label['project']['text'] = ppath if ppath else 'Selecione um diretório...'
         self.variables_section.reload()
         self.render_treeview()
 
     def row_selected(self, event):
         selected_path = self.treeview.focus()
-        node = configuration.nodes.find_node(selected_path)
+        node = self.application.find_node(selected_path)
         col = self.treeview.identify_column(event.x)
 
         # add | remove
         if col == '#1':
             # add
-            if node.is_directory:
-                if configuration.configuration_path:
+            if node is Directory:
+                if self.application.configuration_path:
                     node.open = True
                     child = node.create_child('novotemplate.[ext]')
                     self.editor_dialog.show(child, True, lambda: self.render_treeview())
@@ -122,7 +125,7 @@ class Window:
                     'Pergunta:',
                     'Deseja realmente remover o template?'
                 ):
-                    configuration.remove_template(node)
+                    self.template_application.remove(node)
 
             self.render_treeview()
         # edit
@@ -131,24 +134,24 @@ class Window:
 
     def row_opened(self, event):
         selected_path = self.treeview.focus()
-        node = configuration.nodes.find_node(selected_path)
+        node = self.application.find_node(selected_path)
         node.open = True
 
     def row_closed(self, event):
         selected_path = self.treeview.focus()
-        node = configuration.nodes.find_node(selected_path)
+        node = self.application.find_node(selected_path)
         node.open = False
 
     def save_templates(self):
         try:
-            configuration.save_templates_into_project()
+            self.application.save_into_project()
             openProject = messagebox.askyesno(
                 'Templates salvos com sucesso no projeto!',
                 'Deseja abrir a pasta do projeto?',
                 icon='info'
             )
             if openProject:
-                Util.open_path_with_os(configuration.project_path)
+                OS.open_with(self.application.filetree.path)
         except Exception:
             messagebox.showerror(
                 'Erro:',
