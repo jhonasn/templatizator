@@ -30,6 +30,10 @@ class FileService(NodeService):
         # pylint: disable=no-value-for-parameter
         return self.get()
 
+    def add(self, name, content):
+        self.repository.name = name
+        self.repository.save(content)
+
     def save(self, old_name, new_name, content):
         self.repository.save_file(old_name, new_name, content)
 
@@ -156,9 +160,6 @@ class TemplateService(FileService):
         self.template_repository = template_repository
         project_change_event.subscribe(self.project_changed)
 
-    def save(self, template, filename, content):
-        self.repository.save_file(template.name, filename, content)
-
     def project_changed(self, path):
         self.repository.path = path
 
@@ -172,9 +173,6 @@ class ConfigurableService(FileService):
         super().__init__(repository)
         self.configurable_repository = configurable_repository
         project_change_event.subscribe(self.project_changed)
-
-    def save(self, configurable):
-        self.save(configurable)
 
     def project_changed(self, path):
         self.repository.path = path

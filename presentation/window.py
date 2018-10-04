@@ -152,12 +152,12 @@ class Window:
     def save_templates(self):
         try:
             self.application.save_into_project()
-            openProject = messagebox.askyesno(
+            open_project = messagebox.askyesno(
                 'Templates salvos com sucesso no projeto!',
                 'Deseja abrir a pasta do projeto?',
                 icon='info'
             )
-            if openProject:
+            if open_project:
                 OS.open_with(self.filetree.path)
         except Exception:
             messagebox.showerror(

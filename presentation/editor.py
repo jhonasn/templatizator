@@ -32,11 +32,17 @@ class Editor:
 
     def save_template(self):
         filename = self.filename.get()
-        self.application.save(
-            self.node.name,
-            filename,
-            self.editor.get('1.0', 'end')
-        )
+        content = self.editor.get('1.0', 'end')
+
+        if self.is_new:
+            self.application.add(filename, content)
+        else:
+            self.application.save(
+                self.node.name,
+                filename,
+                content
+            )
+
         self.cb()
         self.dialog.withdraw()
 
@@ -60,7 +66,7 @@ class Editor:
         )
 
         self.variable_application.get()
-        self.combobox['values'] = list(self.variable_application.get())
+        self.combobox['values'] = list(map(lambda v: v.name, self.variable_application.get()))
 
         self.dialog.deiconify()
         #self.dialog.transient(self.window)

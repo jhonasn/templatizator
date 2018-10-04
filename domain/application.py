@@ -27,8 +27,11 @@ class FileApplication(NodeApplication):
     def get(self, file):
         return self.service.get(file)
 
+    def add(self, name, content):
+        self.service.add(name, content)
+
     def save(self, old_name, new_name, content):
-        self.service.save_file(old_name, new_name, content)
+        self.service.save(old_name, new_name, content)
 
     def create_child(self, parent, name):
         return self.service.create_child(parent, name)
