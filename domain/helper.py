@@ -8,16 +8,16 @@ class OS:
     is_mac = False
 
     def open_with(path):
-        if is_linux:
+        if OS.is_linux:
             subprocess.check_call(['xdg-open', path])
-        elif is_windows:
+        elif OS.is_windows:
             os.startfile(path)
-        elif is_mac:
+        elif OS.is_mac:
             subprocess.check_call(['open', path])
 
     def is_dark_theme():
         try:
-            #GTK
+            # GTK env
             process = subprocess.Popen(['gsettings', 'get',
                 'org.gnome.desktop.interface', 'gtk-theme'],
                 stdout=subprocess.PIPE
@@ -31,8 +31,7 @@ class OS:
         return False
 
 class Event:
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
         self.subscribers = []
 
     def subscribe(self, cb):
@@ -43,7 +42,7 @@ class Event:
 
     def publish(self, data):
         for cb in self.subscribers:
-            cb(self.name, data)
+            cb(data)
 
 if sys.platform.find('linux') > -1:
     OS.is_linux = True

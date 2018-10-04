@@ -8,10 +8,10 @@ class BaseService:
     def get(self):
         return self.repository.get()
 
-    def first(self, expression, collection = None):
+    def first(self, expression, collection=None):
         return self.repository.first(expression, collection)
 
-    def filter(self, expression, collection = None):
+    def filter(self, expression, collection=None):
         return self.repository.filter(expression, collection)
 
     def add(self, model):
@@ -26,16 +26,21 @@ class NodeService(BaseService):
 
 class FileService(NodeService):
     def get(self, file):
-        self.name = file.name
+        self.repository.name = file.name
+        # pylint: disable=no-value-for-parameter
         return self.get()
 
     def save(self, old_name, new_name, content):
         self.repository.save_file(old_name, new_name, content)
 
-# TODO: verify if will be needed, maybe this goes into the project service
 class ConfigurationService(BaseService):
-    def change_configuration(self, path):
-        self.configuration_path = path
+    def __init__(self, service, configuration_changed_event):
+        super().__init__(service)
+        self.event = configuration_changed_event
+
+    def change_path(self, path):
+        self.repository.path = path
+        self.event.publish(path)
 
     def get_path(self):
         return self.repository.path
@@ -44,7 +49,7 @@ class ProjectService(BaseService):
     def __init__(self, configuration_repository, variable_repository,
                  template_repository, configurable_repository,
                  template_file_repository, configurable_file_repository,
-                 project_change_event):
+                 configuration_changed_event, project_change_event):
         self.configuration_repository = configuration_repository
         self.variable_repository = variable_repository
         self.template_repository = template_repository
@@ -53,11 +58,23 @@ class ProjectService(BaseService):
         self.configurable_file_repository = configurable_file_repository
         self.event = project_change_event
 
+        configuration_changed_event.subscribe(self.configuration_changed)
+
+        path = self.configuration_repository.get_project_path()
+        if path:
+            self.event.publish(path)
+
     def get_home_path(self):
         return self.configuration_repository.get_home_path()
 
     def find_node(self, filetree, path):
         return self.configuration_repository.find_node(filetree, path)
+
+    def configuration_changed(self, path):
+        self.repository.path = path
+        path = self.configuration_repository.get_project_path()
+        if path:
+            self.event.publish(path)
 
     def get_filetree(self):
         filetree = self.configuration_repository.get_filetree()
@@ -65,25 +82,24 @@ class ProjectService(BaseService):
         templates = self.template_repository.get()
         configurables = self.configurable_repository.get()
 
-        for t in templates:
-            parent = self.repository.find_node(self.repository.get_parent_path(t.path))
-            parent.add_child(t)
+        for template in templates:
+            parent = self.repository.find_node(self.repository.get_parent_path(template.path))
+            parent.add_child(template)
 
-        for cf in configurables:
-            parent = self.repository.find_node(self.repository.get_parent_path(cf.path))
-            parent.add_child(cf)
+        for configurable in configurables:
+            parent = self.repository.find_node(self.repository.get_parent_path(configurable.path))
+            parent.add_child(configurable)
 
         return filetree
 
     def change_path(self, path):
-        project = self.configuration_repository.change_project(path)
-        self.event.publish(path)
-        return project
+        project_path = self.configuration_repository.change_project(path)
+        self.event.publish(project_path)
 
     def replace_variables(self, text):
         new_text = copy(text)
-        for v in self.variable_repository.get():
-            new_text = new_text.replace(f'[{v.key}]', v.value)
+        for var in self.variable_repository.get():
+            new_text = new_text.replace(f'[{var.name}]', var.value)
 
         return new_text
 
@@ -107,15 +123,13 @@ class VariableService(BaseService):
         super().__init__(repository)
         project_change_event.subscribe(self.project_changed)
 
-    def get(self):
-        variables = self.repository.get()
-        if not variables or not len(variables):
-            return self.get_defaults()
-        else:
-            return variables
-
     def get_defaults(self):
         return [Variable('ext', 'py')]
+
+    def save_defaults(self):
+        if not self.repository.exists():
+            for var in self.get_defaults():
+                self.add(var)
 
     def add(self, variable):
         self.repository.add(variable)
@@ -131,8 +145,9 @@ class VariableService(BaseService):
     def remove(self, name):
         self.repository.remove(name)
 
-    def project_changed(self, name, path):
+    def project_changed(self, path):
         self.repository.path = path
+        self.save_defaults()
 
 class TemplateService(FileService):
     def __init__(self, repository, template_repository, project_change_event):
@@ -142,9 +157,9 @@ class TemplateService(FileService):
         project_change_event.subscribe(self.project_changed)
 
     def save(self, template, filename, content):
-        self.save_file(template.name, filename, content)
+        self.repository.save_file(template.name, filename, content)
 
-    def project_changed(self, name, path):
+    def project_changed(self, path):
         self.repository.path = path
 
     def create_child(self, parent, name):
@@ -161,7 +176,7 @@ class ConfigurableService(FileService):
     def save(self, configurable):
         self.save(configurable)
 
-    def project_changed(self, name, path):
+    def project_changed(self, path):
         self.repository.path = path
 
     def create_child(self, parent, name):

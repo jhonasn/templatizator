@@ -75,10 +75,10 @@ class Project(Directory):
         return obj
 
 class Variable(Serializable):
-    def __init__(self, key = None, value = None):
-        self.key = key
+    def __init__(self, name = None, value = None):
+        self.name = name
         self.value = value
 
     def serialize(self):
-        return { 'key': self.key, 'value': self.value }
+        return { 'name': self.name, 'value': self.value }
 

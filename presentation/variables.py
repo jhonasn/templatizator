@@ -10,21 +10,19 @@ class Variables:
         self.cancel = builder.get_object('variable_cancel_button')
         self.treeview = builder.get_object('variables_treeview')
 
-        self.reload()
-
         self.treeview.bind('<ButtonRelease-1>', self.row_selected)
         self.action['command'] = self.variable_action
         self.cancel['command'] = self.cancel_action
         self.row = None
         self.old_name = None
 
+        self.reload()
+
     def reload(self):
         self.treeview.delete(*self.treeview.get_children())
 
-        '''
-        for key, value in configuration.get_variables().items():
-            self.treeview.insert('', 'end', values=[key, value, '❌'])
-        '''
+        for var in self.application.get():
+            self.treeview.insert('', 'end', values=[var.name, var.value, '❌'])
 
     def set_entry_text(self, entry, text):
         entry.delete(0, 'end')
@@ -43,11 +41,11 @@ class Variables:
         # add
         if not self.row:
             self.treeview.insert('', 'end', values=[name, value, '❌'])
-            configuration.add_variable(name, value)
+            self.application.add(name, value)
         # edit
         else:
             self.treeview.item(selected_id, values=[name, value, '❌'])
-            configuration.change_variable(self.old_name, name, value)
+            self.application.change(self.old_name, name, value)
 
         self.cancel_action()
 
@@ -61,7 +59,7 @@ class Variables:
 
         # remove
         if col == '#3':
-            configuration.remove_variable(row_name)
+            self.application.remove(row_name)
             self.treeview.delete(selected_id)
         # edit
         else:

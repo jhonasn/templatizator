@@ -60,7 +60,7 @@ class Editor:
         )
 
         self.variable_application.get()
-        self.combobox['values'] = list(self.variable_application.variables)
+        self.combobox['values'] = list(self.variable_application.get())
 
         self.dialog.deiconify()
         #self.dialog.transient(self.window)

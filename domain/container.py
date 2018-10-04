@@ -5,22 +5,25 @@ from domain.helper import Event
 
 class Container:
     def configure():
-        event = Event('project_changed')
+        project_changed_event = Event()
+        configuration_changed_event = Event()
 
         configuration_repository = ConfigurationRepository()
-        variable_repository = VariableRepository(configuration_repository.path)
-        template_repository = TemplateRepository(configuration_repository.path)
-        template_file_repository = TemplateFileRepository(configuration_repository.path)
-        configurable_repository = ConfigurableRepository(configuration_repository.path)
-        configurable_file_repository = ConfigurableFileRepository(configuration_repository.path)
+        variable_repository = VariableRepository()
+        template_repository = TemplateRepository()
+        template_file_repository = TemplateFileRepository()
+        configurable_repository = ConfigurableRepository()
+        configurable_file_repository = ConfigurableFileRepository()
 
-        configuration_service = ConfigurationService(configuration_repository)
+        # the order affects the event subscribe and publish into the services
+        variable_service = VariableService(variable_repository, project_changed_event)
+        template_service = TemplateService(template_file_repository, template_repository, project_changed_event)
+        configurable_service = ConfigurableService(configurable_file_repository, configurable_repository, project_changed_event)
         project_service = ProjectService(configuration_repository, variable_repository,
                 template_repository, configurable_repository,
-                template_file_repository, configurable_file_repository, event)
-        variable_service = VariableService(variable_repository, event)
-        template_service = TemplateService(template_file_repository, template_repository, event)
-        configurable_service = ConfigurableService(configurable_file_repository, configurable_repository, event)
+                template_file_repository, configurable_file_repository,
+                configuration_changed_event, project_changed_event)
+        configuration_service = ConfigurationService(configuration_repository, configuration_changed_event)
 
         Container.project_application = ProjectApplication(project_service, configuration_service)
         Container.variable_application = VariableApplication(variable_service)

@@ -8,7 +8,7 @@ class FileRepository(ABC):
 
     name = None
 
-    def __init__(self, path = None, name = None):
+    def __init__(self, path=None, name=None):
         self.path = path
         if type(self).name:
             self.name = type(self).name
@@ -29,7 +29,8 @@ class FileRepository(ABC):
             return None
 
     def exists(self):
-        if not self.full_path: return False
+        if not self.full_path:
+            return False
         return os.path.exists(self.full_path)
 
     def get(self):
@@ -62,7 +63,7 @@ class JsonRepository(FileRepository):
     # deserialization type
     of_type = None
 
-    def __init__(self, path = None):
+    def __init__(self, path=None):
         super().__init__(path)
         del self.name
 
@@ -82,30 +83,30 @@ class JsonRepository(FileRepository):
         ))
 
     def get(self):
-        result = self.get_json()
-        value = []
+        json_result = self.get_json()
+        result = []
         deserialization_type = type(self).of_type
 
-        if result:
+        if json_result:
             if not deserialization_type:
-                value = result
+                result = json_result
             else:
-                for item in result:
+                for json_item in json_result:
                     # pylint: disable=not-callable
-                    value_item = deserialization_type()
-                    for key, val in item.items():
-                        value_item.__dict__[key] = val
-                    value.append(value_item)
+                    item = deserialization_type()
+                    for key in json_item.keys():
+                        item.__dict__[key] = json_item[key]
+                    result.append(item)
 
-        return value
+        return result
 
-    def first(self, expression, collection = None):
+    def first(self, expression, collection=None):
         if not collection:
             collection = self.get()
         results = self.filter(expression, collection)
-        return results[0] if len(results) else None
+        return results[0] if results else None
 
-    def filter(self, expression, collection = None):
+    def filter(self, expression, collection=None):
         if not collection:
             collection = self.get()
         if not collection:
@@ -114,18 +115,14 @@ class JsonRepository(FileRepository):
 
     def add(self, model):
         collection = self.get()
-
-        if not collection or len(collection):
-            collection = []
-
         collection.append(model)
         self.save(collection)
 
     def remove(self, expression):
         collection = self.get()
-        m = self.first(expression)
-        if m:
-            collection.remove(m)
+        model = self.first(expression, collection)
+        if model:
+            collection.remove(model)
         self.save(collection)
 
 class NodeRepository(JsonRepository):
@@ -150,7 +147,7 @@ class ConfigurationRepository(JsonRepository):
     name = 'configuration.json'
     of_type = Project
 
-    def __init__(self, path = None):
+    def __init__(self, path=None):
         if not path:
             path = self.default_path()
 
@@ -163,11 +160,21 @@ class ConfigurationRepository(JsonRepository):
 
         return projects
 
+    def get_selected(self):
+        selected = self.first(lambda p: p.selected)
+        return selected if selected else Project()
+
     def default_path(self):
         return os.path.join(self.get_home_path(), 'templatizator')
 
     def get_home_path(self):
         return os.path.expanduser('~')
+
+    def get_project_path(self):
+        if self.path:
+            selected = self.get_selected()
+            if selected.path:
+                return os.path.join(self.path, selected.path_name)
 
     def find_node(self, node, path):
         if node.path == path:
@@ -223,14 +230,9 @@ class ConfigurationRepository(JsonRepository):
 
         self.save(projects)
 
-        return project
+        local_path = os.path.join(self.path, project.path_name)
 
-    def get_filetree_iter(self, path):
-        return
-
-    def get_selected(self):
-        selected = self.first(lambda p: p.selected)
-        return selected if selected else Project()
+        return local_path
 
 class VariableRepository(JsonRepository):
     # save variables json
@@ -241,7 +243,7 @@ class VariableRepository(JsonRepository):
         return super().first(lambda v: v.name == name, variables)
 
     def remove(self, name):
-        super().remove(lambda v: v.name == name)
+        super().remove(name)
 
 class TemplateRepository(NodeRepository):
     # save json templates

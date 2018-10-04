@@ -31,8 +31,9 @@ class Window:
         if application.configuration_path:
             self.label['configuration']['text'] = application.configuration_path
 
-        if application.filetree.path:
-            self.label['project']['text'] = application.filetree.path
+        self.filetree = self.application.get()
+        if self.filetree and self.filetree.path:
+            self.label['project']['text'] = self.filetree.path
             self.render_treeview()
 
     #some unicode 4len chars: ✕ ✖ ❌ ➕ ➖ ⨂ ⨁
@@ -55,8 +56,8 @@ class Window:
 
     def render_treeview(self):
         self.treeview.delete(*self.treeview.get_children())
-        if self.application.filetree:
-            self.fill_treeview(self.application.filetree)
+        if self.filetree:
+            self.fill_treeview(self.filetree)
 
     def fill_treeview(self, node, parent_id = ''):
         if not parent_id:
@@ -72,7 +73,7 @@ class Window:
                 self.fill_treeview(c, child_parent_id)
 
     def select_project(self):
-        path = self.application.filetree.path
+        path = self.filetree.path
         path = filedialog.askdirectory(
             title='Diretório do projeto',
             initialdir=path if path else self.application.home_path,
@@ -85,6 +86,7 @@ class Window:
 
     def project_selected(self, path):
         self.application.change_path(path)
+        self.filetree = self.application.get()
         self.render_treeview()
 
     def select_configuration(self):
@@ -101,14 +103,15 @@ class Window:
 
     def configuration_selected(self, path):
         self.application.change_configuration_path(path)
-        ppath = self.application.filetree.path
+        ppath = self.filetree.path
         self.label['project']['text'] = ppath if ppath else 'Selecione um diretório...'
         self.variables.reload()
+        self.filetree = self.application.get()
         self.render_treeview()
 
     def row_selected(self, event):
         selected_path = self.treeview.focus()
-        node = self.application.find_node(selected_path)
+        node = self.application.find_node(self.filetree, selected_path)
         col = self.treeview.identify_column(event.x)
 
         # add | remove
@@ -128,20 +131,22 @@ class Window:
                     'Deseja realmente remover o template?'
                 ):
                     self.template_application.remove(node)
+                    node.remove()
+                    self.filetree = self.application.get()
 
             self.render_treeview()
         # edit
-        elif type(node) is not Directory:
+        elif type(node) is Template:
             self.editor.show(node, False, lambda: self.render_treeview())
 
     def row_opened(self, event):
         selected_path = self.treeview.focus()
-        node = self.application.find_node(selected_path)
+        node = self.application.find_node(self.filetree, selected_path)
         node.open = True
 
     def row_closed(self, event):
         selected_path = self.treeview.focus()
-        node = self.application.find_node(selected_path)
+        node = self.application.find_node(self.filetree, selected_path)
         node.open = False
 
     def save_templates(self):
@@ -153,7 +158,7 @@ class Window:
                 icon='info'
             )
             if openProject:
-                OS.open_with(self.application.filetree.path)
+                OS.open_with(self.filetree.path)
         except Exception:
             messagebox.showerror(
                 'Erro:',
