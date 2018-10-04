@@ -33,7 +33,7 @@ We have only two windows in this app:
   - Stop saving the entire tree node and save only the templates or relevant nodes in a separate file into the project folder, that way we can save a list of node object without children only pointing location with its path.  
   - Start to save variables in a separated file.  
   - Refactor the Configuration class into various files.  
-  - Fix pylint errors
+  - Fix pylint warnings
   > The reason to do this is because when we change the project directory and return to the previous project we loose the previous project configuration mainly the templates.
 - [ ] Add an option to open and edit templates with another application
 - [ ] Add checkbox to save template on project directory
