@@ -3,7 +3,7 @@ This is desktop program to create a set of template files on some directory tree
 
 The first motivation to create this app was by using DDD/TDD where we need to create a large set of files everytime when we create a new table for example.  
 
-The app very configurable and free from programing language that you use in your system, by the way, the program can be used in any way you want, it only creates a set of configurable templates and save them all at the directory pointed in project field.  
+The app is very configurable and free from programing language that you use in your system, by the way, the program can be used in any way you want, it only creates a set of configurable templates and save them all at the directory pointed in project field.  
 
 The app is made for windows and linux, but it can be used into mac although it's currently not tested/supported in this OS.
 
@@ -33,6 +33,7 @@ We have only two windows in this app:
   - Stop saving the entire tree node and save only the templates or relevant nodes in a separate file into the project folder, that way we can save a list of node object without children only pointing location with its path.  
   - Start to save variables in a separated file.  
   - Refactor the Configuration class into various files.  
+  - Fix pylint errors
   > The reason to do this is because when we change the project directory and return to the previous project we loose the previous project configuration mainly the templates.
 - [ ] Add an option to open and edit templates with another application
 - [ ] Add checkbox to save template on project directory
