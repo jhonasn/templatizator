@@ -27,7 +27,7 @@ class Window:
         self.treeview.bind('<<TreeviewOpen>>', self.row_opened)
         self.treeview.bind('<<TreeviewClose>>', self.row_closed)
 
-        self.center(self.window)
+        Window.center(self.window)
 
         if application.configuration_path:
             self.label['configuration']['text'] = application.configuration_path
@@ -178,11 +178,12 @@ class Window:
                 'Não foi possível salvar os templates no projeto'
             )
 
-    def center(self, win):
+    @classmethod
+    def center(cls, win):
         win.update_idletasks()
         width = win.winfo_width()
         height = win.winfo_height()
-        x = (win.winfo_screenwidth() // 2) - (width // 2)
-        y = (win.winfo_screenheight() // 2) - (height // 2)
-        win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        x_orientation = (win.winfo_screenwidth() // 2) - (width // 2)
+        y_orientation = (win.winfo_screenheight() // 2) - (height // 2)
+        win.geometry('{}x{}+{}+{}'.format(width, height, x_orientation, y_orientation))
 

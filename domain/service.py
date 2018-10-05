@@ -121,22 +121,24 @@ class ProjectService(BaseService):
         return new_text
 
     def save_into_project(self):
-        if not self.configuration_repository.get_project_path():
+        local_path = self.configuration_repository.get_project_path()
+        if not local_path:
             raise ProjectNotSetWarning
 
-        for t in self.template_repository.get():
-            self.template_file_repository.path = t.path
-            self.template_file_repository.name = self.replace_variables(t.name)
-            content = self.template_file_repository.get(t.path)
+        prev_name = self.template_file_repository.name
+        for template in self.template_repository.get():
+            self.template_file_repository.path = local_path
+            self.template_file_repository.name = template.name
+            content = self.template_file_repository.get()
             content = self.replace_variables(content)
+            self.template_file_repository.path = self.configuration_repository.get_parent_path(template.path)
+            self.template_file_repository.name = self.replace_variables(template.name)
             self.template_file_repository.save(content)
 
-        for c in self.configurable_file_repository.get():
-            self.configurable_file_repository.path = c.path
-            self.configurable_file_repository.name = self.replace_variables(c.name)
-            content = self.configurable_file_repository.get(c.path)
-            content = self.replace_variables(content)
-            self.configurable_file_repository.save(content)
+        self.template_file_repository.path = local_path
+        self.template_file_repository.name = prev_name
+
+        # TODO: implement configurable files save
 
 class VariableService(BaseService):
     def __init__(self, repository, project_change_event):

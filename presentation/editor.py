@@ -1,10 +1,12 @@
+from presentation import Window
+
 class Editor:
     def __init__(self, builder, application, variable_application):
         self.application = application
         self.variable_application = variable_application
 
         self.dialog = builder.get_object('editor_toplevel')
-        #self.window = builder.get_object('window')
+        self.window = builder.get_object('window')
         self.dialog.resizable(False, False)
 
         self.filename = builder.get_object('editor_filename_entry')
@@ -33,6 +35,9 @@ class Editor:
     def save_template(self):
         filename = self.filename.get()
         content = self.editor.get('1.0', 'end')
+
+        # remove automatically tk added break line in the content
+        content = content[0:-1]
 
         if self.is_new:
             self.node.name = filename
@@ -69,8 +74,9 @@ class Editor:
         self.variable_application.get()
         self.combobox['values'] = list(map(lambda v: v.name, self.variable_application.get()))
 
+        self.dialog.transient(self.window)
+        Window.center(self.dialog)
         self.dialog.deiconify()
-        #self.dialog.transient(self.window)
 
         if is_new:
             self.last_selected = self.filename
