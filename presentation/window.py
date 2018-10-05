@@ -1,4 +1,5 @@
 from tkinter import filedialog, messagebox, Button
+from domain.infrastructure import ProjectNotSetWarning
 from domain.model import Directory, Template, ConfigurableFile
 from domain.helper import OS
 
@@ -41,17 +42,17 @@ class Window:
     def get_filetree_icon(self, node):
         if isinstance(node, Directory):
             return '⌹'
-        elif type(node) is Template:
+        elif isinstance(node, Template):
             return '⛁'
-        elif type(node) is ConfigurableFile:
+        elif isinstance(node, ConfigurableFile):
             return ''
 
     def get_filetree_action_icon(self, node):
         if isinstance(node, Directory):
             return '➕'
-        elif type(node) is Template:
+        elif isinstance(node, Template):
             return '❌'
-        elif type(node) is ConfigurableFile:
+        elif isinstance(node, ConfigurableFile):
             return ''
 
     def render_treeview(self):
@@ -61,16 +62,22 @@ class Window:
 
     def fill_treeview(self, node, parent_id = ''):
         if not parent_id:
+            icon = self.get_filetree_icon(node)
+            action_icon = self.get_filetree_action_icon(node)
             parent_id = self.treeview.insert(
-                parent_id, 'end', node.path, text=f'{self.get_filetree_icon(node)} {node.name}',
+                parent_id, 'end', node.path, text=f'{icon} {node.name}',
                 values=self.get_filetree_action_icon(node), open=True)
 
-        for c in node.children:
+        for child in node.children:
+            icon = self.get_filetree_icon(child)
+            action_icon = self.get_filetree_action_icon(child)
             child_parent_id = self.treeview.insert(
-                parent_id, 'end', c.path, text=f'{self.get_filetree_icon(c)} {c.name}',
-                values=self.get_filetree_action_icon(node), open=c.open if hasattr(c, 'open') else False)
-            if len(c.children):
-                self.fill_treeview(c, child_parent_id)
+                parent_id, 'end', child.path, text=f'{icon} {child.name}',
+                values=action_icon,
+                open=child.open if hasattr(child, 'open') else False)
+
+            if len(child.children):
+                self.fill_treeview(child, child_parent_id)
 
     def select_project(self):
         path = self.filetree.path
@@ -88,6 +95,7 @@ class Window:
         self.application.change_path(path)
         self.filetree = self.application.get()
         self.render_treeview()
+        self.variables.reload()
 
     def select_configuration(self):
         path = self.application.configuration_path
@@ -159,6 +167,11 @@ class Window:
             )
             if open_project:
                 OS.open_with(self.filetree.path)
+        except ProjectNotSetWarning:
+            messagebox.showwarning(
+                'Atenção',
+                'Selecione um projeto primeiramente'
+            )
         except Exception:
             messagebox.showerror(
                 'Erro:',

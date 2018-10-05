@@ -24,14 +24,14 @@ class NodeApplication(BaseApplication):
         self.service.remove(node)
 
 class FileApplication(NodeApplication):
-    def get(self, file):
-        return self.service.get(file)
+    def get(self, model):
+        return self.service.get(model)
 
-    def add(self, name, content):
-        self.service.add(name, content)
+    def add(self, model, content):
+        self.service.add(model, content)
 
-    def save(self, old_name, new_name, content):
-        self.service.save(old_name, new_name, content)
+    def save(self, model, new_name, content):
+        self.service.save(model, new_name, content)
 
     def create_child(self, parent, name):
         return self.service.create_child(parent, name)

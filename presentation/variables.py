@@ -1,4 +1,5 @@
 from tkinter import messagebox
+from domain.infrastructure import ProjectNotSetWarning
 
 class Variables:
     def __init__(self, builder, application):
@@ -35,13 +36,22 @@ class Variables:
         item = self.treeview.item(selected_id)
 
         if not name or not value:
-            messagebox.showwarning('Atenção:', 'Preencha o nome e o valor da variavel')
+            messagebox.showwarning(
+                'Atenção:',
+                'Preencha o nome e o valor da variavel'
+            )
             return
 
         # add
         if not self.row:
-            self.treeview.insert('', 'end', values=[name, value, '❌'])
-            self.application.add(name, value)
+            try:
+                self.application.add(name, value)
+                self.treeview.insert('', 'end', values=[name, value, '❌'])
+            except ProjectNotSetWarning:
+                messagebox.showwarning(
+                    'Atenção:',
+                    'Selecione um projeto primeiramente'
+                )
         # edit
         else:
             self.treeview.item(selected_id, values=[name, value, '❌'])

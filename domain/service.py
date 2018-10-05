@@ -1,5 +1,6 @@
 from copy import copy
 from domain.model import Project, Directory, Variable
+from domain.infrastructure import ProjectNotSetWarning
 
 class BaseService:
     def __init__(self, repository):
@@ -28,7 +29,7 @@ class FileService(NodeService):
     def get(self, file):
         self.repository.name = file.name
         # pylint: disable=no-value-for-parameter
-        return self.get()
+        return super().get()
 
     def add(self, name, content):
         self.repository.name = name
@@ -36,6 +37,10 @@ class FileService(NodeService):
 
     def save(self, old_name, new_name, content):
         self.repository.save_file(old_name, new_name, content)
+
+    def remove(self, model):
+        self.repository.name = model.name
+        self.repository.drop()
 
 class ConfigurationService(BaseService):
     def __init__(self, service, configuration_changed_event):
@@ -75,7 +80,7 @@ class ProjectService(BaseService):
         return self.configuration_repository.find_node(filetree, path)
 
     def configuration_changed(self, path):
-        self.repository.path = path
+        self.configuration_repository.path = path
         path = self.configuration_repository.get_project_path()
         if path:
             self.event.publish(path)
@@ -87,12 +92,20 @@ class ProjectService(BaseService):
         configurables = self.configurable_repository.get()
 
         for template in templates:
-            parent = self.repository.find_node(self.repository.get_parent_path(template.path))
-            parent.add_child(template)
+            parent = self.find_node(
+                filetree,
+                self.configuration_repository.get_parent_path(template.path)
+            )
+            if parent:
+                parent.add_child(template)
 
         for configurable in configurables:
-            parent = self.repository.find_node(self.repository.get_parent_path(configurable.path))
-            parent.add_child(configurable)
+            parent = self.find_node(
+                filetree,
+                self.configuration_repository.get_parent_path(configurable.path)
+            )
+            if parent:
+                parent.add_child(configurable)
 
         return filetree
 
@@ -108,6 +121,9 @@ class ProjectService(BaseService):
         return new_text
 
     def save_into_project(self):
+        if not self.configuration_repository.get_project_path():
+            raise ProjectNotSetWarning
+
         for t in self.template_repository.get():
             self.template_file_repository.path = t.path
             self.template_file_repository.name = self.replace_variables(t.name)
@@ -136,6 +152,8 @@ class VariableService(BaseService):
                 self.add(var)
 
     def add(self, variable):
+        if not self.repository.path:
+            raise ProjectNotSetWarning
         self.repository.add(variable)
 
     def change(self, old_name, variable):
@@ -155,28 +173,45 @@ class VariableService(BaseService):
 
 class TemplateService(FileService):
     def __init__(self, repository, template_repository, project_change_event):
-        # repository = template_file_repository
+        # self.repository = template_file_repository
         super().__init__(repository)
         self.template_repository = template_repository
         project_change_event.subscribe(self.project_changed)
 
     def project_changed(self, path):
         self.repository.path = path
+        self.template_repository.path = path
 
     def create_child(self, parent, name):
         return self.template_repository.create_child(parent, name)
 
+    def add(self, template, content):
+        self.template_repository.add(template)
+        super().add(template.name, content)
+
+    def save(self, template, new_name, content):
+        self.template_repository.update(template, new_name)
+        self.repository.save_file(template.name, new_name, content)
+
+    def remove(self, template):
+        super().remove(template)
+        self.template_repository.remove(template)
 
 class ConfigurableService(FileService):
     def __init__(self, repository, configurable_repository, project_change_event):
-        # repository = configurable_file_repository
+        # self.repository = configurable_file_repository
         super().__init__(repository)
         self.configurable_repository = configurable_repository
         project_change_event.subscribe(self.project_changed)
 
     def project_changed(self, path):
         self.repository.path = path
+        self.configurable_repository.path = path
 
     def create_child(self, parent, name):
         return self.configurable_repository.create_child(parent, name)
+
+    # TODO: when implement configurable files verify if add and save methods
+    # will be the same as in the template service, if yes, pass the implementation
+    # to the file service wich both classes inhiret from.
 

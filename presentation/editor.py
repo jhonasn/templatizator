@@ -35,10 +35,11 @@ class Editor:
         content = self.editor.get('1.0', 'end')
 
         if self.is_new:
-            self.application.add(filename, content)
+            self.node.name = filename
+            self.application.add(self.node, content)
         else:
             self.application.save(
-                self.node.name,
+                self.node,
                 filename,
                 content
             )

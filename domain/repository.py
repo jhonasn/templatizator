@@ -1,7 +1,9 @@
 import os
 import json
-from domain.model import *
 from abc import ABC
+
+from domain.infrastructure import RepositoryPathNotSetError
+from domain.model import *
 
 class FileRepository(ABC):
     # save files
@@ -44,6 +46,8 @@ class FileRepository(ABC):
             if not os.path.exists(self.path):
                 os.makedirs(self.path)
             open(self.full_path, 'w').write(content)
+        else:
+            raise RepositoryPathNotSetError(type(self).__name__)
 
     def drop(self):
         if self.full_path:
@@ -75,12 +79,11 @@ class JsonRepository(FileRepository):
             return []
 
     def save(self, collection):
-        super().save(json.dumps(
-                list(map(
-                    lambda i: i.serialize() if isinstance(i, Serializable) else i.__dict__,
-                    collection
-                ))
+        collection_serialized = list(map(
+            lambda i: i.serialize() if isinstance(i, Serializable) else i.__dict__,
+            collection
         ))
+        super().save(json.dumps(collection_serialized))
 
     def get(self):
         json_result = self.get_json()
@@ -133,6 +136,20 @@ class NodeRepository(JsonRepository):
 
         return nodes
 
+    def add(self, node):
+        self.update_path(node)
+        super().add(node)
+
+    def update(self, node, new_name):
+        nodes = self.get()
+        db_node = self.first(lambda n: n.name == node.name, nodes)
+        if db_node.name != new_name:
+            db_node.name = new_name
+            self.update_path(db_node)
+            super().save(nodes)
+            node.name = db_node.name
+            node.path = db_node.path
+        
     def remove(self, node):
         super().remove(lambda n: n.path == node.path)
 
@@ -141,6 +158,10 @@ class NodeRepository(JsonRepository):
         child = type(self).of_type(os.path.join(parent.path, name), name)
         parent.add_child(child)
         return child
+
+    def update_path(self, node):
+        node.path = self.get_parent_path(node.path)
+        node.path = os.path.join(node.path, node.name)
 
 class ConfigurationRepository(JsonRepository):
     # save projects in the configuration directory
@@ -173,7 +194,7 @@ class ConfigurationRepository(JsonRepository):
     def get_project_path(self):
         if self.path:
             selected = self.get_selected()
-            if selected.path:
+            if selected and selected.path_name:
                 return os.path.join(self.path, selected.path_name)
 
     def find_node(self, node, path):
