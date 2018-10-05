@@ -29,15 +29,15 @@ We have only two windows in this app:
 - [x] Change save templates in project success dialog to ask if the user wants to open the project folder
 - [x] Add linux styles
 - [ ] Change configuration save method:  
-  - Stop to save all in configuration json file, create a directory for every project with a unique friendly name registered in a configuration file in order to have many projects saved in the same configuration folder.  
-  - Stop saving the entire tree node and save only the templates or relevant nodes in a separate file into the project folder, that way we can save a list of node object without children only pointing location with its path.  
-  - Start to save variables in a separated file.  
-  - Refactor the Configuration class into various files.  
-  - Fix pylint warnings
+  - [x] Stop to save all in configuration json file, create a directory for every project with a unique friendly name registered in a configuration file in order to have many projects saved in the same configuration folder.  
+  - [x] Stop saving the entire tree node and save only the templates or relevant nodes in a separate file into the project folder, that way we can save a list of node object without children only pointing location with its path.  
+  - [x] Start to save variables in a separated file.  
+  - [x] Refactor the Configuration class into various files.
+  - [ ] Fix pylint warnings
   > The reason to do this is because when we change the project directory and return to the previous project we loose the previous project configuration mainly the templates.
 - [ ] Add an option to open and edit templates with another application
-- [ ] Add checkbox to save template on project directory
-- [ ] Add option to add created files from templates into any text file with a line template with placeholders. To set location to add files, use a search into the file and then select to append or prepend the line template. Every template can use the same line template in the file or a specific template for each template.
+- [ ] Add checkbox to save or not the template on project directory
+- [ ] Add option to add "configurable" files, those are already existing project files from any type of text file. In these files we'll can put placeholders to the project templates. Each time when we open this configurable file the system will diff the file to fix it when changed and different from the configurable template. The editor will let the user to add all or select which templates that will be added to the placeholders and how each template will populate the file. The app must detect when the templates are already added to the file and not duplicate.
   > In that way we don't need to make a new GUI nor a implementation for every type of file (for ex.: json, xml, yml, etc).
-- [ ] Diff into configuration and project folder structure
+- [ ] Diff configuration and project folder structure
 
