@@ -7,7 +7,7 @@
 '''
 from tkinter import filedialog, messagebox
 from domain.infrastructure import ProjectNotSetWarning
-from domain.model import Directory, Template, ConfigurableFile
+from domain.model import Project, Directory, Template, ConfigurableFile
 from domain.helper import OS
 
 # pylint: disable=too-many-instance-attributes
@@ -48,12 +48,11 @@ class Window:
             self.label['project']['text'] = self.filetree.path
             self.render_treeview()
 
-    #some unicode 4len chars: ✕ ✖ ❌ ➕ ➖ ⨂ ⨁
-    #5len chars: 📂
     @classmethod
     def get_filetree_icon(cls, node):
         '''Get filetree icon according the filetree node type'''
         return {
+            Project: '⌹',
             Directory: '⌹',
             Template: '⛁',
             ConfigurableFile: ''
@@ -63,6 +62,7 @@ class Window:
     def get_filetree_action_icon(cls, node):
         '''Get filetree icon for action (include or delete) according the filetree node type'''
         return {
+            Project: '➕',
             Directory: '➕',
             Template: '❌',
             ConfigurableFile: ''
@@ -81,7 +81,7 @@ class Window:
             action_icon = self.get_filetree_action_icon(node)
             parent_id = self.treeview.insert(
                 parent_id, 'end', node.path, text=f'{icon} {node.name}',
-                values=self.get_filetree_action_icon(node), open=True)
+                values=action_icon, open=True)
 
         for child in node.children:
             icon = self.get_filetree_icon(child)
