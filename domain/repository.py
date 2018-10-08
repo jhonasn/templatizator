@@ -1,11 +1,19 @@
+'''Repository layer module'''
 import os
 import json
 from abc import ABC
 
 from domain.infrastructure import RepositoryPathNotSetError
-from domain.model import *
+from domain.model import Serializable, Project, Directory, Template, \
+    ConfigurableFile, Variable
+
 
 class FileRepository(ABC):
+    '''CRUD files from hard drive and handle os interactions
+    The full path of repository is mouted with path and name expecting that the
+    name is a name of file. The name can either passed in name static attribute
+    or as constructor argument
+    '''
     # save files
 
     name = None
@@ -16,32 +24,42 @@ class FileRepository(ABC):
             self.name = type(self).name
         self.name = name
 
-    def get_parent_path(self, path):
+    @classmethod
+    def get_parent_path(cls, path):
+        '''Returns parent folder from path passed'''
         return os.path.dirname(path)
 
-    def get_basename(self, path):
+    @classmethod
+    def get_basename(cls, path):
+        '''Returns the name of file or folder path passed'''
         return os.path.basename(path)
 
     @property
     def full_path(self):
-        name = self.name if hasattr(self, 'name') and self.name else type(self).name
+        '''Mount and returns full path of repository'''
+        name = self.name \
+            if hasattr(self, 'name') and self.name \
+            else type(self).name
         if self.path and name:
             return os.path.join(self.path, self.name)
-        else:
-            return None
+
+        return None
 
     def exists(self):
+        '''Returns True if the repository full_path already exists'''
         if not self.full_path:
             return False
         return os.path.exists(self.full_path)
 
     def get(self):
+        '''Returns the content of file hadled by the repository'''
         if self.exists():
             return open(self.full_path, 'r').read()
-        else:
-            return ''
+
+        return ''
 
     def save(self, content):
+        '''Write the content into the file pointed by the full_path of repo'''
         if self.full_path:
             if not os.path.exists(self.path):
                 os.makedirs(self.path)
@@ -50,10 +68,14 @@ class FileRepository(ABC):
             raise RepositoryPathNotSetError(type(self).__name__)
 
     def drop(self):
+        '''Deletes the repository file'''
         if self.full_path:
             os.remove(self.full_path)
 
     def save_file(self, old_name, new_name, content):
+        '''Write the repository file if the name is the same, else
+        delete the old repository file and save the new repo. file
+        '''
         if old_name != new_name:
             self.name = old_name
             self.drop()
@@ -61,7 +83,14 @@ class FileRepository(ABC):
         self.name = new_name
         self.save(content)
 
+
 class JsonRepository(FileRepository):
+    '''Handle collections saving as json into the hard drive.
+    The 'of_type' static attribute expects to be the model type of collection
+    that the repository handle. If this attribute is informed the repository
+    will convert the objects of json to this type, else it will return a dict
+    object with the contents of json.
+    '''
     # save object list as json
 
     # deserialization type
@@ -73,19 +102,27 @@ class JsonRepository(FileRepository):
 
     # get untyped
     def get_json(self):
+        '''Returns a collection of dict objects withou trying to convert'''
         if self.exists():
             return json.loads(super().get())
-        else:
-            return []
+
+        return []
 
     def save(self, collection):
+        '''Save the collection passed as json'''
         collection_serialized = list(map(
-            lambda i: i.serialize() if isinstance(i, Serializable) else i.__dict__,
+            lambda i: (
+                i.serialize()
+                if isinstance(i, Serializable)
+                else i.__dict__
+            ),
             collection
         ))
         super().save(json.dumps(collection_serialized))
 
     def get(self):
+        '''Returns a collection of objects trying to
+        convert to informed of_type attribute'''
         json_result = self.get_json()
         result = []
         deserialization_type = type(self).of_type
@@ -104,12 +141,20 @@ class JsonRepository(FileRepository):
         return result
 
     def first(self, expression, collection=None):
+        '''Get first model according expression
+        if collection is in memory it can be passed as argument
+        to avoid read from disk
+        '''
         if not collection:
             collection = self.get()
         results = self.filter(expression, collection)
         return results[0] if results else None
 
     def filter(self, expression, collection=None):
+        '''Get models accordig expression
+        if collection is in memory it can be passed as argument
+        to avoid read from disk
+        '''
         if not collection:
             collection = self.get()
         if not collection:
@@ -117,19 +162,24 @@ class JsonRepository(FileRepository):
         return list(filter(expression, collection))
 
     def add(self, model):
+        '''Add model into the model collection'''
         collection = self.get()
         collection.append(model)
         self.save(collection)
 
     def remove(self, expression):
+        '''Remove model from model collection according expression'''
         collection = self.get()
         model = self.first(expression, collection)
         if model:
             collection.remove(model)
         self.save(collection)
 
+
 class NodeRepository(JsonRepository):
+    '''Base repository class to handle models that are nodes'''
     def get(self):
+        '''Returns a collection of nodes setting the name'''
         nodes = super().get()
         for node in nodes:
             node.name = self.get_basename(node.path)
@@ -137,10 +187,12 @@ class NodeRepository(JsonRepository):
         return nodes
 
     def add(self, node):
+        '''Add a node into the node collection'''
         self.update_path(node)
         super().add(node)
 
     def update(self, node, new_name):
+        '''Update the node taking care to rename path and name it correctly'''
         nodes = self.get()
         db_node = self.first(lambda n: n.name == node.name, nodes)
         if db_node.name != new_name:
@@ -149,21 +201,28 @@ class NodeRepository(JsonRepository):
             super().save(nodes)
             node.name = db_node.name
             node.path = db_node.path
-        
+
     def remove(self, node):
+        '''Remove node by path'''
         super().remove(lambda n: n.path == node.path)
 
     def create_child(self, parent, name):
+        '''Add child node into the parent and get correct child path'''
         # pylint: disable=not-callable
         child = type(self).of_type(os.path.join(parent.path, name), name)
         parent.add_child(child)
         return child
 
     def update_path(self, node):
+        '''Update node path corretly according path and name'''
         node.path = self.get_parent_path(node.path)
         node.path = os.path.join(node.path, node.name)
 
+
 class ConfigurationRepository(JsonRepository):
+    '''The configuration repository handle CRUD projects in the
+    configuration path
+    '''
     # save projects in the configuration directory
     name = 'configuration.json'
     of_type = Project
@@ -175,47 +234,62 @@ class ConfigurationRepository(JsonRepository):
         super().__init__(path)
 
     def get(self):
+        '''Returns a collection of projects setting the name'''
         projects = super().get()
-        for p in projects:
-            p.name = self.get_basename(p.path)
+        for project in projects:
+            project.name = self.get_basename(project.path)
 
         return projects
 
     def get_selected(self):
+        '''Returns the selected project if there is,
+        else returns a new instance of project model
+        '''
         selected = self.first(lambda p: p.selected)
         return selected if selected else Project()
 
     def default_path(self):
+        '''Returns a default path for configuration folder'''
         return os.path.join(self.get_home_path(), 'templatizator')
 
-    def get_home_path(self):
+    @classmethod
+    def get_home_path(cls):
+        '''Get home path'''
         return os.path.expanduser('~')
 
     def get_project_path(self):
+        '''Returns the path of selected project if there is'''
         if self.path:
             selected = self.get_selected()
             if selected and selected.path_name:
                 return os.path.join(self.path, selected.path_name)
 
+        return None
+
     def find_node(self, node, path):
+        '''Find node instance inside the node graph informed by the path'''
         if node.path == path:
             return node
-        else:
-            for c in node.children:
-                if c.path == path:
-                    return c
-                elif len(c.children) > 0:
-                    p = self.find_node(c, path)
-                    if p != None:
-                        return p
-            return None
+
+        for child in node.children:
+            if child.path == path:
+                return child
+
+            if child.children:
+                child_of = self.find_node(child, path)
+                if child_of is not None:
+                    return child_of
+        return None
 
     def get_filetree(self):
+        '''Get filetree graph of selected project'''
         parent = self.get_selected()
         if not parent.path:
             return parent
         parent.name = self.get_basename(parent.path)
 
+        # Variable files is necessary to run loop walk
+        # pylint: disable=unused-variable
         for root, directories, files in os.walk(parent.path):
             node = self.find_node(parent, root)
 
@@ -226,12 +300,16 @@ class ConfigurationRepository(JsonRepository):
         return parent
 
     def change_project(self, path):
+        '''When the project path is changed we create and select it if isn't
+        exists, else just select the project and save into the project
+        collection.
+        '''
         projects = self.get()
         project = self.first(lambda p: p.path == path, projects)
 
         # unselect projects
-        for p in projects:
-            p.selected = False
+        for project in projects:
+            project.selected = False
 
         if not project:
             # add new project
@@ -240,7 +318,7 @@ class ConfigurationRepository(JsonRepository):
             path_name = self.get_basename(path)
             name = path_name
             i = 0
-            while(self.first(lambda p: p.name == path_name)):
+            while self.first(lambda p: p.name == path_name):
                 i += 1
                 path_name = f'{name}-{i}'
             project = Project(path, name, path_name, True)
@@ -255,32 +333,39 @@ class ConfigurationRepository(JsonRepository):
 
         return local_path
 
+
 class VariableRepository(JsonRepository):
+    '''Handle CRUD variables'''
     # save variables json
     name = 'variables.json'
     of_type = Variable
 
     def first(self, name, variables):
+        '''Find first by name in the variables collection informed'''
         return super().first(lambda v: v.name == name, variables)
 
-    def remove(self, name):
-        super().remove(name)
 
 class TemplateRepository(NodeRepository):
+    '''Handle CRUD Templates'''
     # save json templates
     name = 'templates.json'
     of_type = Template
 
+
 class TemplateFileRepository(FileRepository):
+    '''Handle CRUD templates text file from hard drive'''
     # save template files
     pass
 
+
 class ConfigurableRepository(NodeRepository):
+    '''Handle CRUD Configurable files'''
     # save configurable files json
     name = 'configurablefiles.json'
     of_type = ConfigurableFile
 
+
 class ConfigurableFileRepository(FileRepository):
+    '''Handle CRUD configurable text file from hard drive'''
     # save configurable files
     pass
-

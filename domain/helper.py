@@ -1,3 +1,4 @@
+'''Helpers for all application layers'''
 import os
 import sys
 import subprocess

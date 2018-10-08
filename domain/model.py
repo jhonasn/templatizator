@@ -1,3 +1,4 @@
+'''Model set module'''
 from abc import ABC, abstractmethod
 
 class Serializable(ABC):
