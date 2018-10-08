@@ -10,6 +10,7 @@ from domain.infrastructure import ProjectNotSetWarning
 from domain.model import Project, Directory, Template, ConfigurableFile
 from domain.helper import OS
 
+
 # pylint: disable=too-many-instance-attributes
 class Window:
     '''Class handles for GUI main window'''
@@ -31,9 +32,12 @@ class Window:
             'configuration': builder.get_object('configuration_file_label')
         }
 
-        builder.get_object('project_file_button')['command'] = self.select_project
-        builder.get_object('configuration_file_button')['command'] = self.select_configuration
-        builder.get_object('templates_save_button')['command'] = self.save_templates
+        builder.get_object('project_file_button')['command'] = \
+            self.select_project
+        builder.get_object('configuration_file_button')['command'] = \
+            self.select_configuration
+        builder.get_object('templates_save_button')['command'] = \
+            self.save_templates
         self.treeview.bind('<ButtonRelease-1>', self.row_selected)
         self.treeview.bind('<<TreeviewOpen>>', self.row_opened)
         self.treeview.bind('<<TreeviewClose>>', self.row_closed)
@@ -41,7 +45,8 @@ class Window:
         Window.center(self.window)
 
         if application.configuration_path:
-            self.label['configuration']['text'] = application.configuration_path
+            self.label['configuration']['text'] = \
+                application.configuration_path
 
         self.filetree = self.application.get()
         if self.filetree and self.filetree.path:
@@ -52,20 +57,21 @@ class Window:
     def get_filetree_icon(cls, node):
         '''Get filetree icon according the filetree node type'''
         return {
-            Project: '⌹',
-            Directory: '⌹',
-            Template: '⛁',
-            ConfigurableFile: ''
+            Project: u'⌹',
+            Directory: u'⌹',
+            Template: u'⛁',
+            ConfigurableFile: u''
         }.get(type(node))
 
     @classmethod
     def get_filetree_action_icon(cls, node):
-        '''Get filetree icon for action (include or delete) according the filetree node type'''
+        '''Get filetree icon for action (include or delete)
+        according the filetree node type'''
         return {
-            Project: '➕',
-            Directory: '➕',
-            Template: '❌',
-            ConfigurableFile: ''
+            Project: u'➕',
+            Directory: u'➕',
+            Template: u'❌',
+            ConfigurableFile: u''
         }.get(type(node))
 
     def render_treeview(self):
@@ -75,7 +81,8 @@ class Window:
             self.fill_treeview(self.filetree)
 
     def fill_treeview(self, node, parent_id=''):
-        '''Recursive method that fills the project treeview with application filetree result'''
+        '''Recursive method that fills the project treeview
+        with application filetree result'''
         if not parent_id:
             icon = self.get_filetree_icon(node)
             action_icon = self.get_filetree_action_icon(node)
@@ -108,14 +115,16 @@ class Window:
             self.project_selected(path)
 
     def project_selected(self, path):
-        '''Handle project selected path calling application layer and re-rendering items'''
+        '''Handle project selected path calling application layer and
+        re-rendering items'''
         self.application.change_path(path)
         self.filetree = self.application.get()
         self.render_treeview()
         self.variables.reload()
 
     def select_configuration(self):
-        '''Calls configuration path selector window to set the configuration path'''
+        '''Calls configuration path selector window to set
+        the configuration path'''
         path = self.application.configuration_path
         path = filedialog.askdirectory(
             title='Diretório dos templates',
@@ -128,18 +137,21 @@ class Window:
             self.configuration_selected(path)
 
     def configuration_selected(self, path):
-        '''Handle configuration selected path calling application layer and re-rendering items'''
+        '''Handle configuration selected path calling application layer and
+        re-rendering items'''
         self.application.change_configuration_path(path)
         ppath = self.filetree.path
-        self.label['project']['text'] = ppath if ppath else 'Selecione um diretório...'
+        self.label['project']['text'] = ppath if ppath \
+            else 'Selecione um diretório...'
         self.variables.reload()
         self.filetree = self.application.get()
         self.render_treeview()
 
     def row_selected(self, event):
-        '''Call apropriated action when a treeview row is clicked, those action will be
-        add, remove or edit template. When the action is add or edit the editor window
-        is called. When remove action is called a confirmation dialog will be shown.
+        '''Call apropriated action when a treeview row is clicked,
+        those action will be add, remove or edit template.
+        When the action is add or edit the editor window is called.
+        When remove action is called a confirmation dialog will be shown.
         '''
         selected_path = self.treeview.focus()
         node = self.application.find_node(self.filetree, selected_path)
@@ -151,7 +163,8 @@ class Window:
             if isinstance(node, Directory):
                 if self.application.configuration_path:
                     node.open = True
-                    child = self.template_application.create_child(node, 'novotemplate.[ext]')
+                    child = self.template_application.create_child(
+                        node, 'novotemplate.[ext]')
                     self.editor.show(child, True, self.render_treeview())
                 else:
                     messagebox.showwarning(
@@ -175,22 +188,25 @@ class Window:
 
     # pylint: disable=unused-argument
     def row_opened(self, event):
-        '''When project treeview directory is opened "save" the directory open state'''
+        '''When project treeview directory is opened "save" the directory
+        open state'''
         selected_path = self.treeview.focus()
         node = self.application.find_node(self.filetree, selected_path)
         node.open = True
 
     # pylint: disable=unused-argument
     def row_closed(self, event):
-        '''When project treeview directory is closed "save" the directory open state'''
+        '''When project treeview directory is closed "save" the directory
+        open state'''
         selected_path = self.treeview.focus()
         node = self.application.find_node(self.filetree, selected_path)
         node.open = False
 
     def save_templates(self):
         '''Call aplication layer to save the templates into the project folder.
-        After the files are recorded asks user if he wants to open the project directory.
-        Show a default error dialog if something goes wrong'''
+        After the files are recorded asks user if he wants to open the project
+        directory.
+        It also shows a default error dialog if something goes wrong'''
         try:
             self.application.save_into_project()
             open_project = messagebox.askyesno(
@@ -220,4 +236,4 @@ class Window:
         height = win.winfo_height()
         x_orientation = (win.winfo_screenwidth() // 2) - (width // 2)
         y_orientation = (win.winfo_screenheight() // 2) - (height // 2)
-        win.geometry('{}x{}+{}+{}'.format(width, height, x_orientation, y_orientation))
+        win.geometry(f'{width}x{height}+{x_orientation}+{y_orientation}')

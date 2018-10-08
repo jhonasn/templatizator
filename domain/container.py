@@ -8,9 +8,17 @@ from domain.application import ProjectApplication, VariableApplication, \
     TemplateApplication, ConfigurableFileApplication
 from domain.helper import Event
 
+
+# pylint: disable=too-few-public-methods
 class Container:
-    @classmethod
-    def configure(cls):
+    '''Static container class that holds the important instances available
+    for presentation layer
+    '''
+    def __init__(self):
+        raise Exception('Static class is not instantiable')
+
+    @staticmethod
+    def configure():
         '''Instantiate events, and DDD layers'''
         # events
         project_changed_event = Event()

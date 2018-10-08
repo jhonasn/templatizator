@@ -1,4 +1,4 @@
-from presentation import Window
+from presentation.window import Window
 
 class Editor:
     def __init__(self, builder, application, variable_application):
