@@ -1,9 +1,19 @@
+'''Handler for editor window'''
 from presentation.window import Window
 
+
+# as a window handler it's necessary to record lots of attributes
+# pylint: disable=too-many-instance-attributes
 class Editor:
+    '''Editor window class handler'''
     def __init__(self, builder, application, variable_application):
         self.application = application
         self.variable_application = variable_application
+
+        self.node = None
+        self.is_new = True
+        self.last_selected = None
+        self.call_back = None
 
         self.dialog = builder.get_object('editor_toplevel')
         self.window = builder.get_object('window')
@@ -14,7 +24,8 @@ class Editor:
         self.combobox = builder.get_object('editor_variable_combobox')
 
         builder.get_object('editor_cancel_button')['command'] = self.cancel
-        builder.get_object('editor_save_button')['command'] = self.save_template
+        builder.get_object('editor_save_button')['command'] = \
+            self.save_template
         self.combobox.bind('<<ComboboxSelected>>', self.variable_selected)
         self.filename.bind('<Button-1>', self.input_selected, self.filename)
         self.editor.bind('<Button-1>', self.input_selected, self.editor)
@@ -23,9 +34,15 @@ class Editor:
         self.dialog.protocol('WM_DELETE_WINDOW', self.cancel)
 
     def input_selected(self, event):
+        '''Record filename entry as the last widget selected to add
+        combobox variables selected
+        '''
         self.last_selected = event.widget
 
+    # argument required to call the event and not used by application
+    # pylint: disable=unused-argument
     def variable_selected(self, event):
+        '''Add variable selected in the combobox to the last widget selected'''
         var = f'[{self.combobox.get()}]'
         i = self.last_selected.index('insert')
         self.last_selected.insert(i, var)
@@ -33,6 +50,9 @@ class Editor:
         self.combobox.delete(0, 'end')
 
     def save_template(self):
+        '''Save the template calling application layer and after call
+        the callback passed from main window
+        '''
         filename = self.filename.get()
         content = self.editor.get('1.0', 'end')
 
@@ -49,30 +69,38 @@ class Editor:
                 content
             )
 
-        self.cb()
+        self.call_back()
         self.dialog.withdraw()
 
     def cancel(self):
+        '''Cancel edition (or close the editor window): close the editor
+        window and call callback passed from main window'''
         if self.is_new:
             self.node.remove()
         self.dialog.withdraw()
-        self.cb()
+        self.call_back()
 
-    def show(self, node, is_new, cb):
+    def show(self, node, is_new, call_back):
+        '''Show the editor window initiating edition cleaning the fields and
+        recording (in memory) important data from file (as is_new and cb)
+        '''
         self.is_new = is_new
         self.node = node
-        self.cb = cb
+        self.call_back = call_back
 
         self.filename.delete(0, 'end')
         self.filename.insert(0, node.name)
 
         self.editor.delete('1.0', 'end')
-        self.editor.insert('1.0',
+        self.editor.insert(
+            '1.0',
             '' if is_new else self.application.get(node)
         )
 
         self.variable_application.get()
-        self.combobox['values'] = list(map(lambda v: v.name, self.variable_application.get()))
+        self.combobox['values'] = list(map(
+            lambda v: v.name, self.variable_application.get()
+        ))
 
         self.dialog.transient(self.window)
         Window.center(self.dialog)
@@ -87,4 +115,3 @@ class Editor:
             self.editor.mark_set('insert', '1.0')
 
         self.last_selected.focus_set()
-

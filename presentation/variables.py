@@ -1,7 +1,12 @@
+'''Handler for variables section into the main window'''
 from tkinter import messagebox
 from domain.infrastructure import ProjectNotSetWarning
 
+
+# as a window section handler it's necessary to record lots of attributes
+# pylint: disable=too-many-instance-attributes
 class Variables:
+    '''Variables section class handler'''
     def __init__(self, builder, application):
         self.application = application
 
@@ -20,20 +25,23 @@ class Variables:
         self.reload()
 
     def reload(self):
+        '''reload variables into the reeview'''
         self.treeview.delete(*self.treeview.get_children())
 
         for var in self.application.get():
             self.treeview.insert('', 'end', values=[var.name, var.value, '❌'])
 
-    def set_entry_text(self, entry, text):
+    @staticmethod
+    def set_entry_text(entry, text):
+        '''replace entry text by the text passed'''
         entry.delete(0, 'end')
         entry.insert(0, text)
 
     def variable_action(self):
+        '''Add or save edition when add/save button is clicked'''
         name = self.name.get()
         value = self.value.get()
         selected_id = self.treeview.focus()
-        item = self.treeview.item(selected_id)
 
         if not name or not value:
             messagebox.showwarning(
@@ -60,6 +68,7 @@ class Variables:
         self.cancel_action()
 
     def row_selected(self, event):
+        '''Select to edit or delete variable according column clicked'''
         selected_id = self.treeview.focus()
         item = self.treeview.item(selected_id)
         col = self.treeview.identify_column(event.x)
@@ -73,16 +82,16 @@ class Variables:
             self.treeview.delete(selected_id)
         # edit
         else:
-            self.set_entry_text(self.name, row_name)
-            self.set_entry_text(self.value, row_value)
+            Variables.set_entry_text(self.name, row_name)
+            Variables.set_entry_text(self.value, row_value)
             self.action['text'] = '✓'
             self.row = selected_id
             self.old_name = row_name
 
     def cancel_action(self):
+        '''Cancel variable edition cleaning name and value entries'''
         self.row = None
         self.old_name = None
         self.action['text'] = '➕'
         self.name.delete(0, 'end')
         self.value.delete(0, 'end')
-
