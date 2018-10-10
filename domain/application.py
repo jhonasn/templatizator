@@ -2,68 +2,10 @@
 from domain.model import Variable
 
 
-class BaseApplication:
-    '''Parent base class for application classes'''
-    def __init__(self, service):
-        self.service = service
-
-    def get(self):
-        '''Get model instances'''
-        return self.service.get()
-
-    def first(self, expression, collection=None):
-        '''Get first model according expression
-        if collection is in memory it can be passed as argument
-        to avoid read from disk
-        '''
-        return self.service.first(expression, collection)
-
-    def filter(self, expression, collection=None):
-        '''Get models accordig expression
-        if collection is in memory it can be passed as argument
-        to avoid read from disk
-        '''
-        return self.service.filter(expression, collection)
-
-    def add(self, model):
-        '''Add model into the model collection'''
-        self.service.add(model)
-
-    def remove(self, expression):
-        '''Remove model from model collection according expression'''
-        self.service.remove(expression)
-
-
-class NodeApplication(BaseApplication):
-    '''Base class for application classes that handle node models'''
-    def remove(self, node):
-        '''Remove node from node collection without expression'''
-        self.service.remove(node)
-
-
-class FileApplication(NodeApplication):
-    '''Base class for application classes that handle file models'''
-    def get(self, model):
-        '''Get file content according model'''
-        return self.service.get(model)
-
-    def add(self, model, content):
-        '''Add file with content in the hard disk'''
-        self.service.add(model, content)
-
-    def save(self, model, new_name, content):
-        '''Write file in the hard disk and rename if necessary'''
-        self.service.save(model, new_name, content)
-
-    def create_child(self, parent, name):
-        '''Add child node into the parent and get correct child path'''
-        return self.service.create_child(parent, name)
-
-
-class ProjectApplication(BaseApplication):
+class ProjectApplication:
     '''Exposes actions to manage configuration and project'''
     def __init__(self, service, configuration_service):
-        super().__init__(service)
+        self.service = service
         self.configuration_service = configuration_service
         self.configuration_path = configuration_service.get_path()
 
@@ -95,8 +37,15 @@ class ProjectApplication(BaseApplication):
         self.service.save_into_project()
 
 
-class VariableApplication(BaseApplication):
+class VariableApplication:
     '''Exposes variables basic crud actions'''
+    def __init__(self, service):
+        self.service = service
+
+    def get(self):
+        '''Get variables'''
+        return self.service.get()
+
     def add(self, name, value):
         '''Add variable'''
         variable = Variable(name, value)
@@ -112,11 +61,36 @@ class VariableApplication(BaseApplication):
         self.service.remove(name)
 
 
-class TemplateApplication(FileApplication):
+class TemplateApplication:
     '''Exposes template crud actions'''
-    pass
+    def __init__(self, service):
+        self.service = service
+
+    def get(self, template):
+        '''Get template file content'''
+        return self.service.get(template)
+
+    def add(self, template, content):
+        '''Add template and template file'''
+        self.service.add(template, content)
+
+    def save(self, template, new_name, content):
+        '''Save template and template file renaming it if necessary'''
+        self.service.save(template, new_name, content)
+
+    def remove(self, template):
+        '''Remove template and delete template file'''
+        self.service.remove(template)
+
+    def create_child(self, parent, name):
+        '''Create child, add in the parent and return instance with attributes
+        properly filled
+        '''
+        return self.service.create_child(parent, name)
 
 
-class ConfigurableFileApplication(FileApplication):
+class ConfigurableFileApplication:
     '''Exposes configurable file crud actions'''
+    def __init__(self, service):
+        self.service = service
     pass

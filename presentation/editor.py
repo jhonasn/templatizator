@@ -74,7 +74,8 @@ class Editor:
 
     def cancel(self):
         '''Cancel edition (or close the editor window): close the editor
-        window and call callback passed from main window'''
+        window and call callback passed from main window
+        '''
         if self.is_new:
             self.node.remove()
         self.dialog.withdraw()

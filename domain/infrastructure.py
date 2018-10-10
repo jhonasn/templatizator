@@ -3,7 +3,7 @@
 
 class ProjectNotSetWarning(ResourceWarning):
     '''Warning raised when an action that depends on project path is triggered
-    and the project path isn\'t set
+    and the project path isn't set
     '''
     pass
 

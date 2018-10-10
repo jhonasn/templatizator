@@ -66,7 +66,8 @@ class Window:
     @classmethod
     def get_filetree_action_icon(cls, node):
         '''Get filetree icon for action (include or delete)
-        according the filetree node type'''
+        according the filetree node type
+        '''
         return {
             Project: u'➕',
             Directory: u'➕',
@@ -82,7 +83,8 @@ class Window:
 
     def fill_treeview(self, node, parent_id=''):
         '''Recursive method that fills the project treeview
-        with application filetree result'''
+        with application filetree result
+        '''
         if not parent_id:
             icon = self.get_filetree_icon(node)
             action_icon = self.get_filetree_action_icon(node)
@@ -116,7 +118,8 @@ class Window:
 
     def project_selected(self, path):
         '''Handle project selected path calling application layer and
-        re-rendering items'''
+        re-rendering items
+        '''
         self.application.change_path(path)
         self.filetree = self.application.get()
         self.render_treeview()
@@ -124,7 +127,8 @@ class Window:
 
     def select_configuration(self):
         '''Calls configuration path selector window to set
-        the configuration path'''
+        the configuration path
+        '''
         path = self.application.configuration_path
         path = filedialog.askdirectory(
             title='Diretório dos templates',
@@ -138,7 +142,8 @@ class Window:
 
     def configuration_selected(self, path):
         '''Handle configuration selected path calling application layer and
-        re-rendering items'''
+        re-rendering items
+        '''
         self.application.change_configuration_path(path)
         ppath = self.filetree.path
         self.label['project']['text'] = ppath if ppath \
@@ -164,8 +169,9 @@ class Window:
                 if self.application.configuration_path:
                     node.open = True
                     child = self.template_application.create_child(
-                        node, 'novotemplate.[ext]')
-                    self.editor.show(child, True, self.render_treeview())
+                        node, 'novotemplate.[ext]'
+                    )
+                    self.editor.show(child, True, self.render_treeview)
                 else:
                     messagebox.showwarning(
                         'Atenção:',
@@ -184,12 +190,13 @@ class Window:
             self.render_treeview()
         # edit
         elif isinstance(node, Template):
-            self.editor.show(node, False, self.render_treeview())
+            self.editor.show(node, False, self.render_treeview)
 
     # pylint: disable=unused-argument
     def row_opened(self, event):
         '''When project treeview directory is opened "save" the directory
-        open state'''
+        open state
+        '''
         selected_path = self.treeview.focus()
         node = self.application.find_node(self.filetree, selected_path)
         node.open = True
@@ -197,7 +204,8 @@ class Window:
     # pylint: disable=unused-argument
     def row_closed(self, event):
         '''When project treeview directory is closed "save" the directory
-        open state'''
+        open state
+        '''
         selected_path = self.treeview.focus()
         node = self.application.find_node(self.filetree, selected_path)
         node.open = False
@@ -206,7 +214,8 @@ class Window:
         '''Call aplication layer to save the templates into the project folder.
         After the files are recorded asks user if he wants to open the project
         directory.
-        It also shows a default error dialog if something goes wrong'''
+        It also shows a default error dialog if something goes wrong
+        '''
         try:
             self.application.save_into_project()
             open_project = messagebox.askyesno(

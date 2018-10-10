@@ -108,6 +108,9 @@ class JsonRepository(FileRepository):
 
         return []
 
+    # Overriding save file with object is necessary to the purpouse of saving
+    # a json file
+    # pylint: disable=arguments-differ
     def save(self, collection):
         '''Save the collection passed as json'''
         collection_serialized = list(map(
@@ -122,7 +125,8 @@ class JsonRepository(FileRepository):
 
     def get(self):
         '''Returns a collection of objects trying to
-        convert to informed of_type attribute'''
+        convert to informed of_type attribute
+        '''
         json_result = self.get_json()
         result = []
         deserialization_type = type(self).of_type
@@ -186,10 +190,10 @@ class NodeRepository(JsonRepository):
 
         return nodes
 
-    def add(self, node):
+    def add(self, model):
         '''Add a node into the node collection'''
-        self.update_path(node)
-        super().add(node)
+        self.update_path(model)
+        super().add(model)
 
     def update(self, node, new_name):
         '''Update the node taking care to rename path and name it correctly'''
@@ -202,7 +206,7 @@ class NodeRepository(JsonRepository):
             node.name = db_node.name
             node.path = db_node.path
 
-    def remove(self, node):
+    def remove_node(self, node):
         '''Remove node by path'''
         super().remove(lambda n: n.path == node.path)
 
@@ -339,10 +343,6 @@ class VariableRepository(JsonRepository):
     # save variables json
     name = 'variables.json'
     of_type = Variable
-
-    def first(self, name, variables):
-        '''Find first by name in the variables collection informed'''
-        return super().first(lambda v: v.name == name, variables)
 
 
 class TemplateRepository(NodeRepository):

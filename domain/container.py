@@ -39,12 +39,13 @@ class Container:
             project_changed_event
         )
         template_service = TemplateService(
-            template_file_repository,
             template_repository,
+            template_file_repository,
             project_changed_event
         )
         configurable_service = ConfigurableService(
-            configurable_file_repository, configurable_repository,
+            configurable_repository,
+            configurable_file_repository,
             project_changed_event
         )
         project_service = ProjectService(
