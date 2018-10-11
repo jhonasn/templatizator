@@ -5,7 +5,7 @@
 - Call editor window;
 - Call save files into the project action.
 '''
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, Menu
 from domain.infrastructure import ProjectNotSetWarning
 from domain.model import Project, Directory, Template, ConfigurableFile
 from domain.helper import OS
@@ -21,11 +21,24 @@ class Window:
         self.template_application = template_application
         self.configurable_application = configurable_application
 
+        # selected node
+        self.node = None
+
         self.variables = variables
         self.editor = editor
 
         self.window = builder.get_object('window_toplevel')
         self.treeview = builder.get_object('project_treeview')
+        self.directory_menu = Menu(self.treeview, tearoff=0)
+        self.directory_menu.add_command(label='Add template',
+                                        command=self.add_template)
+        self.directory_menu.add_command(label='Add configurable',
+                                        command=self.add_configurable)
+        self.file_menu = Menu(self.treeview, tearoff=0)
+        self.file_menu.add_command(label='Abrir', command=self.open_file)
+        self.file_menu.add_command(label='Abrir com...',
+                                   command=self.open_with)
+        self.file_menu.add_command(label='Remover', command=self.remove_file)
 
         self.label = {
             'project': builder.get_object('project_file_label'),
@@ -41,6 +54,7 @@ class Window:
         self.treeview.bind('<ButtonRelease-1>', self.row_selected)
         self.treeview.bind('<<TreeviewOpen>>', self.row_opened)
         self.treeview.bind('<<TreeviewClose>>', self.row_closed)
+        self.treeview.bind('<ButtonRelease-3>', self.row_popup_selected)
 
         Window.center(self.window)
 
@@ -152,6 +166,62 @@ class Window:
         self.filetree = self.application.get()
         self.render_treeview()
 
+    def add_template(self):
+        '''Add a template inside selected node'''
+        parent = self.node
+        if self.application.configuration_path:
+            parent.open = True
+            child = self.template_application.create_child(
+                parent, 'novotemplate.[ext]'
+            )
+            self.editor.show(child, True, self.render_treeview)
+        else:
+            messagebox.showwarning(
+                'Atenção:',
+                'Selecione onde salvar os templates primeiramente'
+            )
+
+        self.render_treeview()
+
+    def add_configurable(self):
+        '''Add configurable file'''
+        if self.node:
+            print('add configurable implementation pending')
+
+    def open_file(self):
+        '''Open file with templatizator editor window'''
+        self.editor.show(self.node, False, self.render_treeview)
+
+    def open_with(self):
+        '''Open file with default OS editor'''
+        OS.open_with(self.template_application.get_path(self.node))
+
+    def remove_file(self):
+        '''Remove file: template or configurable'''
+        if messagebox.askyesno(
+                'Pergunta:',
+                'Deseja realmente remover o template?'
+        ):
+            self.template_application.remove(self.node)
+            self.node.remove()
+            self.filetree = self.application.get()
+
+        self.render_treeview()
+
+    def row_popup_selected(self, event):
+        '''Call apropriated context menu when a treeview row is clicked with
+        mouse right button click
+        '''
+        selected_path = self.treeview.identify_row(event.y)
+        col = self.treeview.identify_column(event.x)
+        # set selected node
+        self.node = self.application.find_node(self.filetree, selected_path)
+
+        if isinstance(self.node, Directory):
+            self.directory_menu.post(event.x_root, event.y_root)
+        elif col == '#0':
+            self.file_menu.post(event.x_root, event.y_root)
+
     def row_selected(self, event):
         '''Call apropriated action when a treeview row is clicked,
         those action will be add, remove or edit template.
@@ -164,33 +234,17 @@ class Window:
 
         # add | remove
         if col == '#1':
+            self.node = node
             # add
             if isinstance(node, Directory):
-                if self.application.configuration_path:
-                    node.open = True
-                    child = self.template_application.create_child(
-                        node, 'novotemplate.[ext]'
-                    )
-                    self.editor.show(child, True, self.render_treeview)
-                else:
-                    messagebox.showwarning(
-                        'Atenção:',
-                        'Selecione onde salvar os templates primeiramente'
-                    )
+                self.add_template()
             # remove
             else:
-                if messagebox.askyesno(
-                        'Pergunta:',
-                        'Deseja realmente remover o template?'
-                ):
-                    self.template_application.remove(node)
-                    node.remove()
-                    self.filetree = self.application.get()
-
-            self.render_treeview()
+                self.remove_file()
         # edit
         elif isinstance(node, Template):
-            self.editor.show(node, False, self.render_treeview)
+            self.node = node
+            self.open_file()
 
     # pylint: disable=unused-argument
     def row_opened(self, event):

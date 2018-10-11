@@ -198,6 +198,11 @@ class TemplateService:
         self.file_repository.name = template.name
         return self.file_repository.get()
 
+    def get_path(self, template):
+        '''Get template file path'''
+        self.repository.name = template.name
+        return self.repository.full_path
+
     def add(self, template, content):
         '''Add file with content in the hard disk'''
         self.repository.add(template)

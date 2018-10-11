@@ -70,6 +70,10 @@ class TemplateApplication:
         '''Get template file content'''
         return self.service.get(template)
 
+    def get_path(self, template):
+        '''Get template file path'''
+        return self.service.get_path(template)
+
     def add(self, template, content):
         '''Add template and template file'''
         self.service.add(template, content)
