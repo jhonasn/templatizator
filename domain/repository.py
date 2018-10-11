@@ -312,8 +312,8 @@ class ConfigurationRepository(JsonRepository):
         project = self.first(lambda p: p.path == path, projects)
 
         # unselect projects
-        for project in projects:
-            project.selected = False
+        for proj in projects:
+            proj.selected = False
 
         if not project:
             # add new project

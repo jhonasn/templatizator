@@ -93,4 +93,3 @@ class ConfigurableFileApplication:
     '''Exposes configurable file crud actions'''
     def __init__(self, service):
         self.service = service
-    pass
