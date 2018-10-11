@@ -7,7 +7,7 @@
 '''
 from tkinter import filedialog, messagebox, Menu
 from domain.infrastructure import ProjectNotSetWarning
-from domain.model import Project, Directory, Template, ConfigurableFile
+from domain.model import Directory, File, Template, ConfigurableFile
 from domain.helper import OS
 
 
@@ -70,24 +70,31 @@ class Window:
     @classmethod
     def get_filetree_icon(cls, node):
         '''Get filetree icon according the filetree node type'''
-        return {
-            Project: u'⌹',
-            Directory: u'⌹',
-            Template: u'⛁',
-            ConfigurableFile: u''
-        }.get(type(node))
+        if isinstance(node, Directory):
+            return u'\uF4C1'
+        if isinstance(node, Template):
+            return u'\u1F5CB'
+        if isinstance(node, ConfigurableFile):
+            return u'\u1F5CE'
+        return ''
 
     @classmethod
     def get_filetree_action_icon(cls, node):
         '''Get filetree icon for action (include or delete)
         according the filetree node type
         '''
-        return {
-            Project: u'➕',
-            Directory: u'➕',
-            Template: u'❌',
-            ConfigurableFile: u''
-        }.get(type(node))
+        return u'\u2795' if isinstance(node, Directory) else u'\u274C'
+
+    @classmethod
+    def get_filetree_checkbox(cls, node):
+        '''Get checkbox and its state
+        If the node is a file then the checkbox is shown checked or not
+        depending on node state.
+        If the node is a directory don't show the checkbox
+        '''
+        if isinstance(node, File):
+            return u'\u2611' if node.save else u'\u2612'
+        return ''
 
     def render_treeview(self):
         '''Render treeview if there is filetree instance set'''
@@ -102,17 +109,23 @@ class Window:
         if not parent_id:
             icon = self.get_filetree_icon(node)
             action_icon = self.get_filetree_action_icon(node)
+            checkbox = self.get_filetree_checkbox(node)
+            name = f'{icon} {node.name}'
             parent_id = self.treeview.insert(
-                parent_id, 'end', node.path, text=f'{icon} {node.name}',
-                values=action_icon, open=True)
+                parent_id, 'end', node.path, text=name,
+                values=(checkbox, action_icon), open=True
+            )
 
         for child in node.children:
             icon = self.get_filetree_icon(child)
             action_icon = self.get_filetree_action_icon(child)
+            name = f'{icon} {child.name}'
+            checkbox = self.get_filetree_checkbox(child)
             child_parent_id = self.treeview.insert(
-                parent_id, 'end', child.path, text=f'{icon} {child.name}',
-                values=action_icon,
-                open=child.open if hasattr(child, 'open') else False)
+                parent_id, 'end', child.path, text=name,
+                values=(checkbox, action_icon),
+                open=child.open if hasattr(child, 'open') else False
+            )
 
             if child.children:
                 self.fill_treeview(child, child_parent_id)
@@ -233,7 +246,7 @@ class Window:
         col = self.treeview.identify_column(event.x)
 
         # add | remove
-        if col == '#1':
+        if col == '#2':
             self.node = node
             # add
             if isinstance(node, Directory):
@@ -242,9 +255,15 @@ class Window:
             else:
                 self.remove_file()
         # edit
-        elif isinstance(node, Template):
+        elif isinstance(node, File):
             self.node = node
-            self.open_file()
+            if col == '#1':
+                self.node.save = not self.node.save
+                if isinstance(node, Template):
+                    self.template_application.save(self.node)
+                self.render_treeview()
+            else:
+                self.open_file()
 
     # pylint: disable=unused-argument
     def row_opened(self, event):

@@ -342,7 +342,18 @@
                         <property name="stretch">true</property>
                         <property name="tree_column">true</property>
                         <property name="visible">true</property>
-                        <property name="width">310</property>
+                        <property name="width">30</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Treeview.Column" id="project_checkbox_treeviewcolumn">
+                        <property name="column_anchor">w</property>
+                        <property name="heading_anchor">w</property>
+                        <property name="minwidth">20</property>
+                        <property name="stretch">false</property>
+                        <property name="tree_column">false</property>
+                        <property name="visible">true</property>
+                        <property name="width">23</property>
                       </object>
                     </child>
                     <child>
@@ -350,10 +361,10 @@
                         <property name="column_anchor">w</property>
                         <property name="heading_anchor">w</property>
                         <property name="minwidth">20</property>
-                        <property name="stretch">true</property>
+                        <property name="stretch">false</property>
                         <property name="tree_column">false</property>
                         <property name="visible">true</property>
-                        <property name="width">25</property>
+                        <property name="width">23</property>
                       </object>
                     </child>
                   </object>

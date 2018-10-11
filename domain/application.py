@@ -78,9 +78,13 @@ class TemplateApplication:
         '''Add template and template file'''
         self.service.add(template, content)
 
-    def save(self, template, new_name, content):
+    def save(self, template):
+        '''Save template state'''
+        self.service.save(template)
+
+    def save_file(self, template, new_name, content):
         '''Save template and template file renaming it if necessary'''
-        self.service.save(template, new_name, content)
+        self.service.save_file(template, new_name, content)
 
     def remove(self, template):
         '''Remove template and delete template file'''

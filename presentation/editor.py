@@ -63,7 +63,7 @@ class Editor:
             self.node.name = filename
             self.application.add(self.node, content)
         else:
-            self.application.save(
+            self.application.save_file(
                 self.node,
                 filename,
                 content

@@ -198,13 +198,13 @@ class NodeRepository(JsonRepository):
     def update(self, node, new_name):
         '''Update the node taking care to rename path and name it correctly'''
         nodes = self.get()
-        db_node = self.first(lambda n: n.name == node.name, nodes)
-        if db_node.name != new_name:
-            db_node.name = new_name
-            self.update_path(db_node)
-            super().save(nodes)
-            node.name = db_node.name
-            node.path = db_node.path
+        db_node = self.first(lambda n: n.path == node.path, nodes)
+        db_node.name = new_name
+        self.update_path(db_node)
+        db_node.save = node.save
+        super().save(nodes)
+        node.name = db_node.name
+        node.path = db_node.path
 
     def remove_node(self, node):
         '''Remove node by path'''

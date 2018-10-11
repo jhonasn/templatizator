@@ -2,6 +2,10 @@
 from tkinter import messagebox
 from domain.infrastructure import ProjectNotSetWarning
 
+ADD_ICON = u'\u2795'
+REMOVE_ICON = u'\u274C'
+SAVE_ICON = u'\u1F4BE'
+
 
 # as a window section handler it's necessary to record lots of attributes
 # pylint: disable=too-many-instance-attributes
@@ -29,7 +33,8 @@ class Variables:
         self.treeview.delete(*self.treeview.get_children())
 
         for var in self.application.get():
-            self.treeview.insert('', 'end', values=[var.name, var.value, '❌'])
+            self.treeview.insert('', 'end', values=(var.name, var.value,
+                                                    REMOVE_ICON))
 
     @staticmethod
     def set_entry_text(entry, text):
@@ -54,7 +59,8 @@ class Variables:
         if not self.row:
             try:
                 self.application.add(name, value)
-                self.treeview.insert('', 'end', values=[name, value, '❌'])
+                self.treeview.insert('', 'end', values=(name, value,
+                                                        REMOVE_ICON))
             except ProjectNotSetWarning:
                 messagebox.showwarning(
                     'Atenção:',
@@ -62,7 +68,8 @@ class Variables:
                 )
         # edit
         else:
-            self.treeview.item(selected_id, values=[name, value, '❌'])
+            self.treeview.item(selected_id, values=(name, value,
+                                                    REMOVE_ICON))
             self.application.change(self.old_name, name, value)
 
         self.cancel_action()
@@ -84,7 +91,7 @@ class Variables:
         else:
             Variables.set_entry_text(self.name, row_name)
             Variables.set_entry_text(self.value, row_value)
-            self.action['text'] = '✓'
+            self.action['text'] = SAVE_ICON
             self.row = selected_id
             self.old_name = row_name
 
@@ -92,6 +99,6 @@ class Variables:
         '''Cancel variable edition cleaning name and value entries'''
         self.row = None
         self.old_name = None
-        self.action['text'] = '➕'
+        self.action['text'] = ADD_ICON
         self.name.delete(0, 'end')
         self.value.delete(0, 'end')

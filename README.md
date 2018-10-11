@@ -37,7 +37,8 @@ We have only two windows in this app:
   > The reason to do this is because when we change the project directory and return to the previous project we loose the previous project configuration mainly the templates.
 - [x] Add an option to open and edit templates with another application
     - [x] Add context menu and add this option
-- [ ] Add checkbox to save or not the template on project directory
+- [x] Add checkbox to save or not the template on project directory
+    - [ ] Implement to save only checked templates into the project
 - [ ] Add tooltip into filetree action buttons and template checkbox
 - [ ] Add option to add "configurable" files, those are already existing project files from any type of text file.
     - [x] Add option into context menu to add configurable files

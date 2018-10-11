@@ -209,7 +209,11 @@ class TemplateService:
         self.file_repository.name = template.name
         self.file_repository.save(content)
 
-    def save(self, template, new_name, content):
+    def save(self, template):
+        '''Save template state'''
+        self.repository.update(template, template.name)
+
+    def save_file(self, template, new_name, content):
         '''Write file in the hard disk and rename if necessary'''
         self.repository.update(template, new_name)
         self.file_repository.save_file(template.name, new_name, content)

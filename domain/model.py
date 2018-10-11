@@ -56,7 +56,14 @@ class Directory(Node):
 
 class File(Node):
     '''Represents a file into a file tree'''
-    pass
+    def __init__(self, path=None, name=None, save=True):
+        super().__init__(path, name)
+        self.save = save
+
+    def serialize(self):
+        obj = super().serialize()
+        obj['save'] = self.save
+        return obj
 
 
 class Template(File):
@@ -70,17 +77,7 @@ class ConfigurableFile(File):
     a configurable, the configurable will receive the templates in placeholders
     in any way desired through the placeholder template lines
     '''
-    def __init__(self, path=None, name=None, expression=None, after=True):
-        super().__init__(path, name)
-        self.expression = expression
-        self.after = after
-
-    def serialize(self):
-        '''Serialize relevant attributes'''
-        obj = super().serialize()
-        obj['expression'] = self.expression
-        obj['after'] = self.after
-        return obj
+    pass
 
 
 class Project(Directory):
