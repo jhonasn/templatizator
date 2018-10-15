@@ -2,6 +2,7 @@
 from tkinter import messagebox
 from domain.infrastructure import ProjectNotSetWarning
 from presentation.helper import get_tkinter_unicode
+from presentation.widgets import Tooltip
 
 ADD_ICON = get_tkinter_unicode('\U00002795')
 REMOVE_ICON = get_tkinter_unicode('\U0000274C')
@@ -20,14 +21,21 @@ class Variables:
         self.action = builder.get_object('variable_action_button')
         self.cancel = builder.get_object('variable_cancel_button')
         self.treeview = builder.get_object('variables_treeview')
+        self.action_tooltip = Tooltip(self.action, 'Adicionar')
+        Tooltip(self.cancel, 'Cancelar')
+        Tooltip(self.treeview, 'Remover', col='#3')
 
         self.treeview.bind('<ButtonRelease-1>', self.row_selected)
+        #self.treeview.bind('<Enter>', self.enter)
         self.action['command'] = self.variable_action
         self.cancel['command'] = self.cancel_action
         self.row = None
         self.old_name = None
 
         self.reload()
+
+    def enter(self, event):
+        print('enter ev:', event)
 
     def reload(self):
         '''reload variables into the reeview'''
@@ -93,6 +101,7 @@ class Variables:
             Variables.set_entry_text(self.name, row_name)
             Variables.set_entry_text(self.value, row_value)
             self.action['text'] = SAVE_ICON
+            self.action_tooltip.text = 'Salvar'
             self.row = selected_id
             self.old_name = row_name
 

@@ -1,5 +1,4 @@
 '''Service layer module'''
-from copy import copy
 from domain.model import Variable
 from domain.infrastructure import ProjectNotSetWarning
 
@@ -95,7 +94,7 @@ class ProjectService:
         '''Replaces placeholders in the passed text with
         recorded application variables
         '''
-        new_text = copy(text)
+        new_text = text
         for var in self.variable_repository.get():
             new_text = new_text.replace(f'[{var.name}]', var.value)
 
@@ -111,15 +110,17 @@ class ProjectService:
 
         prev_name = self.template_file_repository.name
         for template in self.template_repository.get():
-            self.template_file_repository.path = local_path
-            self.template_file_repository.name = template.name
-            content = self.template_file_repository.get()
-            content = self.replace_variables(content)
-            self.template_file_repository.path = \
-                self.configuration_repository.get_parent_path(template.path)
-            self.template_file_repository.name = \
-                self.replace_variables(template.name)
-            self.template_file_repository.save(content)
+            if template.save:
+                self.template_file_repository.path = local_path
+                self.template_file_repository.name = template.name
+                content = self.template_file_repository.get()
+                content = self.replace_variables(content)
+                self.template_file_repository.path = \
+                    self.configuration_repository.get_parent_path(
+                        template.path)
+                self.template_file_repository.name = \
+                    self.replace_variables(template.name)
+                self.template_file_repository.save(content)
 
         self.template_file_repository.path = local_path
         self.template_file_repository.name = prev_name
@@ -134,6 +135,7 @@ class VariableService:
         project_change_event.subscribe(self.project_changed)
 
     def get(self):
+        '''Get project variables'''
         return self.repository.get()
 
     @staticmethod

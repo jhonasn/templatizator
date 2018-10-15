@@ -10,6 +10,7 @@ from domain.infrastructure import ProjectNotSetWarning
 from domain.model import Directory, File, Template, ConfigurableFile
 from domain.helper import OS
 from presentation.helper import get_tkinter_unicode
+from presentation.widgets import Tooltip
 
 
 # pylint: disable=too-many-instance-attributes
@@ -40,6 +41,7 @@ class Window:
         self.file_menu.add_command(label='Abrir com...',
                                    command=self.open_with)
         self.file_menu.add_command(label='Remover', command=self.remove_file)
+        Tooltip(self.treeview, col='#', before=self.before_show_tooltip)
 
         self.label = {
             'project': builder.get_object('project_file_label'),
@@ -292,6 +294,20 @@ class Window:
         icon = self.get_filetree_icon(node)
         text = f'{icon} {node.name}'
         self.treeview.item(selected_path, text=text)
+
+    def before_show_tooltip(self, col, iid, tooltip):
+        '''Decides wich tooltip message to show or if will show'''
+        node = self.application.find_node(self.filetree, iid)
+        if col == '#2' and isinstance(node, Directory):
+            tooltip.text = 'Adicionar template'
+            return True
+        if col == '#2' and isinstance(node, File):
+            tooltip.text = 'Remover'
+            return True
+        if col == '#1' and isinstance(node, File):
+            tooltip.text = 'Salvar no projeto?'
+            return True
+        return False
 
     def save_templates(self):
         '''Call aplication layer to save the templates into the project folder.
