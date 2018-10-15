@@ -9,6 +9,7 @@ from tkinter import filedialog, messagebox, Menu
 from domain.infrastructure import ProjectNotSetWarning
 from domain.model import Directory, File, Template, ConfigurableFile
 from domain.helper import OS
+from presentation.helper import get_tkinter_unicode
 
 
 # pylint: disable=too-many-instance-attributes
@@ -70,20 +71,22 @@ class Window:
     @classmethod
     def get_filetree_icon(cls, node):
         '''Get filetree icon according the filetree node type'''
+        icon = ''
         if isinstance(node, Directory):
-            return u'\uF4C1'
+            icon = '\U0001F4C2' if node.open else '\U0001F4C1'
         if isinstance(node, Template):
-            return u'\u1F5CB'
+            icon = '\U0001F5CB'
         if isinstance(node, ConfigurableFile):
-            return u'\u1F5CE'
-        return ''
+            icon = '\U0001F5CE'
+        return get_tkinter_unicode(icon)
 
     @classmethod
     def get_filetree_action_icon(cls, node):
         '''Get filetree icon for action (include or delete)
         according the filetree node type
         '''
-        return u'\u2795' if isinstance(node, Directory) else u'\u274C'
+        icon = '\U00002795' if isinstance(node, Directory) else '\U0000274C'
+        return get_tkinter_unicode(icon)
 
     @classmethod
     def get_filetree_checkbox(cls, node):
@@ -92,9 +95,10 @@ class Window:
         depending on node state.
         If the node is a directory don't show the checkbox
         '''
+        icon = ''
         if isinstance(node, File):
-            return u'\u2611' if node.save else u'\u2612'
-        return ''
+            icon = '\U00002611' if node.save else '\U00002612'
+        return get_tkinter_unicode(icon)
 
     def render_treeview(self):
         '''Render treeview if there is filetree instance set'''
@@ -273,6 +277,9 @@ class Window:
         selected_path = self.treeview.focus()
         node = self.application.find_node(self.filetree, selected_path)
         node.open = True
+        icon = self.get_filetree_icon(node)
+        text = f'{icon} {node.name}'
+        self.treeview.item(selected_path, text=text)
 
     # pylint: disable=unused-argument
     def row_closed(self, event):
@@ -282,6 +289,9 @@ class Window:
         selected_path = self.treeview.focus()
         node = self.application.find_node(self.filetree, selected_path)
         node.open = False
+        icon = self.get_filetree_icon(node)
+        text = f'{icon} {node.name}'
+        self.treeview.item(selected_path, text=text)
 
     def save_templates(self):
         '''Call aplication layer to save the templates into the project folder.
