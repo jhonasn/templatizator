@@ -17,8 +17,8 @@ from presentation.widgets import Tooltip
 class Window:
     '''Class handles for GUI main window'''
     # pylint: disable=too-many-arguments
-    def __init__(self, builder, variables, editor, application,
-                 template_application, configurable_application):
+    def __init__(self, builder, variables, editor, configurable_editor,
+                 application, template_application, configurable_application):
         self.application = application
         self.template_application = template_application
         self.configurable_application = configurable_application
@@ -28,6 +28,7 @@ class Window:
 
         self.variables = variables
         self.editor = editor
+        self.configurable_editor = configurable_editor
 
         self.window = builder.get_object('window_toplevel')
         self.treeview = builder.get_object('project_treeview')
@@ -203,13 +204,29 @@ class Window:
         self.render_treeview()
 
     def add_configurable(self):
-        '''Add configurable file'''
+        '''Add configurable file, selecting a existing project file that can
+        be a xml or json file, but there's no restriction by file type.
+        '''
         if self.node:
-            print('add configurable implementation pending')
+            path = filedialog.askopenfilename(
+                title='Selecione o arquivo configurável',
+                initialdir=self.node.path,
+                parent=self.window
+            )
+            if path:
+                child = self.configurable_application.create_child(
+                    self.node, path
+                )
+                self.configurable_editor.show(child, True,
+                                              self.render_treeview)
 
     def open_file(self):
         '''Open file with templatizator editor window'''
-        self.editor.show(self.node, False, self.render_treeview)
+        if isinstance(self.node, Template):
+            self.editor.show(self.node, False, self.render_treeview)
+        else:
+            self.configurable_editor.show(self.node, False,
+                                          self.render_treeview)
 
     def open_with(self):
         '''Open file with default OS editor'''
@@ -217,11 +234,16 @@ class Window:
 
     def remove_file(self):
         '''Remove file: template or configurable'''
+        is_template = isinstance(self.node, Template)
+        name = 'template' if is_template else 'arquivo configurável'
         if messagebox.askyesno(
                 'Pergunta:',
-                'Deseja realmente remover o template?'
+                f'Deseja realmente remover o {name}?'
         ):
-            self.template_application.remove(self.node)
+            if is_template:
+                self.template_application.remove(self.node)
+            else:
+                self.configurable_application.remove(self.node)
             self.node.remove()
             self.filetree = self.application.get()
 

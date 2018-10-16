@@ -3,6 +3,7 @@ from domain.container import Container as DomainContainer
 from presentation.window import Window
 from presentation.variables import Variables
 from presentation.editor import Editor
+from presentation.configurable_editor import ConfigurableEditor
 
 
 # pylint: disable=too-few-public-methods
@@ -25,8 +26,16 @@ class Container:
             DomainContainer.template_application,
             DomainContainer.variable_application
         )
+        Container.configurable_editor = ConfigurableEditor(
+            builder,
+            DomainContainer.configurable_file_application,
+            DomainContainer.variable_application
+        )
         Container.window = Window(
-            builder, Container.variables, Container.editor,
+            builder,
+            Container.variables,
+            Container.editor,
+            Container.configurable_editor,
             DomainContainer.project_application,
             DomainContainer.template_application,
             DomainContainer.configurable_file_application
