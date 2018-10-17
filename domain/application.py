@@ -1,5 +1,6 @@
 '''Application layer module'''
 from domain.model import Variable
+from abc import ABC
 
 
 class ProjectApplication:
@@ -61,15 +62,24 @@ class VariableApplication:
         self.service.remove(name)
 
 
-class TemplateApplication:
-    '''Exposes template crud actions'''
+class FileApplication(ABC):
+    '''Base class for file model handler classes'''
     def __init__(self, service):
         self.service = service
 
-    def get(self, template):
-        '''Get template file content'''
-        return self.service.get(template)
+    def get(self, file):
+        '''Get file content'''
+        return self.service.get(file)
 
+    def create_child(self, parent, name):
+        '''Create child, add in the parent and return instance with attributes
+        properly filled
+        '''
+        return self.service.create_child(parent, name)
+
+
+class TemplateApplication(FileApplication):
+    '''Exposes template crud actions'''
     def get_path(self, template):
         '''Get template file path'''
         return self.service.get_path(template)
@@ -90,14 +100,13 @@ class TemplateApplication:
         '''Remove template and delete template file'''
         self.service.remove(template)
 
-    def create_child(self, parent, name):
-        '''Create child, add in the parent and return instance with attributes
-        properly filled
-        '''
-        return self.service.create_child(parent, name)
 
-
-class ConfigurableFileApplication:
+class ConfigurableFileApplication(FileApplication):
     '''Exposes configurable file crud actions'''
-    def __init__(self, service):
-        self.service = service
+    def get_filename(self, path):
+        '''Get filename from entire path'''
+        return self.service.get_filename(path)
+
+    def is_child(self, parent_path, filename):
+        '''Verify if filename is a existent file into the parent_path folder'''
+        return self.service.is_child(parent_path, filename)

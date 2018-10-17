@@ -45,6 +45,11 @@ class FileRepository(ABC):
 
         return None
 
+    @full_path.setter
+    def full_path(self, path):
+        self.name = self.get_basename(path)
+        self.path = self.get_parent_path(path)
+
     def exists(self):
         '''Returns True if the repository full_path already exists'''
         if not self.full_path:
@@ -363,6 +368,11 @@ class ConfigurableRepository(NodeRepository):
     # save configurable files json
     name = 'configurablefiles.json'
     of_type = ConfigurableFile
+
+    @classmethod
+    def is_child(cls, parent_path, filename):
+        '''Verify if filename is a existent file into the parent_path folder'''
+        return os.path.exists(os.path.join(parent_path, filename))
 
 
 class ConfigurableFileRepository(FileRepository):

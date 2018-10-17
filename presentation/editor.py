@@ -15,22 +15,46 @@ class Editor:
         self.last_selected = None
         self.call_back = None
 
+        self.builder = builder
+
+        self.dialog = None
+        self.window = None
+        self.filelabel = None
+        self.filename = None
+        self.editor = None
+        self.combobox = None
+        self.cancel_button = None
+        self.save_button = None
+
+        self.set_props()
+        self.dialog.resizable(False, False)
+        self.dialog.withdraw()
+
+    def set_props(self):
+        '''Set interface properties from builder obj'''
+        builder = self.builder
         self.dialog = builder.get_object('editor_toplevel')
         self.window = builder.get_object('window')
-        self.dialog.resizable(False, False)
 
+        self.filelabel = builder.get_object('editor_filename_label')
         self.filename = builder.get_object('editor_filename_entry')
         self.editor = builder.get_object('editor_text')
         self.combobox = builder.get_object('editor_variable_combobox')
 
-        builder.get_object('editor_cancel_button')['command'] = self.cancel
-        builder.get_object('editor_save_button')['command'] = \
-            self.save_template
+        self.cancel_button = builder.get_object('editor_cancel_button')
+        self.save_button = builder.get_object('editor_save_button')
+
+    def rebind(self):
+        '''Rebind editor events'''
+        self.set_props()
+
+        self.save_button['command'] = self.save
+        self.cancel_button['command'] = self.cancel
+
         self.combobox.bind('<<ComboboxSelected>>', self.variable_selected)
         self.filename.bind('<Button-1>', self.input_selected, self.filename)
         self.editor.bind('<Button-1>', self.input_selected, self.editor)
 
-        self.dialog.withdraw()
         self.dialog.protocol('WM_DELETE_WINDOW', self.cancel)
 
     def input_selected(self, event):
@@ -49,10 +73,12 @@ class Editor:
         self.last_selected.focus_set()
         self.combobox.delete(0, 'end')
 
-    def save_template(self):
+    def save(self):
         '''Save the template calling application layer and after call
         the callback passed from main window
         '''
+        self.rebind()
+
         filename = self.filename.get()
         content = self.editor.get('1.0', 'end')
 
@@ -85,6 +111,8 @@ class Editor:
         '''Show the editor window initiating edition cleaning the fields and
         recording (in memory) important data from file (as is_new and cb)
         '''
+        self.rebind()
+
         self.is_new = is_new
         self.node = node
         self.call_back = call_back
@@ -98,7 +126,6 @@ class Editor:
             '' if is_new else self.application.get(node)
         )
 
-        self.variable_application.get()
         self.combobox['values'] = list(map(
             lambda v: v.name, self.variable_application.get()
         ))

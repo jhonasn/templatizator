@@ -1,4 +1,5 @@
 '''Service layer module'''
+from abc import ABC
 from domain.model import Variable
 from domain.infrastructure import ProjectNotSetWarning
 
@@ -177,12 +178,27 @@ class VariableService:
         self.save_defaults()
 
 
-class TemplateService:
-    '''Handle template rules'''
-    def __init__(self, repository, file_repository, project_change_event):
+class FileService(ABC):
+    '''Base service class for file model handlers'''
+    def __init__(self, repository, file_repository):
         self.repository = repository
         self.file_repository = file_repository
+
+    def create_child(self, parent, name):
+        '''Add child node into the parent and get correct child path'''
+        return self.repository.create_child(parent, name)
+
+
+class TemplateService(FileService):
+    '''Handle template rules'''
+    def __init__(self, repository, file_repository, project_change_event):
+        super().__init__(repository, file_repository)
         project_change_event.subscribe(self.project_changed)
+
+    def get(self, template):
+        '''Get file content'''
+        self.file_repository.name = template.name
+        return self.file_repository.get()
 
     def project_changed(self, path):
         '''Project path change listener that change repository path when
@@ -190,15 +206,6 @@ class TemplateService:
         '''
         self.file_repository.path = path
         self.repository.path = path
-
-    def create_child(self, parent, name):
-        '''Add child node into the parent and get correct child path'''
-        return self.repository.create_child(parent, name)
-
-    def get(self, template):
-        '''Get template file content'''
-        self.file_repository.name = template.name
-        return self.file_repository.get()
 
     def get_path(self, template):
         '''Get template file path'''
@@ -227,12 +234,16 @@ class TemplateService:
         self.file_repository.drop()
 
 
-class ConfigurableService:
+class ConfigurableService(FileService):
     '''Handle configurable rules'''
     def __init__(self, repository, file_repository, project_change_event):
-        self.repository = repository
-        self.file_repository = file_repository
+        super().__init__(repository, file_repository)
         project_change_event.subscribe(self.project_changed)
+
+    def get(self, configurable):
+        '''Get file content'''
+        self.file_repository.full_path = configurable.path
+        return self.file_repository.get()
 
     def project_changed(self, path):
         '''Project path change listener that change repository path when
@@ -240,3 +251,11 @@ class ConfigurableService:
         '''
         self.repository.path = path
         self.file_repository.path = path
+
+    def get_filename(self, path):
+        '''Get filename from entire path'''
+        return self.repository.get_basename(path)
+
+    def is_child(self, parent_path, filename):
+        '''Verify if filename is a existent file into the parent_path folder'''
+        return self.repository.is_child(parent_path, filename)

@@ -214,11 +214,22 @@ class Window:
                 parent=self.window
             )
             if path:
-                child = self.configurable_application.create_child(
-                    self.node, path
-                )
-                self.configurable_editor.show(child, True,
-                                              self.render_treeview)
+                filename = self.configurable_application.get_filename(path)
+                if not self.configurable_application.is_child(self.node.path,
+                                                              filename):
+                    messagebox.showwarning(
+                        'Atenção',
+                        'Selecione um arquivo dentro da pasta selecionada'
+                    )
+                    self.add_configurable()
+                else:
+                    self.node.open = True
+                    child = self.configurable_application.create_child(
+                        self.node, filename
+                    )
+                    self.render_treeview()
+                    self.configurable_editor.show(child, True,
+                                                  self.render_treeview)
 
     def open_file(self):
         '''Open file with templatizator editor window'''
