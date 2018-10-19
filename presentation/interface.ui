@@ -515,4 +515,138 @@
       </object>
     </child>
   </object>
+  <object class="tk.Toplevel" id="configurable_toplevel">
+    <property name="height">200</property>
+    <property name="title" translatable="yes">[Templatizator] Edição de arquivo configurável</property>
+    <property name="width">200</property>
+    <child>
+      <object class="ttk.Frame" id="configurable_frame">
+        <property name="borderwidth">5</property>
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="configurable_variable_label">
+            <property name="text" translatable="yes">Adicionar variável:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Combobox" id="configurable_variable_combobox">
+            <property name="width">33</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="pygubu.builder.widgets.scrollbarhelper" id="configurable_editor_scroll">
+            <property name="scrolltype">both</property>
+            <property name="usemousewheel">false</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="columnspan">2</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+            <child>
+              <object class="tk.Text" id="configurable_editor_text">
+                <property name="height">10</property>
+                <property name="width">50</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Labelframe" id="template_labelframe">
+            <property name="height">100</property>
+            <property name="text" translatable="yes">Adicionar templates:</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="columnspan">2</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">ew</property>
+              <columns>
+                <column id="0">
+                  <property name="weight">1</property>
+                </column>
+              </columns>
+            </layout>
+            <child>
+              <object class="ttk.Button" id="add_template_button">
+                <property name="text" translatable="yes">Adicionar</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="columnspan">3</property>
+                  <property name="padx">5</property>
+                  <property name="pady">2</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">e</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Frame" id="configurable_buttons_frame">
+            <property name="height">200</property>
+            <property name="width">200</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="columnspan">2</property>
+              <property name="propagate">True</property>
+              <property name="row">3</property>
+              <property name="sticky">se</property>
+            </layout>
+            <child>
+              <object class="ttk.Button" id="configurable_cancel_button">
+                <property name="text" translatable="yes">Cancelar</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="padx">5</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">s</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Button" id="configurable_save_button">
+                <property name="text" translatable="yes">Salvar</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                  <property name="sticky">se</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
 </interface>

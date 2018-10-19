@@ -29,7 +29,8 @@ class Container:
         Container.configurable_editor = ConfigurableEditor(
             builder,
             DomainContainer.configurable_file_application,
-            DomainContainer.variable_application
+            DomainContainer.variable_application,
+            DomainContainer.template_application
         )
         Container.window = Window(
             builder,

@@ -200,6 +200,10 @@ class TemplateService(FileService):
         self.file_repository.name = template.name
         return self.file_repository.get()
 
+    def get_all(self):
+        '''Get all templates'''
+        return self.repository.get()
+
     def project_changed(self, path):
         '''Project path change listener that change repository path when
         project path is changed
