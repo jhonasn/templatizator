@@ -1,4 +1,5 @@
 '''Handler for editor window'''
+from copy import copy
 from difflib import SequenceMatcher
 from tkinter.ttk import Checkbutton
 from presentation.window import Window
@@ -8,6 +9,7 @@ from presentation.window import Window
 # pylint: disable=too-many-instance-attributes
 class ConfigurableEditor:
     '''Configurable editor window class handler'''
+    # pylint: disable=too-many-locals
     def __init__(self, builder, application, variable_application,
                  template_application):
         self.application = application
@@ -42,10 +44,20 @@ class ConfigurableEditor:
         self.dialog.resizable(False, False)
         self.dialog.withdraw()
 
-        for index, template in enumerate(self.template_application.get_all()):
+        all_templates = self.template_application.get_all()
+        select_all_template = copy(all_templates[0])
+        select_all_template.name = 'Todos'
+        all_templates.insert(0, select_all_template)
+        for index, template in enumerate(all_templates):
             row, col = int(index / 3), index % 3
             check = Checkbutton(template_frame, name=str(index),
                                 text=template.name)
+            # deselect checkbox
+            check.invoke()
+            check.invoke()
+            if (index == 0):
+                check['command'] = self.checkbox_all_selected
+
             check.grid(row=row, column=col)
             self.templates.append(check)
             check.grid_forget()
@@ -73,14 +85,15 @@ class ConfigurableEditor:
     # pylint: disable=unused-argument
     def key_press(self, event):
         '''Block the user to edit original file content'''
+        next_char = self.editor.get('insert', 'insert+1c')
         # allow navigation keys
-        if event.keysym in ['Left', 'Right']:
+        if event.keysym in ['Left', 'Right', 'Up', 'Down', 'Home', 'End']:
             return None
-        # cursor moved line
-        if event.keysym in ['Up', 'Down']:
-            self.change_template_options()
         # block
         if self.current_line not in self.template_lines:
+            return 'break'
+        # block, prevent join template lines with template content
+        if event.keysym == 'Delete' and next_char == '\n':
             return 'break'
         if event.keysym == 'Return':
             self.template_lines.append(self.current_line + 1)
@@ -104,8 +117,17 @@ class ConfigurableEditor:
         self.change_template_options()
 
     def key_pressed(self, event):
-        '''Update editor painted lines when key is pressed'''
+        '''Update editor painted lines and template control when key is pressed
+        '''
         self.paint()
+        # show/hide template line options
+        if event.keysym in ['Up', 'Down']:
+            self.change_template_options()
+
+    def checkbox_all_selected(self):
+        '''Verify if all checkbutton was selected'''
+        print('is checkbox all selected?', 'selected' in self.templates[0].state())
+
 
     def add_template(self):
         '''Add a template line and show template options'''
