@@ -3,6 +3,7 @@ from copy import copy
 from difflib import SequenceMatcher
 from tkinter.ttk import Checkbutton
 from presentation.window import Window
+from domain.model import Template
 
 
 # as a window handler it's necessary to record lots of attributes
@@ -45,7 +46,7 @@ class ConfigurableEditor:
         self.dialog.withdraw()
 
         all_templates = self.template_application.get_all()
-        select_all_template = copy(all_templates[0])
+        select_all_template = Template()
         select_all_template.name = 'Todos'
         all_templates.insert(0, select_all_template)
         for index, template in enumerate(all_templates):
