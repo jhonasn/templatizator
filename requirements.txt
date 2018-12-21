@@ -1,6 +1,6 @@
 pygubu==0.9.8.2
 # dev dependency
-#pyinstall==0.1.4
+pyinstall==0.1.4
 # Linux only:
-#ttkthemes==2.1.0
+ttkthemes==2.1.0
 

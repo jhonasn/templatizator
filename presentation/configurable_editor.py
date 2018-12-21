@@ -195,7 +195,6 @@ class ConfigurableEditor:
             ))
 
         self.dialog.transient(self.window)
-        Window.center(self.dialog)
         self.dialog.deiconify()
 
         self.editor.mark_set('insert', '1.0')

@@ -105,7 +105,7 @@ class Editor:
         ))
 
         self.dialog.transient(self.window)
-        Window.center(self.dialog)
+        #Window.center(self.dialog)
         self.dialog.deiconify()
 
         if is_new:
