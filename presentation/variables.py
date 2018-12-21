@@ -1,12 +1,13 @@
 '''Handler for variables section into the main window'''
 from tkinter import messagebox
 from domain.infrastructure import ProjectNotSetWarning
-from presentation.helper import get_tkinter_unicode
+from presentation.helper import get_tkinter_unicode, is_unicode_available
 from presentation.widgets import Tooltip
 
-ADD_ICON = get_tkinter_unicode('\U00002795')
-REMOVE_ICON = get_tkinter_unicode('\U0000274C')
-SAVE_ICON = get_tkinter_unicode('\U0001F4BE')
+icons = is_unicode_available('💾')
+ADD_ICON = get_tkinter_unicode('➕')
+REMOVE_ICON = get_tkinter_unicode('❌')
+SAVE_ICON = get_tkinter_unicode('💾' if icons else '✔')
 
 
 # as a window section handler it's necessary to record lots of attributes

@@ -9,7 +9,7 @@ from tkinter import filedialog, messagebox, Menu
 from domain.infrastructure import ProjectNotSetWarning
 from domain.model import Directory, File, Template, ConfigurableFile
 from domain.helper import OS
-from presentation.helper import get_tkinter_unicode
+from presentation.helper import get_tkinter_unicode, is_unicode_available
 from presentation.widgets import Tooltip
 
 
@@ -22,6 +22,8 @@ class Window:
         self.application = application
         self.template_application = template_application
         self.configurable_application = configurable_application
+
+        self.icons = is_unicode_available('📂')
 
         # selected node
         self.node = None
@@ -71,16 +73,18 @@ class Window:
             self.label['project']['text'] = self.filetree.path
             self.render_treeview()
 
-    @classmethod
-    def get_filetree_icon(cls, node):
+    def get_filetree_icon(self, node):
         '''Get filetree icon according the filetree node type'''
         icon = ''
         if isinstance(node, Directory):
-            icon = '\U0001F4C2' if node.open else '\U0001F4C1'
+            if self.icons:
+                icon = '📁' if node.open else '📂'
+            else:
+                icon = '⌸' if node.open else '⌹'
         if isinstance(node, Template):
-            icon = '\U0001F5CB'
+            icon = '🗋' if self.icons else '⛁'
         if isinstance(node, ConfigurableFile):
-            icon = '\U0001F5CE'
+            icon = '🗎' if self.icons else '⚙'
         return get_tkinter_unicode(icon)
 
     @classmethod
@@ -88,7 +92,7 @@ class Window:
         '''Get filetree icon for action (include or delete)
         according the filetree node type
         '''
-        icon = '\U00002795' if isinstance(node, Directory) else '\U0000274C'
+        icon = '➕' if isinstance(node, Directory) else '❌'
         return get_tkinter_unicode(icon)
 
     @classmethod
@@ -100,7 +104,7 @@ class Window:
         '''
         icon = ''
         if isinstance(node, File):
-            icon = '\U00002611' if node.save else '\U00002612'
+            icon = '☑' if node.save else '☒'
         return get_tkinter_unicode(icon)
 
     def render_treeview(self):
