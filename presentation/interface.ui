@@ -577,40 +577,6 @@
           </object>
         </child>
         <child>
-          <object class="ttk.Labelframe" id="template_labelframe">
-            <property name="height">100</property>
-            <property name="text" translatable="yes">Adicionar templates:</property>
-            <property name="width">200</property>
-            <layout>
-              <property name="column">0</property>
-              <property name="columnspan">2</property>
-              <property name="pady">5</property>
-              <property name="propagate">True</property>
-              <property name="row">2</property>
-              <property name="sticky">ew</property>
-              <columns>
-                <column id="0">
-                  <property name="weight">1</property>
-                </column>
-              </columns>
-            </layout>
-            <child>
-              <object class="ttk.Button" id="add_template_button">
-                <property name="text" translatable="yes">Adicionar</property>
-                <layout>
-                  <property name="column">0</property>
-                  <property name="columnspan">3</property>
-                  <property name="padx">5</property>
-                  <property name="pady">2</property>
-                  <property name="propagate">True</property>
-                  <property name="row">0</property>
-                  <property name="sticky">e</property>
-                </layout>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
           <object class="ttk.Frame" id="configurable_buttons_frame">
             <property name="height">200</property>
             <property name="width">200</property>

@@ -1,6 +1,4 @@
 '''Handler for editor window'''
-from presentation.window import Window
-
 
 # as a window handler it's necessary to record lots of attributes
 # pylint: disable=too-many-instance-attributes
@@ -105,7 +103,6 @@ class Editor:
         ))
 
         self.dialog.transient(self.window)
-        #Window.center(self.dialog)
         self.dialog.deiconify()
 
         if is_new:
