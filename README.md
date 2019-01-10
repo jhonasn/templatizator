@@ -47,6 +47,6 @@ We have only two windows in this app:
     - [ ] Implement diff
     > In these files we'll can put placeholders to the project templates. Each time when we open this configurable file the system will diff the file to fix it when changed and different from the configurable template. The editor will let the user to add all or select which templates that will be added to the placeholders and how each template will populate the file. The app must detect when the templates are already added to the file and not duplicate.
   > In that way we don't need to make a new GUI nor a implementation for every type of file (for ex.: json, xml, yml, etc).
-- [ ] Make all strigs translatable
+- [ ] Make all strings translatable
 - [ ] Diff project filetree folder structure
 
