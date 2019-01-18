@@ -4,7 +4,7 @@ import json
 from abc import ABC
 
 from domain.infrastructure import RepositoryPathNotSetError
-from domain.model import Serializable, Project, Directory, Template, \
+from domain.domain import Serializable, Project, Directory, Template, \
     ConfigurableFile, Variable
 
 
@@ -42,6 +42,8 @@ class FileRepository(ABC):
             else type(self).name
         if self.path and name:
             return os.path.join(self.path, self.name)
+        elif self.path:
+            return self.path
 
         return None
 
@@ -177,7 +179,7 @@ class JsonRepository(FileRepository):
         self.save(collection)
 
     def remove(self, expression):
-        '''Remove model from model collection according expression'''
+        '''Remove model from domain collection according expression'''
         collection = self.get()
         model = self.first(expression, collection)
         if model:

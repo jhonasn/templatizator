@@ -1,6 +1,6 @@
 '''Handler for cofigurable editor window'''
 from copy import copy
-from domain.model import Template
+from domain.domain import Template
 
 
 # as a window handler it's necessary to record lots of attributes
@@ -56,10 +56,14 @@ class ConfigurableEditor:
         '''Save the configurable calling application layer and after call
         the callback passed from main window
         '''
+        content = self.editor.get('1.0', 'end')
+
+        # remove automatically tk added break line in the content
+        content = content[0:-1]
         if self.is_new:
-            self.application.add(self.node)
+            self.application.add(self.node, content)
         else:
-            self.application.save(self.node)
+            self.application.save_file(self.node, None, content)
 
         self.call_back()
         self.dialog.withdraw()

@@ -1,5 +1,5 @@
 '''Application layer module'''
-from domain.model import Variable
+from domain.domain import Variable
 from abc import ABC
 
 
@@ -77,6 +77,22 @@ class FileApplication(ABC):
         '''
         return self.service.create_child(parent, name)
 
+    def add(self, file_node, content):
+        '''Add file node and file'''
+        self.service.add(file_node, content)
+
+    def save(self, file_node):
+        '''Save file node state'''
+        self.service.save(file_node)
+
+    def save_file(self, file_node, new_name, content):
+        '''Save file node and file renaming it if necessary'''
+        self.service.save_file(file_node, new_name, content)
+
+    def remove(self, file_node):
+        '''Remove file node and delete file'''
+        self.service.remove(file_node)
+
 
 class TemplateApplication(FileApplication):
     '''Exposes template crud actions'''
@@ -87,22 +103,6 @@ class TemplateApplication(FileApplication):
     def get_all(self):
         '''Get all templates'''
         return self.service.get_all()
-
-    def add(self, template, content):
-        '''Add template and template file'''
-        self.service.add(template, content)
-
-    def save(self, template):
-        '''Save template state'''
-        self.service.save(template)
-
-    def save_file(self, template, new_name, content):
-        '''Save template and template file renaming it if necessary'''
-        self.service.save_file(template, new_name, content)
-
-    def remove(self, template):
-        '''Remove template and delete template file'''
-        self.service.remove(template)
 
 
 class ConfigurableFileApplication(FileApplication):

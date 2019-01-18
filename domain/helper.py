@@ -42,6 +42,10 @@ class OS:
         except Exception:
             return False
 
+    @staticmethod
+    def get_default_path(path):
+        return os.path.normpath(path)
+
 
 class Event:
     '''Help different classes to communicate with each other using instances

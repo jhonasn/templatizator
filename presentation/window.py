@@ -7,7 +7,7 @@
 '''
 from tkinter import filedialog, messagebox, Menu
 from domain.infrastructure import ProjectNotSetWarning
-from domain.model import Directory, File, Template, ConfigurableFile
+from domain.domain import Directory, File, Template, ConfigurableFile
 from domain.helper import OS
 from presentation.helper import get_tkinter_unicode, is_unicode_available
 from presentation.widgets import Tooltip
@@ -304,6 +304,8 @@ class Window:
                 self.node.save = not self.node.save
                 if isinstance(node, Template):
                     self.template_application.save(self.node)
+                elif isinstance(node, ConfigurableFile):
+                    self.configurable_application.save(self.node)
                 self.render_treeview()
             else:
                 self.open_file()

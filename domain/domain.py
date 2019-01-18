@@ -1,11 +1,11 @@
-'''Model set module'''
+'''Domain set module'''
 from abc import ABC, abstractmethod
 
 
 # Just one method contract required
 # pylint: disable=too-few-public-methods
 class Serializable(ABC):
-    '''Base class for serializable classes (all models must be)'''
+    '''Base class for serializable classes (all domains must be)'''
     @abstractmethod
     def serialize(self):
         '''Contract method to serialize object'''

@@ -1,7 +1,8 @@
 '''Service layer module'''
 from abc import ABC
-from domain.model import Variable
+from domain.domain import Variable
 from domain.infrastructure import ProjectNotSetWarning
+from domain.helper import OS
 
 
 class ConfigurationService:
@@ -109,16 +110,18 @@ class ProjectService:
         if not local_path:
             raise ProjectNotSetWarning
 
+        # save templates into the project
         prev_name = self.template_file_repository.name
         for template in self.template_repository.get():
             if template.save:
                 self.template_file_repository.path = local_path
                 self.template_file_repository.name = template.name
+
                 content = self.template_file_repository.get()
                 content = self.replace_variables(content)
+
                 self.template_file_repository.path = \
-                    self.configuration_repository.get_parent_path(
-                        template.path)
+                    self.configuration_repository.get_parent_path(template.path)
                 self.template_file_repository.name = \
                     self.replace_variables(template.name)
                 self.template_file_repository.save(content)
@@ -126,7 +129,67 @@ class ProjectService:
         self.template_file_repository.path = local_path
         self.template_file_repository.name = prev_name
 
-        # TODO: implement configurable files save here too
+        # save configurable files into the project
+        prev_name = self.configurable_file_repository.name
+        for configurable in self.configurable_repository.get():
+            if configurable.save:
+                self.configurable_file_repository.path = local_path
+                self.configurable_file_repository.name = configurable.name
+
+                content = self.configurable_file_repository.get()
+
+                templates = self.template_repository.get()
+
+                for index, template in enumerate(templates):
+                    is_last_template = (index + 1) == len(templates)
+                    # reserve space in all templates
+                    reserved_content = ''
+                    for line in content.splitlines():
+                        if line.find('[template.All.name]') > -1 \
+                            or line.find('[template.All.path]') > -1:
+                            #import pdb;pdb.set_trace()
+                            prev_line = line
+                            line = line.replace(
+                                f'[template.All.name]',
+                                f'[template.{template.name}.name]'
+                            )
+                            line = line.replace(
+                                f'[template.All.path]',
+                                f'[template.{template.name}.path]'
+                            )
+                            if not is_last_template:
+                                line += f'\n{prev_line}'
+
+                        reserved_content += line + '\n'
+
+                    content = reserved_content
+                    content = self.replace_variables(content)
+
+                    template.name = self.replace_variables(template.name)
+
+                    # replace specific template
+                    content = content.replace(
+                        f'[template.{template.name}.name]',
+                        template.name
+                    )
+                    content = content.replace(
+                        f'[template.{template.name}.path]',
+                        OS.get_default_path(template.path)
+                    )
+
+                # save new content into the template
+                self.configurable_file_repository.name = configurable.name
+                self.configurable_file_repository.save(content)
+
+                # save new content to the configurable
+                self.configurable_file_repository.path = \
+                    self.configuration_repository.get_parent_path(
+                        configurable.path)
+                self.configurable_file_repository.save(content)
+
+
+        self.configurable_file_repository.path = local_path
+        self.configurable_file_repository.name = prev_name
 
 
 class VariableService:
@@ -188,6 +251,29 @@ class FileService(ABC):
         '''Add child node into the parent and get correct child path'''
         return self.repository.create_child(parent, name)
 
+    def add(self, file_node, content):
+        '''Add file node with content in the hard disk'''
+        self.repository.add(file_node)
+        self.file_repository.name = file_node.name
+        self.file_repository.save(content)
+
+    def save(self, file_node):
+        '''Save file node state'''
+        self.repository.update(file_node, file_node.name)
+
+    def save_file(self, file_node, new_name, content):
+        '''Write file node in the hard disk and rename if necessary'''
+        if not new_name:
+            new_name = file_node.name
+        self.repository.update(file_node, new_name)
+        self.file_repository.save_file(file_node.name, new_name, content)
+
+    def remove(self, template):
+        '''Removes file node from collection and its file'''
+        self.repository.remove_node(template)
+        self.file_repository.name = template.name
+        self.file_repository.drop()
+
 
 class TemplateService(FileService):
     '''Handle template rules'''
@@ -216,27 +302,6 @@ class TemplateService(FileService):
         self.repository.name = template.name
         return self.repository.full_path
 
-    def add(self, template, content):
-        '''Add file with content in the hard disk'''
-        self.repository.add(template)
-        self.file_repository.name = template.name
-        self.file_repository.save(content)
-
-    def save(self, template):
-        '''Save template state'''
-        self.repository.update(template, template.name)
-
-    def save_file(self, template, new_name, content):
-        '''Write file in the hard disk and rename if necessary'''
-        self.repository.update(template, new_name)
-        self.file_repository.save_file(template.name, new_name, content)
-
-    def remove(self, template):
-        '''Removes template from collection and its file'''
-        self.repository.remove_node(template)
-        self.file_repository.name = template.name
-        self.file_repository.drop()
-
 
 class ConfigurableService(FileService):
     '''Handle configurable rules'''
@@ -246,8 +311,20 @@ class ConfigurableService(FileService):
 
     def get(self, configurable):
         '''Get file content'''
-        self.file_repository.full_path = configurable.path
-        return self.file_repository.get()
+        previous_path = self.file_repository.path
+
+        is_new = not self.repository.filter(
+            lambda c: c.path == configurable.path
+        )
+
+        if is_new:
+            self.file_repository.path = configurable.path
+        else:
+            self.file_repository.name = configurable.name
+
+        content = self.file_repository.get()
+        self.file_repository.path = previous_path
+        return content
 
     def project_changed(self, path):
         '''Project path change listener that change repository path when
