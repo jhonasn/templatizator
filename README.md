@@ -48,13 +48,8 @@ We have only two windows in this app:
     > Diff is not necessary anymore since after we save the file the template of configurable is updated too.
 
     > In these files we'll can put placeholders to the project templates. The editor will let the user to add all or select which templates that will be added to the file placing placeholders that will be replaced when the user save the project. After saved the configurable will continue in the project but the content will be replaced in the "template" of configurable file, reflecting the same state of original file.
+
   > In that way we don't need to make a new GUI nor a implementation for every type of file (for ex.: json, xml, yml, etc).
-<<<<<<< HEAD
 - [ ] Make all strigs translatable
 - [x] ~~Diff project filetree folder structure~~
 > Not necessary anymore since the way that templates are saved and load tree structure changed. (before the tree was saved entirely in to the program, now we just save the templates and say where they are in the tree, if the folder they are match in the tree then they are shown otherwise not)
-=======
-- [ ] Make all strings translatable
-- [ ] Diff project filetree folder structure
-
->>>>>>> ab1387b0f565516c0359df4e02acd455e17546e5
