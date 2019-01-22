@@ -1,3 +1,7 @@
+# TEMPLATIZATOR.
+# Copyright (C) 2019 JHONASN
+# Jhonas Nascimento <jhonasn@gmail.com>, 2019.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
