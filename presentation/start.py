@@ -2,7 +2,7 @@
 import pygubu
 
 # add ttkstdwidgets to build pygubu package
-# from pygubu.builder import ttkstdwidgets
+from pygubu.builder import ttkstdwidgets
 
 from domain.helper import OS
 from presentation.container import Container

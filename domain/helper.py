@@ -10,6 +10,8 @@ class OS:
     is_windows = False
     is_mac = False
 
+    is_bundled_project = False
+
     def __init__(self):
         raise Exception('Static class is not instantiable')
 
@@ -45,6 +47,20 @@ class OS:
     @staticmethod
     def get_default_path(path):
         return os.path.normpath(path)
+
+    @staticmethod
+    def set_current_directory():
+        current_directory = None
+        # verify if project is bundled
+        if getattr(sys, 'frozen', False):
+            current_directory = sys._MEIPASS
+            OS.is_bundled_project = True
+        else:
+            current_directory = os.path.abspath(os.path.dirname(
+                os.path.dirname(__file__)
+            ))
+
+        os.chdir(current_directory)
 
 
 class Event:
