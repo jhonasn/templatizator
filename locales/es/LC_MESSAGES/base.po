@@ -111,11 +111,17 @@ msgstr "Seleccione el archivo configurable:"
 msgid "Select a file inside the selected folder"
 msgstr "Seleccione un archivo dentro de la carpeta seleccionada"
 
+msgid "configurable file"
+msgstr "archivo configurable"
+
+msgid "template"
+msgstr "plantilla"
+
 msgid "Question:"
 msgstr "Pregunta:"
 
 msgid "Did you sure that you want to remove the {name}?"
-msgstr "¿Está seguro de que desea eliminar el {nombre}?"
+msgstr "¿Está seguro de que desea eliminar el {name}?"
 
 msgid "Save it in the project?"
 msgstr "¿Guardar en el proyecto?"

@@ -111,6 +111,12 @@ msgstr "Selecione o arquivo configurável primeiramente"
 msgid "Select a file inside the selected folder"
 msgstr "Selecione um arquivo dentro da pasta selecionada"
 
+msgid "configurable file"
+msgstr "arquivo configurável"
+
+msgid "template"
+msgstr "template"
+
 msgid "Question:"
 msgstr "Pergunta:"
 

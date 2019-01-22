@@ -269,10 +269,12 @@ class Window:
     def remove_file(self):
         '''Remove file: template or configurable'''
         is_template = isinstance(self.node, Template)
-        name = 'template' if is_template else 'configurable file'
+        name = _('template') if is_template else _('configurable file')
         if messagebox.askyesno(
                 _('Question:'),
-                _('Did you sure that you want to remove the {name}?')
+                _('Did you sure that you want to remove the {name}?').format(
+                    name=name
+                )
         ):
             if is_template:
                 self.template_application.remove(self.node)

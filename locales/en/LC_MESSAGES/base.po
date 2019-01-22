@@ -111,6 +111,12 @@ msgstr ""
 msgid "Select a file inside the selected folder"
 msgstr ""
 
+msgid "configurable file"
+msgstr ""
+
+msgid "template"
+msgstr ""
+
 msgid "Question:"
 msgstr ""
 
