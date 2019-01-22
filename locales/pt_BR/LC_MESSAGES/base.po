@@ -1,0 +1,133 @@
+# TEMPLATIZATOR.
+# Copyright (C) 2019 JHONASN
+# Jhonas Nascimento <jhonasn@gmail.com>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"POT-Creation-Date: 2019-01-22 14:24-0200\n"
+"PO-Revision-Date: 2019-01-22 14:24-0200\n"
+"Last-Translator: Jhonas Nascimento <jhonasn@gmail.com>\n"
+"Language-Team: PORTUGUESE (BRAZIL) <jhonasn@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+msgid "[Templatizator] Configurable file editing"
+msgstr "[Templatizator] Edição de arquivo configurável"
+
+msgid "Add variable:"
+msgstr "Adicionar variável:"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Save"
+msgstr "Salvar"
+
+msgid "[Templatizator] Template editing"
+msgstr "[Templatizator] Edição de template"
+
+msgid "File name:"
+msgstr "Nome do arquivo:"
+
+msgid "Add"
+msgstr "Adicionar"
+
+msgid "Remove"
+msgstr "Remover"
+
+msgid "Name:"
+msgstr "Nome:"
+
+msgid "Value:"
+msgstr "Valor:"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Value"
+msgstr "Valor"
+
+msgid "Warning"
+msgstr "Atenção"
+
+msgid "Fill variable name and value"
+msgstr "Preencha o nome e valor da variável"
+
+msgid "Select a project first"
+msgstr "Selecione um projeto primeiramente"
+
+msgid "Add template"
+msgstr "Adicionar template"
+
+msgid "Add configurable file"
+msgstr "Adicionar arquivo configurável"
+
+msgid "Open"
+msgstr "Abrir"
+
+msgid "Open with..."
+msgstr "Abrir com"
+
+msgid "Save templates on:"
+msgstr "Salvar templates em:"
+
+msgid "Project:"
+msgstr "Projeto:"
+
+msgid "Replacement variables:"
+msgstr "Variáveis de substituição"
+
+msgid "Selected project:"
+msgstr "Projeto selecionado:"
+
+msgid "Select a directory..."
+msgstr "Selecione um diretório..."
+
+msgid "Select"
+msgstr "Selecione"
+
+msgid "Save templates in the project"
+msgstr "Salvar templates no projeto"
+
+msgid "Select the project directory:"
+msgstr "Selecione o diretório do projeto:"
+
+msgid "Select the directory where the templates will be saved:"
+msgstr "Selecione o diretório onde os templates serão salvos:"
+
+msgid "new_template.[ext]"
+msgstr "novo_template.[ext]"
+
+msgid "Select where to save the templates first"
+msgstr "Selecione onde salvar os templates primeiramente"
+
+msgid "Select the configurable file:"
+msgstr "Selecione o arquivo configurável primeiramente"
+
+msgid "Select a file inside the selected folder"
+msgstr "Selecione um arquivo dentro da pasta selecionada"
+
+msgid "Question:"
+msgstr "Pergunta:"
+
+msgid "Did you sure that you want to remove the {name}?"
+msgstr "Você tem certeza que deseja remover o {name}?"
+
+msgid "Save it in the project?"
+msgstr "Salvar no projeto?"
+
+msgid "Templates saved successfully in the project!"
+msgstr "Templates salvos no projeto com sucesso!"
+
+msgid "Do you want to open the project folder?"
+msgstr "Deseja abrir a pasta do projeto?"
+
+msgid "Error"
+msgstr "Erro"
+
+msgid "It was not possible to save the templates in the project"
+msgstr "Não foi possivel salvar os templates no projeto"

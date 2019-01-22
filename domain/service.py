@@ -145,9 +145,8 @@ class ProjectService:
                     # reserve space in all templates
                     reserved_content = ''
                     for line in content.splitlines():
-                        if line.find('[template.All.name]') > -1 \
-                            or line.find('[template.All.path]') > -1:
-                            #import pdb;pdb.set_trace()
+                        if (line.find('[template.All.name]') > -1
+                            or line.find('[template.All.path]') > -1):
                             prev_line = line
                             line = line.replace(
                                 f'[template.All.name]',
@@ -163,18 +162,20 @@ class ProjectService:
                         reserved_content += line + '\n'
 
                     content = reserved_content
-                    content = self.replace_variables(content)
 
-                    template.name = self.replace_variables(template.name)
+                    template_name = self.replace_variables(template.name)
+                    template_path = self.replace_variables(OS.get_default_path(
+                        template.path
+                    ))
 
                     # replace specific template
                     content = content.replace(
                         f'[template.{template.name}.name]',
-                        template.name
+                        template_name
                     )
                     content = content.replace(
                         f'[template.{template.name}.path]',
-                        OS.get_default_path(template.path)
+                        template_path
                     )
 
                 # save new content into the template
@@ -300,7 +301,7 @@ class TemplateService(FileService):
     def get_path(self, template):
         '''Get template file path'''
         self.repository.name = template.name
-        return self.repository.full_path
+        return OS.get_default_path(self.repository.full_path)
 
 
 class ConfigurableService(FileService):

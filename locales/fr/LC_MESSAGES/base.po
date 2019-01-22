@@ -1,0 +1,129 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"POT-Creation-Date: 2019-01-22 14:24-0200\n"
+"PO-Revision-Date: 2019-01-22 14:24-0200\n"
+"Last-Translator: Jhonas Nascimento <jhonasn@gmail.com>\n"
+"Language-Team: FRENCH <jhonasn@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+msgid "[Templatizator] Configurable file editing"
+msgstr "[Templatizator] Edition de fichier configurable"
+
+msgid "Add variable:"
+msgstr "Ajouter une variable:"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "[Templatizator] Template editing"
+msgstr "[Templatizator] Édition de modèle"
+
+msgid "File name:"
+msgstr "Nom du fichier:"
+
+msgid "Add"
+msgstr "Ajouter"
+
+msgid "Remove"
+msgstr "Supprimer"
+
+msgid "Name:"
+msgstr "Nom:"
+
+msgid "Value:"
+msgstr "Valeur:"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Value"
+msgstr "Valeur"
+
+msgid "Warning"
+msgstr "Attention"
+
+msgid "Fill variable name and value"
+msgstr "Remplir le nom et la valeur de la variable"
+
+msgid "Select a project first"
+msgstr "Sélectionner d'abord un projet"
+
+msgid "Add template"
+msgstr "Ajouter un modèle"
+
+msgid "Add configurable file"
+msgstr "Ajouter un fichier configurable"
+
+msgid "Open"
+msgstr "Ouvrir"
+
+msgid "Open with..."
+msgstr "Ouvrir avec..."
+
+msgid "Save templates on:"
+msgstr "Enregistrer les modèles sur:"
+
+msgid "Project:"
+msgstr "Projet:"
+
+msgid "Replacement variables:"
+msgstr "Variables de remplacement:"
+
+msgid "Selected project:"
+msgstr "Projet sélectionné:"
+
+msgid "Select a directory..."
+msgstr "Choisir un répertoire..."
+
+msgid "Select"
+msgstr "Sélectionner"
+
+msgid "Save templates in the project"
+msgstr "Enregistrer les modèles dans le projet"
+
+msgid "Select the project directory:"
+msgstr "Sélectionnez le répertoire du projet:"
+
+msgid "Select the directory where the templates will be saved:"
+msgstr "Sélectionnez le répertoire où les modèles seront sauvegardés:"
+
+msgid "new_template.[ext]"
+msgstr "nouveau_modele.[ext]"
+
+msgid "Select where to save the templates first"
+msgstr "Sélectionner où enregistrer les modèles en premier"
+
+msgid "Select the configurable file:"
+msgstr "Sélectionnez le fichier configurable:"
+
+msgid "Select a file inside the selected folder"
+msgstr "Sélectionner un fichier dans le dossier sélectionné"
+
+msgid "Question:"
+msgstr "Question:"
+
+msgid "Did you sure that you want to remove the {name}?"
+msgstr "Voulez-vous vraiment supprimer le {nom}?"
+
+msgid "Save it in the project?"
+msgstr "Enregistrer dans le projet?"
+
+msgid "Templates saved successfully in the project!"
+msgstr "Modèles enregistrés avec succès dans le projet!"
+
+msgid "Do you want to open the project folder?"
+msgstr "Voulez-vous ouvrir le dossier du projet?"
+
+msgid "Error"
+msgstr "Erreur"
+
+msgid "It was not possible to save the templates in the project"
+msgstr "Il n’a pas été possible d’enregistrer les modèles dans le projet"

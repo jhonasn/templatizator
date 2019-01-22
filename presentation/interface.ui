@@ -29,7 +29,6 @@
         <child>
           <object class="ttk.Labelframe" id="configuration_labelframe">
             <property name="height">50</property>
-            <property name="text" translatable="yes">Salvar templates em:</property>
             <property name="width">365</property>
             <layout>
               <property name="column">0</property>
@@ -52,7 +51,6 @@
                 <property name="padding">3</property>
                 <property name="relief">sunken</property>
                 <property name="takefocus">true</property>
-                <property name="text" translatable="yes">Selecione um diretório...</property>
                 <layout>
                   <property name="column">0</property>
                   <property name="padx">4</property>
@@ -64,7 +62,6 @@
             </child>
             <child>
               <object class="ttk.Button" id="configuration_file_button">
-                <property name="text" translatable="yes">Selecione</property>
                 <layout>
                   <property name="column">1</property>
                   <property name="padx">4</property>
@@ -79,7 +76,6 @@
         <child>
           <object class="ttk.Labelframe" id="project_labelframe">
             <property name="height">50</property>
-            <property name="text" translatable="yes">Projeto:</property>
             <property name="width">365</property>
             <layout>
               <property name="column">0</property>
@@ -104,7 +100,6 @@
                 <property name="padding">3</property>
                 <property name="relief">sunken</property>
                 <property name="takefocus">true</property>
-                <property name="text" translatable="yes">Selecione um diretório...</property>
                 <layout>
                   <property name="column">0</property>
                   <property name="padx">4</property>
@@ -116,7 +111,6 @@
             </child>
             <child>
               <object class="ttk.Button" id="project_file_button">
-                <property name="text" translatable="yes">Selecione</property>
                 <layout>
                   <property name="column">1</property>
                   <property name="padx">4</property>
@@ -131,7 +125,6 @@
         <child>
           <object class="ttk.Labelframe" id="variables_labelframe">
             <property name="height">200</property>
-            <property name="text" translatable="yes">Variáveis de substituição:</property>
             <property name="width">365</property>
             <layout>
               <property name="column">0</property>
@@ -156,8 +149,7 @@
               </columns>
             </layout>
             <child>
-              <object class="ttk.Label" id="Label_3">
-                <property name="text" translatable="yes">Nome:</property>
+              <object class="ttk.Label" id="variable_name_label">
                 <layout>
                   <property name="column">0</property>
                   <property name="padx">5</property>
@@ -181,8 +173,7 @@
               </object>
             </child>
             <child>
-              <object class="ttk.Label" id="Label_4">
-                <property name="text" translatable="yes">Valor:</property>
+              <object class="ttk.Label" id="variable_value_label">
                 <layout>
                   <property name="column">1</property>
                   <property name="propagate">True</property>
@@ -256,7 +247,6 @@
                         <property name="heading_anchor">w</property>
                         <property name="minwidth">0</property>
                         <property name="stretch">true</property>
-                        <property name="text" translatable="yes">Nome</property>
                         <property name="tree_column">false</property>
                         <property name="visible">true</property>
                         <property name="width">150</property>
@@ -267,7 +257,6 @@
                         <property name="column_anchor">w</property>
                         <property name="minwidth">0</property>
                         <property name="stretch">true</property>
-                        <property name="text" translatable="yes">Valor</property>
                         <property name="tree_column">false</property>
                         <property name="visible">true</property>
                         <property name="width">160</property>
@@ -293,7 +282,6 @@
         <child>
           <object class="ttk.Labelframe" id="project_selected_labelframe">
             <property name="height">300</property>
-            <property name="text" translatable="yes">Projeto selecionado:</property>
             <property name="width">365</property>
             <layout>
               <property name="column">0</property>
@@ -376,7 +364,6 @@
         <child>
           <object class="ttk.Button" id="templates_save_button">
             <property name="takefocus">false</property>
-            <property name="text" translatable="yes">Salvar templates no projeto</property>
             <layout>
               <property name="column">0</property>
               <property name="pady">5</property>
@@ -391,7 +378,6 @@
   </object>
   <object class="tk.Toplevel" id="editor_toplevel">
     <property name="height">200</property>
-    <property name="title" translatable="yes">[Templatizator] Edição de template</property>
     <property name="width">200</property>
     <child>
       <object class="ttk.Frame" id="editor_frame">
@@ -405,7 +391,6 @@
         </layout>
         <child>
           <object class="ttk.Label" id="editor_filename_label">
-            <property name="text" translatable="yes">Nome arquivo:</property>
             <property name="width">14</property>
             <layout>
               <property name="column">0</property>
@@ -431,7 +416,6 @@
         </child>
         <child>
           <object class="ttk.Label" id="editor_variable_label">
-            <property name="text" translatable="yes">Adicionar variável:</property>
             <layout>
               <property name="column">0</property>
               <property name="pady">5</property>
@@ -489,7 +473,6 @@
             </layout>
             <child>
               <object class="ttk.Button" id="editor_cancel_button">
-                <property name="text" translatable="yes">Cancelar</property>
                 <layout>
                   <property name="column">0</property>
                   <property name="padx">5</property>
@@ -501,7 +484,6 @@
             </child>
             <child>
               <object class="ttk.Button" id="editor_save_button">
-                <property name="text" translatable="yes">Salvar</property>
                 <layout>
                   <property name="column">1</property>
                   <property name="propagate">True</property>
@@ -517,7 +499,6 @@
   </object>
   <object class="tk.Toplevel" id="configurable_toplevel">
     <property name="height">200</property>
-    <property name="title" translatable="yes">[Templatizator] Edição de arquivo configurável</property>
     <property name="width">200</property>
     <child>
       <object class="ttk.Frame" id="configurable_frame">
@@ -531,7 +512,6 @@
         </layout>
         <child>
           <object class="ttk.Label" id="configurable_variable_label">
-            <property name="text" translatable="yes">Adicionar variável:</property>
             <layout>
               <property name="column">0</property>
               <property name="pady">5</property>
@@ -589,7 +569,6 @@
             </layout>
             <child>
               <object class="ttk.Button" id="configurable_cancel_button">
-                <property name="text" translatable="yes">Cancelar</property>
                 <layout>
                   <property name="column">0</property>
                   <property name="padx">5</property>
@@ -601,7 +580,6 @@
             </child>
             <child>
               <object class="ttk.Button" id="configurable_save_button">
-                <property name="text" translatable="yes">Salvar</property>
                 <layout>
                   <property name="column">1</property>
                   <property name="propagate">True</property>

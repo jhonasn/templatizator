@@ -50,6 +50,8 @@ We have only two windows in this app:
     > In these files we'll can put placeholders to the project templates. The editor will let the user to add all or select which templates that will be added to the file placing placeholders that will be replaced when the user save the project. After saved the configurable will continue in the project but the content will be replaced in the "template" of configurable file, reflecting the same state of original file.
 
   > In that way we don't need to make a new GUI nor a implementation for every type of file (for ex.: json, xml, yml, etc).
-- [ ] Make all strigs translatable
-- [x] ~~Diff project filetree folder structure~~
+- [x] Make all strings translatable (Added languages: en, es, fr and pt_BR)
+- [ ] ~~Diff project filetree folder structure~~
+- [ ] Configure a builder script and setup.py
+- [ ] Publish application into linux repository
 > Not necessary anymore since the way that templates are saved and load tree structure changed. (before the tree was saved entirely in to the program, now we just save the templates and say where they are in the tree, if the folder they are match in the tree then they are shown otherwise not)

@@ -1,4 +1,5 @@
 '''Handler for editor window'''
+from locales.translation import _
 
 # as a window handler it's necessary to record lots of attributes
 # pylint: disable=too-many-instance-attributes
@@ -21,6 +22,13 @@ class Editor:
         self.combobox = builder.get_object('editor_variable_combobox')
         cancel_button = builder.get_object('editor_cancel_button')
         save_button = builder.get_object('editor_save_button')
+
+        # translate labels
+        self.dialog.title(_('[Templatizator] Template editing'))
+        self.filelabel['text'] = _('File name:')
+        builder.get_object('editor_variable_label')['text'] = _('Add variable:')
+        cancel_button['text'] = _('Cancel')
+        save_button['text'] = _('Save')
 
         save_button['command'] = self.save
         cancel_button['command'] = self.cancel

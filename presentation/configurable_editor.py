@@ -1,5 +1,6 @@
 '''Handler for cofigurable editor window'''
 from copy import copy
+from locales.translation import _
 from domain.domain import Template
 
 
@@ -24,6 +25,13 @@ class ConfigurableEditor:
         self.combobox = builder.get_object('configurable_variable_combobox')
         cancel_button = builder.get_object('configurable_cancel_button')
         save_button = builder.get_object('configurable_save_button')
+
+        # translate labels
+        self.dialog.title(_('[Templatizator] Configurable file editing'))
+        builder.get_object('configurable_variable_label')['text'] = _(
+            'Add variable:')
+        cancel_button['text'] = _('Cancel')
+        save_button['text'] = _('Save')
 
         cancel_button['command'] = self.cancel
         save_button['command'] = self.save

@@ -11,6 +11,7 @@ from domain.domain import Directory, File, Template, ConfigurableFile
 from domain.helper import OS
 from presentation.helper import get_tkinter_unicode, is_unicode_available
 from presentation.widgets import Tooltip
+from locales.translation import _
 
 
 # pylint: disable=too-many-instance-attributes
@@ -35,21 +36,36 @@ class Window:
         self.window = builder.get_object('window_toplevel')
         self.treeview = builder.get_object('project_treeview')
         self.directory_menu = Menu(self.treeview, tearoff=0)
-        self.directory_menu.add_command(label='Add template',
+        self.directory_menu.add_command(label=_('Add template'),
                                         command=self.add_template)
-        self.directory_menu.add_command(label='Add configurable',
+        self.directory_menu.add_command(label=_('Add configurable file'),
                                         command=self.add_configurable)
         self.file_menu = Menu(self.treeview, tearoff=0)
-        self.file_menu.add_command(label='Abrir', command=self.open_file)
-        self.file_menu.add_command(label='Abrir com...',
+        self.file_menu.add_command(label=_('Open'), command=self.open_file)
+        self.file_menu.add_command(label=_('Open with...'),
                                    command=self.open_with)
-        self.file_menu.add_command(label='Remover', command=self.remove_file)
+        self.file_menu.add_command(label=_('Remove'), command=self.remove_file)
         Tooltip(self.treeview, col='#', before=self.before_show_tooltip)
 
         self.label = {
             'project': builder.get_object('project_file_label'),
             'configuration': builder.get_object('configuration_file_label')
         }
+
+        # translate labels
+        builder.get_object('configuration_labelframe')['text'] = _(
+            'Save templates on:')
+        builder.get_object('project_labelframe')['text'] = _('Project:')
+        builder.get_object('variables_labelframe')['text'] = _(
+            'Replacement variables:')
+        builder.get_object('project_selected_labelframe')['text'] = _(
+            'Selected project:')
+        self.label['configuration']['text'] = _('Select a directory...')
+        self.label['project']['text'] = _('Select a directory...')
+        builder.get_object('configuration_file_button')['text'] = _('Select')
+        builder.get_object('project_file_button')['text'] = _('Select')
+        builder.get_object('templates_save_button')['text'] = _(
+            'Save templates in the project')
 
         builder.get_object('project_file_button')['command'] = \
             self.select_project
@@ -145,12 +161,13 @@ class Window:
         '''Calls project path selector window to set the project path'''
         path = self.filetree.path
         path = filedialog.askdirectory(
-            title='Diretório do projeto',
+            title=_('Select the project directory:'),
             initialdir=path if path else self.application.home_path,
             mustexist=True,
             parent=self.window
         )
         if path:
+            path = OS.get_default_path(path)
             self.label['project']['text'] = path
             self.project_selected(path)
 
@@ -169,12 +186,13 @@ class Window:
         '''
         path = self.application.configuration_path
         path = filedialog.askdirectory(
-            title='Diretório dos templates',
+            title=_('Select the directory where the templates will be saved:'),
             initialdir=path if path else self.application.home_path,
             mustexist=True,
             parent=self.window
         )
         if path:
+            path = OS.get_default_path(path)
             self.label['configuration']['text'] = path
             self.configuration_selected(path)
 
@@ -185,7 +203,7 @@ class Window:
         self.application.change_configuration_path(path)
         ppath = self.filetree.path
         self.label['project']['text'] = ppath if ppath \
-            else 'Selecione um diretório...'
+            else _('Select a directory...')
         self.variables.reload()
         self.filetree = self.application.get()
         self.render_treeview()
@@ -196,13 +214,13 @@ class Window:
         if self.application.configuration_path:
             parent.open = True
             child = self.template_application.create_child(
-                parent, 'novotemplate.[ext]'
+                parent, _('new_template.[ext]')
             )
             self.editor.show(child, True, self.render_treeview)
         else:
             messagebox.showwarning(
-                'Atenção:',
-                'Selecione onde salvar os templates primeiramente'
+                _('Warning'),
+                _('Select where to save the templates first')
             )
 
         self.render_treeview()
@@ -213,17 +231,18 @@ class Window:
         '''
         if self.node:
             path = filedialog.askopenfilename(
-                title='Selecione o arquivo configurável',
+                title=_('Select the configurable file:'),
                 initialdir=self.node.path,
                 parent=self.window
             )
             if path:
+                path = OS.get_default_path(path)
                 filename = self.configurable_application.get_filename(path)
                 if not self.configurable_application.is_child(self.node.path,
                                                               filename):
                     messagebox.showwarning(
-                        'Atenção',
-                        'Selecione um arquivo dentro da pasta selecionada'
+                        _('Warning'),
+                        _('Select a file inside the selected folder')
                     )
                     self.add_configurable()
                 else:
@@ -250,10 +269,10 @@ class Window:
     def remove_file(self):
         '''Remove file: template or configurable'''
         is_template = isinstance(self.node, Template)
-        name = 'template' if is_template else 'arquivo configurável'
+        name = 'template' if is_template else 'configurable file'
         if messagebox.askyesno(
-                'Pergunta:',
-                f'Deseja realmente remover o {name}?'
+                _('Question:'),
+                _('Did you sure that you want to remove the {name}?')
         ):
             if is_template:
                 self.template_application.remove(self.node)
@@ -338,13 +357,13 @@ class Window:
         '''Decides wich tooltip message to show or if will show'''
         node = self.application.find_node(self.filetree, iid)
         if col == '#2' and isinstance(node, Directory):
-            tooltip.text = 'Adicionar template'
+            tooltip.text = _('Add template')
             return True
         if col == '#2' and isinstance(node, File):
-            tooltip.text = 'Remover'
+            tooltip.text = _('Remove')
             return True
         if col == '#1' and isinstance(node, File):
-            tooltip.text = 'Salvar no projeto?'
+            tooltip.text = _('Save it in the project?')
             return True
         return False
 
@@ -357,21 +376,21 @@ class Window:
         try:
             self.application.save_into_project()
             open_project = messagebox.askyesno(
-                'Templates salvos com sucesso no projeto!',
-                'Deseja abrir a pasta do projeto?',
+                _('Templates saved successfully in the project!'),
+                _('Do you want to open the project folder?'),
                 icon='info'
             )
             if open_project:
                 OS.open_with(self.filetree.path)
         except ProjectNotSetWarning:
             messagebox.showwarning(
-                'Atenção',
-                'Selecione um projeto primeiramente'
+                _('Warning'),
+                _('Select a project first')
             )
         except Exception as ex:
             messagebox.showerror(
-                'Erro:',
-                'Não foi possível salvar os templates no projeto'
+                _('Error'),
+                _('It was not possible to save the templates in the project')
             )
             raise ex
 

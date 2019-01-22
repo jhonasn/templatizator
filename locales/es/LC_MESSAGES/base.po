@@ -1,0 +1,129 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"POT-Creation-Date: 2019-01-22 14:24-0200\n"
+"PO-Revision-Date: 2019-01-22 14:24-0200\n"
+"Last-Translator: Jhonas Nascimento <jhonasn@gmail.com>\n"
+"Language-Team: SPANISH <jhonasn@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+msgid "[Templatizator] Configurable file editing"
+msgstr "[Templatizator] Edición de archivo configurable"
+
+msgid "Add variable:"
+msgstr "Agregar variable:"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "[Templatizator] Template editing"
+msgstr "[Templatizator] Edición de plantillas"
+
+msgid "File name:"
+msgstr "Nombre del archivo:"
+
+msgid "Add"
+msgstr "Agregar"
+
+msgid "Remove"
+msgstr "Eliminar"
+
+msgid "Name:"
+msgstr "Nombre:"
+
+msgid "Value:"
+msgstr "Valor:"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Value"
+msgstr "Valor"
+
+msgid "Warning"
+msgstr "Advertencia"
+
+msgid "Fill variable name and value"
+msgstr "Rellenar nombre y valor de variable"
+
+msgid "Select a project first"
+msgstr "Selecciona un proyecto primero"
+
+msgid "Add template"
+msgstr "Agregar plantilla"
+
+msgid "Add configurable file"
+msgstr "Agregar archivo configurable"
+
+msgid "Open"
+msgstr "Abrir"
+
+msgid "Open with..."
+msgstr "Abrir con..."
+
+msgid "Save templates on:"
+msgstr "Guardar plantillas en:"
+
+msgid "Project:"
+msgstr "Proyecto:"
+
+msgid "Replacement variables:"
+msgstr "Variables de reemplazo:"
+
+msgid "Selected project:"
+msgstr "Proyecto seleccionado:"
+
+msgid "Select a directory..."
+msgstr "Seleccionar un directorio..."
+
+msgid "Select"
+msgstr "Seleccionar"
+
+msgid "Save templates in the project"
+msgstr "Guardar plantillas en el proyecto"
+
+msgid "Select the project directory:"
+msgstr "Seleccione el directorio del proyecto:"
+
+msgid "Select the directory where the templates will be saved:"
+msgstr "Seleccione el directorio donde se guardarán las plantillas:"
+
+msgid "new_template.[ext]"
+msgstr "nueva_plantilla.[ext]"
+
+msgid "Select where to save the templates first"
+msgstr "Selecciona donde guardar las plantillas primero"
+
+msgid "Select the configurable file:"
+msgstr "Seleccione el archivo configurable:"
+
+msgid "Select a file inside the selected folder"
+msgstr "Seleccione un archivo dentro de la carpeta seleccionada"
+
+msgid "Question:"
+msgstr "Pregunta:"
+
+msgid "Did you sure that you want to remove the {name}?"
+msgstr "¿Está seguro de que desea eliminar el {nombre}?"
+
+msgid "Save it in the project?"
+msgstr "¿Guardar en el proyecto?"
+
+msgid "Templates saved successfully in the project!"
+msgstr "¡Plantillas guardadas exitosamente en el proyecto!"
+
+msgid "Do you want to open the project folder?"
+msgstr "¿Desea abrir la carpeta del proyecto?"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "It was not possible to save the templates in the project"
+msgstr "No fue posible guardar las plantillas en el proyecto"

@@ -1,0 +1,129 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"POT-Creation-Date: 2019-01-22 14:24-0200\n"
+"PO-Revision-Date: 2019-01-22 14:24-0200\n"
+"Last-Translator: Jhonas Nascimento <jhonasn@gmail.com>\n"
+"Language-Team: ENGLISH <jhonasn@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+msgid "[Templatizator] Configurable file editing"
+msgstr ""
+
+msgid "Add variable:"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "[Templatizator] Template editing"
+msgstr ""
+
+msgid "File name:"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "Name:"
+msgstr ""
+
+msgid "Value:"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Fill variable name and value"
+msgstr ""
+
+msgid "Select a project first"
+msgstr ""
+
+msgid "Add template"
+msgstr ""
+
+msgid "Add configurable file"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "Open with..."
+msgstr ""
+
+msgid "Save templates on:"
+msgstr ""
+
+msgid "Project:"
+msgstr ""
+
+msgid "Replacement variables:"
+msgstr ""
+
+msgid "Selected project:"
+msgstr ""
+
+msgid "Select a directory..."
+msgstr ""
+
+msgid "Select"
+msgstr ""
+
+msgid "Save templates in the project"
+msgstr ""
+
+msgid "Select the project directory:"
+msgstr ""
+
+msgid "Select the directory where the templates will be saved:"
+msgstr ""
+
+msgid "new_template.[ext]"
+msgstr ""
+
+msgid "Select where to save the templates first"
+msgstr ""
+
+msgid "Select the configurable file:"
+msgstr ""
+
+msgid "Select a file inside the selected folder"
+msgstr ""
+
+msgid "Question:"
+msgstr ""
+
+msgid "Did you sure that you want to remove the {name}?"
+msgstr ""
+
+msgid "Save it in the project?"
+msgstr ""
+
+msgid "Templates saved successfully in the project!"
+msgstr ""
+
+msgid "Do you want to open the project folder?"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "It was not possible to save the templates in the project"
+msgstr ""

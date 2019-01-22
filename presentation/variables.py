@@ -3,6 +3,7 @@ from tkinter import messagebox
 from domain.infrastructure import ProjectNotSetWarning
 from presentation.helper import get_tkinter_unicode, is_unicode_available
 from presentation.widgets import Tooltip
+from locales.translation import _
 
 icons = is_unicode_available('💾')
 ADD_ICON = get_tkinter_unicode('➕')
@@ -22,21 +23,23 @@ class Variables:
         self.action = builder.get_object('variable_action_button')
         self.cancel = builder.get_object('variable_cancel_button')
         self.treeview = builder.get_object('variables_treeview')
-        self.action_tooltip = Tooltip(self.action, 'Adicionar')
-        Tooltip(self.cancel, 'Cancelar')
-        Tooltip(self.treeview, 'Remover', col='#3')
+        self.action_tooltip = Tooltip(self.action, _('Add'))
+        Tooltip(self.cancel, _('Cancel'))
+        Tooltip(self.treeview, _('Remove'), col='#3')
+
+        # translate labels
+        builder.get_object('variable_name_label')['text'] = _('Name:')
+        builder.get_object('variable_value_label')['text'] = _('Value:')
+        self.treeview.heading('variable_name_treeviewcolumn', text=_('Name'))
+        self.treeview.heading('variable_value_treeviewcolumn', text=_('Value'))
 
         self.treeview.bind('<ButtonRelease-1>', self.row_selected)
-        #self.treeview.bind('<Enter>', self.enter)
         self.action['command'] = self.variable_action
         self.cancel['command'] = self.cancel_action
         self.row = None
         self.old_name = None
 
         self.reload()
-
-    def enter(self, event):
-        print('enter ev:', event)
 
     def reload(self):
         '''reload variables into the reeview'''
@@ -60,8 +63,8 @@ class Variables:
 
         if not name or not value:
             messagebox.showwarning(
-                'Atenção:',
-                'Preencha o nome e o valor da variavel'
+                _('Warning'),
+                _('Fill variable name and value')
             )
             return
 
@@ -73,8 +76,8 @@ class Variables:
                                                         REMOVE_ICON))
             except ProjectNotSetWarning:
                 messagebox.showwarning(
-                    'Atenção:',
-                    'Selecione um projeto primeiramente'
+                    _('Warning'),
+                    _('Select a project first')
                 )
         # edit
         else:
@@ -102,7 +105,7 @@ class Variables:
             Variables.set_entry_text(self.name, row_name)
             Variables.set_entry_text(self.value, row_value)
             self.action['text'] = SAVE_ICON
-            self.action_tooltip.text = 'Salvar'
+            self.action_tooltip.text = _('Save')
             self.row = selected_id
             self.old_name = row_name
 
