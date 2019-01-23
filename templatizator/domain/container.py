@@ -1,12 +1,12 @@
 '''Container module that instantiate classes to accomplish IoC role'''
-from domain.repository import ConfigurationRepository, VariableRepository, \
+from templatizator.domain.repository import ConfigurationRepository, VariableRepository, \
     TemplateRepository, TemplateFileRepository, \
     ConfigurableRepository, ConfigurableFileRepository
-from domain.service import ProjectService, ConfigurationService, \
+from templatizator.domain.service import ProjectService, ConfigurationService, \
     VariableService, TemplateService, ConfigurableService
-from domain.application import ProjectApplication, VariableApplication, \
+from templatizator.domain.application import ProjectApplication, VariableApplication, \
     TemplateApplication, ConfigurableFileApplication
-from domain.helper import Event
+from templatizator.domain.helper import Event
 
 
 # pylint: disable=too-few-public-methods

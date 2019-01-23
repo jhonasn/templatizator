@@ -6,12 +6,14 @@
 - Call save files into the project action.
 '''
 from tkinter import filedialog, messagebox, Menu
-from domain.infrastructure import ProjectNotSetWarning
-from domain.domain import Directory, File, Template, ConfigurableFile
-from domain.helper import OS
-from presentation.helper import get_tkinter_unicode, is_unicode_available
-from presentation.widgets import Tooltip
-from locales.translation import _
+from templatizator.domain.infrastructure import ProjectNotSetWarning
+from templatizator.domain.domain import Directory, File, Template, \
+    ConfigurableFile
+from templatizator.domain.helper import OS
+from templatizator.presentation.helper import get_tkinter_unicode, \
+    is_unicode_available
+from templatizator.presentation.widgets import Tooltip
+from templatizator.locales.i18n import _
 
 
 # pylint: disable=too-many-instance-attributes

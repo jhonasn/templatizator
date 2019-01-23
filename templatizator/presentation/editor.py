@@ -1,5 +1,5 @@
 '''Handler for editor window'''
-from locales.translation import _
+from templatizator.locales.i18n import _
 
 # as a window handler it's necessary to record lots of attributes
 # pylint: disable=too-many-instance-attributes

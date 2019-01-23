@@ -2,10 +2,9 @@
 import os
 import json
 from abc import ABC
-
-from domain.infrastructure import RepositoryPathNotSetError
-from domain.domain import Serializable, Project, Directory, Template, \
-    ConfigurableFile, Variable
+from templatizator.domain.infrastructure import RepositoryPathNotSetError
+from templatizator.domain.domain import Serializable, Project, Directory, \
+    Template, ConfigurableFile, Variable
 
 
 class FileRepository(ABC):

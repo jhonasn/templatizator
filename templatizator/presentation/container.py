@@ -1,9 +1,9 @@
 '''Container module that instantiate classes to accomplish IoC role'''
-from domain.container import Container as DomainContainer
-from presentation.window import Window
-from presentation.variables import Variables
-from presentation.editor import Editor
-from presentation.configurable_editor import ConfigurableEditor
+from templatizator.domain.container import Container as DomainContainer
+from templatizator.presentation.window import Window
+from templatizator.presentation.variables import Variables
+from templatizator.presentation.editor import Editor
+from templatizator.presentation.configurable_editor import ConfigurableEditor
 
 
 # pylint: disable=too-few-public-methods

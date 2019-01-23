@@ -1,6 +1,6 @@
 '''Application layer module'''
-from domain.domain import Variable
 from abc import ABC
+from templatizator.domain.domain import Variable
 
 
 class ProjectApplication:

@@ -53,5 +53,6 @@ We have only two windows in this app:
 - [x] Make all strings translatable (Added languages: en, es, fr and pt_BR)
 - [ ] ~~Diff project filetree folder structure~~
 - [ ] Configure a builder script and setup.py
+- [ ] Add tests
 - [ ] Publish application into linux repository
 > Not necessary anymore since the way that templates are saved and load tree structure changed. (before the tree was saved entirely in to the program, now we just save the templates and say where they are in the tree, if the folder they are match in the tree then they are shown otherwise not)

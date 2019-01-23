@@ -1,7 +1,7 @@
 '''Handler for cofigurable editor window'''
 from copy import copy
-from locales.translation import _
-from domain.domain import Template
+from templatizator.locales.i18n import _
+from templatizator.domain.domain import Template
 
 
 # as a window handler it's necessary to record lots of attributes

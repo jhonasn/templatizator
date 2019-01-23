@@ -1,9 +1,10 @@
 '''Handler for variables section into the main window'''
 from tkinter import messagebox
-from domain.infrastructure import ProjectNotSetWarning
-from presentation.helper import get_tkinter_unicode, is_unicode_available
-from presentation.widgets import Tooltip
-from locales.translation import _
+from templatizator.domain.infrastructure import ProjectNotSetWarning
+from templatizator.presentation.helper import get_tkinter_unicode, \
+    is_unicode_available
+from templatizator.presentation.widgets import Tooltip
+from templatizator.locales.i18n import _
 
 icons = is_unicode_available('💾')
 ADD_ICON = get_tkinter_unicode('➕')

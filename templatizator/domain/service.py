@@ -1,8 +1,8 @@
 '''Service layer module'''
 from abc import ABC
-from domain.domain import Variable
-from domain.infrastructure import ProjectNotSetWarning
-from domain.helper import OS
+from templatizator.domain.domain import Variable
+from templatizator.domain.infrastructure import ProjectNotSetWarning
+from templatizator.domain.helper import OS
 
 
 class ConfigurationService:
