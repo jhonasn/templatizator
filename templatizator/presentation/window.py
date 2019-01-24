@@ -6,7 +6,7 @@
 - Call save files into the project action.
 '''
 from tkinter import filedialog, messagebox, Menu
-from templatizator.domain.infrastructure import ProjectNotSetWarning
+from templatizator.domain.infrastructure import ProjectNotSet
 from templatizator.domain.domain import Directory, File, Template, \
     ConfigurableFile
 from templatizator.domain.helper import OS
@@ -386,7 +386,7 @@ class Window:
             )
             if open_project:
                 OS.open_with(self.filetree.path)
-        except ProjectNotSetWarning:
+        except ProjectNotSet:
             messagebox.showwarning(
                 _('Warning'),
                 _('Select a project first')

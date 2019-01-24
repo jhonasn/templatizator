@@ -2,7 +2,7 @@
 import os
 import json
 from abc import ABC
-from templatizator.domain.infrastructure import RepositoryPathNotSetError
+from templatizator.domain.infrastructure import RepositoryPathNotSet
 from templatizator.domain.domain import Serializable, Project, Directory, \
     Template, ConfigurableFile, Variable
 
@@ -71,7 +71,7 @@ class FileRepository(ABC):
                 os.makedirs(self.path)
             open(self.full_path, 'w').write(content)
         else:
-            raise RepositoryPathNotSetError(type(self).__name__)
+            raise RepositoryPathNotSet(type(self).__name__)
 
     def drop(self):
         '''Deletes the repository file'''

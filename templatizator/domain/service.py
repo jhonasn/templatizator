@@ -1,7 +1,7 @@
 '''Service layer module'''
 from abc import ABC
 from templatizator.domain.domain import Variable
-from templatizator.domain.infrastructure import ProjectNotSetWarning
+from templatizator.domain.infrastructure import ProjectNotSet
 from templatizator.domain.helper import OS
 
 
@@ -108,7 +108,7 @@ class ProjectService:
         '''
         local_path = self.configuration_repository.get_project_path()
         if not local_path:
-            raise ProjectNotSetWarning
+            raise ProjectNotSet
 
         # save templates into the project
         prev_name = self.template_file_repository.name
@@ -217,7 +217,7 @@ class VariableService:
     def add(self, variable):
         '''Add variable'''
         if not self.repository.path:
-            raise ProjectNotSetWarning
+            raise ProjectNotSet
         self.repository.add(variable)
 
     def change(self, old_name, variable):

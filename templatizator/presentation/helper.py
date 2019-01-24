@@ -1,5 +1,6 @@
 '''Helpers for interface'''
 import re
+from templatizator.domain.helper import OS
 
 _NONBMP = re.compile(r'[\U00010000-\U0010FFFF]')
 
@@ -19,6 +20,9 @@ def get_tkinter_unicode(text):
 
 def is_unicode_available(text):
     '''Verify if unicode passed text is available to use in this os'''
+    if OS.is_windows:
+        return True
+        
     try:
         print(_NONBMP.sub(_surrogatepair, text.upper()))
     except:

@@ -1,6 +1,6 @@
 '''Handler for variables section into the main window'''
 from tkinter import messagebox
-from templatizator.domain.infrastructure import ProjectNotSetWarning
+from templatizator.domain.infrastructure import ProjectNotSet
 from templatizator.presentation.helper import get_tkinter_unicode, \
     is_unicode_available
 from templatizator.presentation.widgets import Tooltip
@@ -75,7 +75,7 @@ class Variables:
                 self.application.add(name, value)
                 self.treeview.insert('', 'end', values=(name, value,
                                                         REMOVE_ICON))
-            except ProjectNotSetWarning:
+            except ProjectNotSet:
                 messagebox.showwarning(
                     _('Warning'),
                     _('Select a project first')

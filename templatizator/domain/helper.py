@@ -50,10 +50,18 @@ class OS:
 
     @staticmethod
     def get_path(path):
-        base = os.path.abspath(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        )
-        return os.path.normpath(os.path.join(base, path))
+        base_path = None
+
+        # verify if project is bundled
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+            OS.is_bundled_project = True
+        else:
+            base_path = os.path.abspath(
+                os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            )
+
+        return os.path.normpath(os.path.join(base_path, path))
 
 
 class Event:

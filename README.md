@@ -52,7 +52,7 @@ We have only two windows in this app:
   > In that way we don't need to make a new GUI nor a implementation for every type of file (for ex.: json, xml, yml, etc).
 - [x] Make all strings translatable (Added languages: en, es, fr and pt_BR)
 - [ ] ~~Diff project filetree folder structure~~
-- [ ] Configure a builder script and setup.py
+- [x] Configure a builder script in setup.py
 - [ ] Add tests
 - [ ] Publish application into linux repository
 > Not necessary anymore since the way that templates are saved and load tree structure changed. (before the tree was saved entirely in to the program, now we just save the templates and say where they are in the tree, if the folder they are match in the tree then they are shown otherwise not)
