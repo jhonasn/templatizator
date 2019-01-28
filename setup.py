@@ -29,6 +29,7 @@ class BuildExecutableCommand(Command):
             'templatizator/presentation',
             '--hidden-import=tkinter',
             '--onefile',
+            '--noconsole',
             '--name=templatizator',
             '-y',
             '__main__.py',
@@ -42,7 +43,11 @@ requirements = ['pygubu==0.9.8.2']
 if OS.is_linux:
     requirements.append('ttkthemes==2.1.0')
 
-dev_requirements = ['pyinstaller==3.4', 'setuptools==40.6.3', 'babel==2.6.0']
+dev_requirements = [
+    'pyinstaller==3.4',
+    'setuptools==40.6.3',
+    'babel==2.6.0',
+]
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
