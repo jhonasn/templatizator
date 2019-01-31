@@ -60,7 +60,8 @@ class FileRepository(ABC):
     def get(self):
         '''Returns the content of file hadled by the repository'''
         if self.exists():
-            return open(self.full_path, 'r').read()
+            with open(self.full_path, 'r') as f:
+                return f.read()
 
         return ''
 
@@ -69,7 +70,8 @@ class FileRepository(ABC):
         if self.full_path:
             if not os.path.exists(self.path):
                 os.makedirs(self.path)
-            open(self.full_path, 'w').write(content)
+            with open(self.full_path, 'w') as f:
+                f.write(content)
         else:
             raise RepositoryPathNotSet(type(self).__name__)
 

@@ -1,0 +1,89 @@
+CHANGES
+=======
+
+* fixed build executable with no console; prepared i18n for tests listening the LANGUAGE env. variable;
+* implemented build with pyinstaller throught setup.py; fixed not start application when executing setup; implemented show different icons on windows; changed exceptions names; fixed get correct path when project is bundled;
+* Changed readme
+* restructured project and implemented setup.py info
+* implemented setup.py and builder
+* fixed a translation issue
+* added heading to translations
+* implemented translation to en, es, fr and pt\_BR; fixed some problems when saving configurable files
+* Update README.md
+* implemented crud for configurable files
+* Update README.md
+* Changed configurable logic leaving the edition free, that way we could remove some configurable editor code
+* fixed not opening editor windows on linux; uncommented install libraries from requirement.txt
+* fixed linux icons problem
+* fixed initialization bug that was stoping when try to initialize an application without templates saved
+* implemented checkboxes initiation and some editing validations
+* implemented configurable interface; implemented method to get recorded templates
+* implemented ui configurable, block delete configurable content and paint template code
+* implemented selection, add and show configurable
+* initiated configurable implementation
+* implemented tooltip to variables buttons and grid options
+* implemented complex icons (unicode) into the tkinter interface
+* implemented save into the project option checkbox on template nodes
+* implemented context menu into project treeview and option to open templates with another application
+* fixed change project
+* Fixed lint errors and closed TODO list parent topic
+* Fixed pylint warnings
+* fixed lint errors
+* fixed most of lint errors and writed docstrings for infrasctructure, repository and service layer
+* Fixed lint errors from presentation layer
+* fixed warnings into containers and presentation window
+* Fixed lint errors
+* Fixed icon error and removed useless comments
+* Update README.md
+* Fixed pylint warnings
+* code refactored to save files into the project folder and fixed some file editor issues
+* code refactored to implement editor crud
+* Update README.md
+* Update README.md
+* refactored add variables on templates'
+* implemented code refactor to work variables crud
+* implemented code refactor to open template editor
+* refactored some code related to window project load
+* "backend" code refactor completed
+* implemented refactor; implemented repositories, services, application services; removed or refatored some old code; fixed some wrong cased variables in presentation layer
+* implemented containers for instantiations and code refactor
+* started refactory using ddd patterns
+* Update README.md
+* implemented linux styles
+* added images to readme
+* implemented basic theme change for linux
+* Added images to readme; Changed titles; fixed plus sign when change variables;
+* implemented layout and removed an useless comment in Node.py
+* Update README.md
+* Fixed Change configuration save method formatting
+* implemented open project folder after save templates; added new todo items
+* implemented open project folder after save templates; added new todo items
+* changed preopened directories logic
+* Added new todo
+* fixed how to list instructions
+* Added basic application use instructions
+* Update README.md
+* Added todo list to the project
+* implemented code prepared to compilation
+* removed glade from tkinter branch
+* Implemented editor combobox; removed add button from editor; changed open save templates directory logic, now this directory opens another templatizator projects saved before; improved interface;
+* Implemented basic editor 'CRUD' operations
+* added cancel button to variables treeview and implemented 'CRUD' operations on view
+* implemented basic ttk interface initiation, select project and render treeview
+* implemented gui
+* added pygubu interface file
+* fixed error on set configuration folder not initializing problem
+* Fixed initialization bug
+* implemented save files into the project folder
+* added question dialog to alert elements method and added confirmation to remove template
+* added a todo reminder note
+* Implemented save, remove and read templates with editor; Implemented save, remove and read variables; Implemented gui with gtk 3; Added a button to save templates into the project;
+* reorganized app.py
+* Removed variables dialog, moved its UI to the main window and renamed its class to handle variables in the main window; Added alert option on GtkElements class; Implemented save files and configurations mainly in Configuration class; moved configuration instance to a 'reborn' App class
+* fixed GtkElements mount form, applied "white list" form to create objects instead "black list"
+* Changed initialization logic; Implemented ui list, add and remove variables; Implemented treeview with utf-8 character icons; Implemented edito dialog and logic to open a new template;
+* fixed node creation from path
+* added variables dialog, separated gui handlers for dialogs and started to use just python 3 (removed \_\_init\_\_.py files)
+* Update README.md
+* initial commit
+* Initial commit

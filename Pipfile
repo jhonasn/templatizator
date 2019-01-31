@@ -1,0 +1,36 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+setuptools = "*"
+babel = "*"
+pyinstaller = "*"
+pytest = "*"
+pbr = "*"
+tox = "*"
+flake8 = "*"
+
+[packages]
+pygubu = "*"
+ttkthemes = "*"
+
+[requires]
+python_version = "3.7"
+
+[scripts]
+app = "python ."
+test = "pytest -v"
+build = [
+  "pyinstaller",
+  "--add-data=templatizator/presentation/interface.ui;templatizator/presentation",
+  "--hidden-import=tkinter",
+  "--onedir",
+  "--noconsole",
+  "--name=templatizator",
+  "-y",
+  "__main__.py"
+]
+babelextract = "setup.py extract_messages"
+babelcompile = "setup.py compile_catalog"
