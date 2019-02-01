@@ -352,9 +352,10 @@ class ConfigurationRepository(JsonRepository):
 
         return local_path
 
-    def path_changed(self, path):
+    def change_path(self, path):
         with open(type(self).pathfile, 'w') as f:
             f.write(path)
+        self.path = path
 
 
 class VariableRepository(JsonRepository):

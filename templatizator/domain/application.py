@@ -8,7 +8,15 @@ class ProjectApplication:
     def __init__(self, service, configuration_service):
         self.service = service
         self.configuration_service = configuration_service
-        self.configuration_path = configuration_service.get_path()
+
+    @property
+    def configuration_path(self):
+        return self.configuration_service.get_path()
+
+    @property
+    def home_path(self):
+        '''Get home path'''
+        return self.service.get_home_path()
 
     def get(self):
         '''Get filetree graph'''
@@ -21,11 +29,6 @@ class ProjectApplication:
     def change_configuration_path(self, path):
         '''Change configuration path'''
         self.configuration_service.change_path(path)
-
-    @property
-    def home_path(self):
-        '''Get home path'''
-        return self.service.get_home_path()
 
     def find_node(self, filetree, path):
         '''Find node instance of informed path into the filetree'''
