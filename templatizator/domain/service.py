@@ -47,9 +47,10 @@ class ProjectService:
         '''Get home path'''
         return self.configuration_repository.get_home_path()
 
-    def find_node(self, filetree, path):
-        '''Find node instance of informed path into the filetree'''
-        return self.configuration_repository.find_node(filetree, path)
+    def change_path(self, path):
+        '''Changes repository path and notify it through event'''
+        project_path = self.configuration_repository.change_project(path)
+        self.event.publish(project_path)
 
     def configuration_changed(self, path):
         '''Configuration path change listener, change path when receives a
@@ -57,8 +58,11 @@ class ProjectService:
         '''
         self.configuration_repository.path = path
         path = self.configuration_repository.get_project_path()
-        if path:
-            self.event.publish(path)
+        self.event.publish(path)
+
+    def find_node(self, filetree, path):
+        '''Find node instance of informed path into the filetree'''
+        return self.configuration_repository.find_node(filetree, path)
 
     def get_filetree(self):
         '''Get filetree graph and fills it with templates and configurables'''
@@ -86,11 +90,6 @@ class ProjectService:
                 parent.add_child(configurable)
 
         return filetree
-
-    def change_path(self, path):
-        '''Changes repository path and notify it through event'''
-        project_path = self.configuration_repository.change_project(path)
-        self.event.publish(project_path)
 
     def replace_variables(self, text):
         '''Replaces placeholders in the passed text with
@@ -209,8 +208,10 @@ class VariableService:
         return [Variable('ext', 'py')]
 
     def save_defaults(self):
-        '''Saves default variables if them aren\'t deleted before'''
-        if not self.repository.exists():
+        '''Saves default variables if them aren\'t deleted before
+        and project is set
+        '''
+        if not self.repository.exists() and self.repository.path:
             for var in VariableService.get_defaults():
                 self.add(var)
 
