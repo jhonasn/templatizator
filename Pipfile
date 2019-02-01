@@ -11,6 +11,7 @@ pytest = "*"
 pbr = "*"
 tox = "*"
 flake8 = "*"
+pytest-cov = "*"
 
 [packages]
 pygubu = "*"
@@ -21,7 +22,8 @@ python_version = "3.7"
 
 [scripts]
 app = "python ."
-test = "pytest -v"
+test = "pytest -v -s"
+cov = "pytest --cov=templatizator tests"
 build = [
   "pyinstaller",
   "--add-data=templatizator/presentation/interface.ui;templatizator/presentation",
