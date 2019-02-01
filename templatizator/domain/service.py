@@ -14,6 +14,8 @@ class ConfigurationService:
     def change_path(self, path):
         '''Changes repository path and notify it through event'''
         self.repository.path = path
+        # save configuration path
+        self.repository.path_changed(path)
         self.event.publish(path)
 
     def get_path(self):

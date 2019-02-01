@@ -238,9 +238,16 @@ class ConfigurationRepository(JsonRepository):
     # save projects in the configuration directory
     name = 'configuration.json'
     of_type = Project
+    pathfile = 'configuration.txt'
 
     def __init__(self, path=None):
-        if not path:
+        # load last path from file
+        filename = type(self).pathfile
+        if os.path.exists(filename):
+            with open(filename) as f:
+                path = f.read()
+
+        if not path or not os.path.exists(path):
             path = self.default_path()
 
         super().__init__(path)
@@ -344,6 +351,10 @@ class ConfigurationRepository(JsonRepository):
         local_path = os.path.join(self.path, project.path_name)
 
         return local_path
+
+    def path_changed(self, path):
+        with open(type(self).pathfile, 'w') as f:
+            f.write(path)
 
 
 class VariableRepository(JsonRepository):
