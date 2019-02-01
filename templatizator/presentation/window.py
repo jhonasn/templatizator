@@ -96,7 +96,7 @@ class Window:
         icon = ''
         if isinstance(node, Directory):
             if self.icons:
-                icon = '📁' if node.open else '📂'
+                icon = '📂' if node.open else '📁'
             else:
                 icon = '⌸' if node.open else '⌹'
         if isinstance(node, Template):
@@ -203,9 +203,11 @@ class Window:
         re-rendering items
         '''
         self.application.change_configuration_path(path)
-        ppath = self.filetree.path
-        self.label['project']['text'] = ppath if ppath \
-            else _('Select a directory...')
+        if self.filetree.path:
+            self.application.change_path(self.filetree.path)
+            self.label['project']['text'] = self.filetree.path
+        else:
+            self.label['project']['text'] = _('Select a directory...')
         self.variables.reload()
         self.filetree = self.application.get()
         self.render_treeview()
