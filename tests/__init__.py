@@ -23,6 +23,7 @@ def configure_paths():
 def delete_configuration_folders():
     rmtree(Container.project_application.configuration_path, ignore_errors=True)
     rmtree(configuration_path, ignore_errors=True)
+    rmtree(project_path, ignore_errors=True)
     return (
         not exists(Container.project_application.configuration_path)
         and not exists(configuration_path)

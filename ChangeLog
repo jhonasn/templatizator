@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+* added option to insert relative path to all templates in configurable files; fixed leave the last all templates placeholder on configurable files; fixed not show context menu when click in an object that is not a row;
+* implemented variable project not set test; implemented some project tests; added future testes commented
+* implemented variable project not set test; implemented some project tests; added future testes commented
+* fixed method to get the configuration path, before it was keeping the value into application layer instance, that maintains the value not updated, now the application layer returns the value from the repository layer
+* implemented save last configuration path selected
+* fixed unset project when another configuration path is selected; fixed save default variables only when project path is set;
+* fixed issue when change configuration folder
+* Moved application information from setup.py to setup.cfg including pbr; Moved dependencies and commands from setup.py to Pipfile and started to use pipenv; Added tox to test languages and flake8 linting; Added test for variable aplication layer; Fixed templatizator \_\_init\_\_ file to not start when running tests; Implemented file openings in repository, passed to use with statement;
 * fixed build executable with no console; prepared i18n for tests listening the LANGUAGE env. variable;
 * implemented build with pyinstaller throught setup.py; fixed not start application when executing setup; implemented show different icons on windows; changed exceptions names; fixed get correct path when project is bundled;
 * Changed readme

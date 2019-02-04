@@ -77,7 +77,7 @@ class FileRepository(ABC):
 
     def drop(self):
         '''Deletes the repository file'''
-        if self.full_path:
+        if self.full_path and os.path.exists(self.full_path):
             os.remove(self.full_path)
 
     def save_file(self, old_name, new_name, content):
