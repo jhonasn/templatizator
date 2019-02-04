@@ -94,15 +94,20 @@ class ConfigurableEditor:
         select_all_template.name = 'All'
         all_templates.insert(0, select_all_template)
 
-        index = 0
-        len_all_templates = len(all_templates) * 2
-        while index < len_all_templates:
-            template = all_templates[index]
+        for index, template in enumerate(copy(all_templates)):
+            name = template.name
             template_path = copy(template)
             template_path.name += '.path'
             template.name += '.name'
-            all_templates.insert(index + 1, template_path)
-            index += 2
+
+            all_templates.insert(index * 2 + 1, template_path)
+
+            # add relative_path to All template
+            is_template_all = name == 'All'
+            if is_template_all:
+                template_relpath = copy(template)
+                template_relpath.name = f'{name}.relative_path'
+                all_templates.insert(index * 2 + 2, template_relpath)
 
         self.combobox['values'] = list(map(
             lambda v: v.name, self.variable_application.get()

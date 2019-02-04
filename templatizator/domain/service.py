@@ -132,61 +132,75 @@ class ProjectService:
         # save configurable files into the project
         prev_name = self.configurable_file_repository.name
         for configurable in self.configurable_repository.get():
+            from re import sub
             if configurable.save:
                 self.configurable_file_repository.path = local_path
                 self.configurable_file_repository.name = configurable.name
 
                 content = self.configurable_file_repository.get()
-
                 templates = self.template_repository.get()
 
+                # first remount content replacing template.All placeholders
+                # by each template
+                new_content = ''
+                template_all_props = ['name', 'path', 'relative_path']
+                for line in content.splitlines():
+                    props = map(lambda p: f'[template.All.{p}]', template_all_props)
+                    if any(filter(lambda p: p in line, props)):
+                        prev_line = line
+
+                        for template in templates:
+                            for prop in template_all_props:
+                                line = line.replace(
+                                    f'[template.All.{prop}]',
+                                    f'[template.{template.name}.{prop}]'
+                                )
+
+                            # place the template line again bellow the line
+                            line += f'\n{prev_line}'
+
+                    new_content += f'{line}\n'
+
+                content = new_content
+
+                # replace templates on content
+                project_path = self.get_filetree().path
                 for index, template in enumerate(templates):
-                    is_last_template = (index + 1) == len(templates)
-                    # reserve space in all templates
-                    reserved_content = ''
-                    for line in content.splitlines():
-                        if (line.find('[template.All.name]') > -1
-                            or line.find('[template.All.path]') > -1):
-                            prev_line = line
-                            line = line.replace(
-                                f'[template.All.name]',
-                                f'[template.{template.name}.name]'
-                            )
-                            line = line.replace(
-                                f'[template.All.path]',
-                                f'[template.{template.name}.path]'
-                            )
-                            if not is_last_template:
-                                line += f'\n{prev_line}'
-
-                        reserved_content += line + '\n'
-
-                    content = reserved_content
-
-                    template_name = self.replace_variables(template.name)
-                    template_path = self.replace_variables(OS.get_default_path(
-                        template.path
-                    ))
+                    template_replace = {
+                        'name': self.replace_variables(template.name),
+                        'path': self.replace_variables(OS.get_default_path(
+                            template.path
+                        )),
+                    }
+                    template_replace['relative_path'] = \
+                        template_replace['path'].replace(project_path, '')
+                    # remove first slash
+                    template_replace['relative_path'] = \
+                        template_replace['relative_path'][1:]
 
                     # replace specific template
-                    content = content.replace(
-                        f'[template.{template.name}.name]',
-                        template_name
-                    )
-                    content = content.replace(
-                        f'[template.{template.name}.path]',
-                        template_path
-                    )
+                    for prop in template_all_props:
+                        content = content.replace(
+                            f'[template.{template.name}.{prop}]',
+                            template_replace[prop]
+                        )
 
                 # save new content into the template
                 self.configurable_file_repository.name = configurable.name
                 self.configurable_file_repository.save(content)
 
-                # save new content to the configurable
+                # save new content to the configurable in project
+                # removing the template.All placeholders
                 self.configurable_file_repository.path = \
                     self.configuration_repository.get_parent_path(
                         configurable.path)
-                self.configurable_file_repository.save(content)
+                props = '|'.join(template_all_props)
+                self.configurable_file_repository.save(
+                    sub(f'(?<=\n).*\[template\.All\.({props})\].*\n',
+                        lambda m: '',
+                        content
+                    )
+                )
 
 
         self.configurable_file_repository.path = local_path

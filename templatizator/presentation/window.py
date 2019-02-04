@@ -298,7 +298,9 @@ class Window:
         # set selected node
         self.node = self.application.find_node(self.filetree, selected_path)
 
-        if isinstance(self.node, Directory):
+        if not self.node:
+            return
+        elif isinstance(self.node, Directory):
             self.directory_menu.post(event.x_root, event.y_root)
         elif col == '#0':
             self.file_menu.post(event.x_root, event.y_root)
