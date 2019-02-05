@@ -196,7 +196,8 @@ class ProjectService:
                         configurable.path)
                 props = '|'.join(template_all_props)
                 self.configurable_file_repository.save(
-                    sub(f'(?<=\n).*\[template\.All\.({props})\].*\n',
+                    sub(r'(?<=\n).*\[template\.All\.({props})\].*\n'.replace(
+                            '{props}', props),
                         lambda m: '',
                         content
                     )
@@ -317,7 +318,10 @@ class TemplateService(FileService):
     def get_path(self, template):
         '''Get template file path'''
         self.repository.name = template.name
-        return OS.get_default_path(self.repository.full_path)
+        path = OS.get_default_path(self.repository.full_path)
+        # reset repository name
+        del self.repository.name
+        return path
 
 
 class ConfigurableService(FileService):

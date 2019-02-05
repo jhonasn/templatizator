@@ -1,4 +1,4 @@
-from os.path import join, basename, exists
+from os.path import join, basename, dirname, exists
 from pytest import fixture, raises, mark
 from templatizator.domain.container import Container
 from templatizator.domain.infrastructure import ProjectNotSet, \
@@ -87,6 +87,7 @@ class TestProjectApplication:
 
     def teardown_method(self, method):
         from shutil import rmtree
+        delete_configuration_folders()
         path = 'tests_templatizator'
         home_path = Container.project_application.home_path
         rmtree(join(home_path, path), ignore_errors=True)
@@ -212,6 +213,10 @@ class TestProjectApplication:
         assert type(node) is Directory
         assert node.name == name and node.path == path
 
+    def test_save_into_project_not_set(self):
+        with raises(ProjectNotSet):
+            Container.project_application.save_into_project()
+
     # def test_save_into_project(self):
     # implemented in template and configuration tests
 
@@ -219,11 +224,7 @@ class TestProjectApplication:
 class TestTemplateApplication:
     @classmethod
     def setup_method(cls):
-        app = Container.template_application
-        for template in app.get_all():
-            app.remove(template)
-        Container.variable_application.remove('name')
-        Container.variable_application.remove('ext')
+        delete_configuration_folders()
 
     @fixture
     def application(self):
@@ -241,7 +242,7 @@ class TestTemplateApplication:
         for template in templates_add:
             directory, name = template.values()
             path = join(project_path, directory, name)
-            content = f'''class {name}:
+            content = f'''class {name}_{directory}:
                 def __init__(self):
                     self.is_{directory} = True
             '''
@@ -254,18 +255,91 @@ class TestTemplateApplication:
         assert len(templates) == 4
         assert any(filter(lambda t: t.name == added_template['file'], templates))
 
-    # def test_get(self, templates, added_template):
-    # def test_create_child(self):
-    # def test_save(self):
-    # def test_save_file(self):
+    def test_get(self, application, templates):
+        for template in templates:
+            content = application.get(template)
+            lines = content.splitlines()
+            directory = list(filter(lambda t: t['file'] == template.name,
+                                    templates_add))[0]['directory']
+            assert len(lines) == 4
+            assert lines[0] == f'class {template.name}_{directory}:'
+
+    def test_create_child(self, application, templates):
+        for template in templates:
+            child = application.create_child(template, 'child')
+            assert child.name == 'child'
+            assert child.path == join(template.path, 'child')
+
+    def test_save(self, application, templates):
+        for template in templates:
+            new_name = template.name + '_changed'
+            template.name = new_name
+            path = join(dirname(template.path), new_name)
+            application.save(template)
+            assert template.name == new_name
+            assert template.path == path
+            template = list(filter(lambda t: t.name == new_name,
+                                application.get_all()))
+            assert any(template)
+            template = template[0]
+            assert template.name == new_name
+            assert template.path == path
+
+    def test_save_file(self, application, templates):
+        for template in templates:
+            new_name = template.name + '_changed'
+            path = join(dirname(template.path), new_name)
+            application.save_file(template, new_name, f'path: {path}')
+            template = list(filter(lambda t: t.name == new_name,
+                                    application.get_all()))
+            assert any(template)
+            template = template[0]
+            assert template.name == new_name
+            assert template.path == path
+            content = application.get(template)
+            assert content == f'path: {path}'
+
+    def test_get_path(self, application, templates):
+        for template in templates:
+            path = application.get_path(template)
+            assert path == join(
+                Container.project_application.configuration_path,
+                basename(project_path), template.name)
+
+            # verify if getting path is not changing the repository path
+            templates = application.get_all()
+            assert len(templates) == 4
+
+    def test_save_into_project(self, application, templates):
+        Container.project_application.save_into_project()
+        variables = Container.variable_application.get()
+        for template in templates:
+            name = template.name
+            content = application.get(template)
+            directory = list(filter(lambda t: t['file'] == template.name,
+                                    templates_add))[0]['directory']
+            for var in variables:
+                placeholder = f'[{var.name}]'
+                name = name.replace(placeholder, var.value)
+                content = content.replace(placeholder, var.value)
+            path = join(project_path, directory, name)
+            assert exists(path)
+            assert content.splitlines()[0] == f'class {name}_{directory}:'
+
+    # def test_add(self):
+    # already tested in templates fixture
     # def test_remove(self):
-    # def test_get_path(self):
-    # def test_save_into_project(self):
+    # already tested in setup_method
 
 
 class TestConfigurableApplication:
+    @classmethod
+    def setup_method(cls):
+        delete_configuration_folders()
+        
     @fixture
     def application(self):
+        configure_paths()
         return Container.configurable_file_application
 
     # def test_get(self):
