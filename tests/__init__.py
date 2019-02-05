@@ -29,17 +29,20 @@ def delete_configuration_folders():
         and not exists(configuration_path)
     )
 
+def create_file(path, content):
+    if not exists(path):
+        with open(path, 'w') as f:
+            f.write(content)
+
 def create_test_project():
     makedirs(join(project_path, 'domain'), exist_ok=True)
     makedirs(join(project_path, 'repository'), exist_ok=True)
     makedirs(join(project_path, 'service'), exist_ok=True)
     makedirs(join(project_path, 'application'), exist_ok=True)
     configurable_file = join(project_path, 'package.json')
-    if not exists(configurable_file):
-        with open(configurable_file, 'w') as f:
-            f.write(dumps({
-                'name': 'Test project',
-                'version': '1.0.0'
-            }))
+    configurable_content = dumps({'name': 'Test project', 'version': '1.0.0'})
+    fake_configurable_file = join(project_path, 'application', 'package.json')
+    create_file(configurable_file, configurable_content)
+    create_file(fake_configurable_file, configurable_content)
 
 delete_configuration_folders()
