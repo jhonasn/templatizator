@@ -384,10 +384,10 @@ class ConfigurableRepository(NodeRepository):
     name = 'configurablefiles.json'
     of_type = ConfigurableFile
 
-    @classmethod
-    def is_child(cls, parent_path, filename):
+    def is_child(self, parent_path, filename):
         '''Verify if filename is a existent file into the parent_path folder'''
-        return os.path.exists(os.path.join(parent_path, filename))
+        return (os.path.exists(os.path.join(parent_path, filename)) and
+                self.get_parent_path(filename) == parent_path)
 
 
 class ConfigurableFileRepository(FileRepository):

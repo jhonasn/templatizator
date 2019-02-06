@@ -44,5 +44,9 @@ def create_test_project():
     fake_configurable_file = join(project_path, 'application', 'package.json')
     create_file(configurable_file, configurable_content)
     create_file(fake_configurable_file, configurable_content)
+    configurable_file = join(project_path, 'multiline_package.json')
+    configurable_content = dumps({'name': 'Test project', 'version': '1.0.0'},
+                                    indent=2)
+    create_file(configurable_file, configurable_content)
 
 delete_configuration_folders()

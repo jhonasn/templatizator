@@ -292,6 +292,13 @@ class TestTemplateApplication:
             '''
             Container.template_application.add(Template(path, name), content)
 
+    def get_templates():
+        templates = Container.template_application.get_all()
+        if not templates:
+            TestTemplateApplication.add_templates()
+            templates = Container.template_application.get_all()
+        return templates
+
     @fixture
     def application(self):
         configure_paths()
@@ -364,17 +371,22 @@ class TestTemplateApplication:
 
 
 class TestConfigurableApplication:
-    initial_configurable_content = dumps({'name': 'Test project', 'version': '1.0.0'})
+    initial_configurable_content_object = {'name': 'Test project',
+                                            'version': '1.0.0'}
+    configurable_content_object = {'name': 'Test project', 'version': '1.0.0',
+        'files': ['template.All.name'], 'paths': ['template.All.path'],
+        'relative_paths': ['template.All.relative_path']}
 
     @classmethod
     def setup_method(cls):
         delete_configuration_folders()
 
     @staticmethod
-    def get_configurable():
+    def get_configurables():
         from templatizator.domain.domain import ConfigurableFile
         path = join(project_path, 'package.json')
-        return ConfigurableFile(path)
+        path2 = join(project_path, 'multiline_package.json')
+        return [ConfigurableFile(path), ConfigurableFile(path2)]
 
     @fixture
     def application(self):
@@ -393,26 +405,33 @@ class TestConfigurableApplication:
 
     @fixture
     def configurables(self, application, repository):
-        content = dumps({
-            'name': 'Test project', 'version': '1.0.0',
-            'files': ['template.All.name'], 'paths': ['template.All.path'],
-            'relative_paths': ['template.All.relative_path']
-        })
-        configurable = TestConfigurableApplication.get_configurable()
-        configurable.name = application.get_filename(configurable.path)
-        application.add(configurable, content)
+        content_object = TestConfigurableApplication.configurable_content_object
+        configurables = TestConfigurableApplication.get_configurables()
+        for configurable in configurables:
+            configurable.name = application.get_filename(configurable.path)
+            content = dumps(content_object, indent=2 \
+                if configurable.name == 'multiline_package.json' else None)
+            application.add(configurable, content)
         return repository.get()
 
     def test_get(self, application):
-        content = application.get(
-            TestConfigurableApplication.get_configurable())
-        assert content == \
-            TestConfigurableApplication.initial_configurable_content
+        for configurable in TestConfigurableApplication.get_configurables():
+            content = application.get(configurable)
+            obj = TestConfigurableApplication.\
+                initial_configurable_content_object
+            content_result = dumps(obj, indent=2 \
+                if basename(configurable.path) == 'multiline_package.json' \
+                else None)
+            assert content == content_result
 
     def test_get_created(self, application, configurables):
-        content = application.get(configurables[0])
-        assert content != \
-            TestConfigurableApplication.initial_configurable_content
+        for configurable in configurables:
+            content = application.get(configurable)
+            init_obj = TestConfigurableApplication.\
+                        initial_configurable_content_object
+            content_result = dumps(init_obj, indent=2 \
+                if configurable.name == 'multiline_package.json' else None)
+            assert content != content_result
 
     def test_create_child(self, application, configurables):
         FileApplicationTestHelper.test_create_child(application, configurables)
@@ -431,16 +450,77 @@ class TestConfigurableApplication:
 
     def test_get_filename(self, application, configurables):
         assert configurables[0].name == 'package.json'
+        assert configurables[1].name == 'multiline_package.json'
 
     def test_is_child(self, application, configurables):
-        configurable = configurables[0]
-        assert application.is_child(project_path, configurable.path)
-        assert not application.is_child(dirname(project_path),
-                                                configurable.path)
-        assert not application.is_child(join(project_path, 'application'),
-                                                configurable.path)
+        for configurable in configurables:
+            assert application.is_child(project_path, configurable.path)
+            assert not application.is_child(dirname(project_path),
+                                                    configurable.path)
+            assert not application.is_child(join(project_path, 'application'),
+                                                    configurable.path)
 
-    # def test_save_into_project(self):
+    def test_save_into_project(self, application, configurables):
+        Container.project_application.save_into_project()
+        variables = Container.variable_application.get()
+        templates = TestTemplateApplication.get_templates()
+        templates_mapped = []
+        for template in templates:
+            name = template.name
+            for var in variables:
+                placeholder = f'[{var.name}]'
+                name = name.replace(placeholder, var.value)
+
+            relative_path = template.path.replace(project_path, '')[1:]
+            templates_mapped.append({
+                'name': template.name, 'replaced_name': name,
+                'path': template.path, 'relative_path': relative_path
+            })
+
+        separator = ', '
+        templates_names = separator.join(map(lambda t: '"{}"'.format(
+            t['replaced_name']), templates_mapped))
+        templates_paths = separator.join(map(lambda t: '"{}"'.format(t['path']),
+                                        templates_mapped))
+        templates_relative_paths = separator.join(map(lambda t: '"{}"'.format(
+            t['relative_path']), templates_mapped))
+
+        from copy import deepcopy
+        init_obj = deepcopy(TestConfigurableApplication.\
+                            configurable_content_object)
+        obj = deepcopy(init_obj)
+        def add_placeholders(obj, is_init=False):
+            sufix = separator + obj['files'][0]
+            obj['files'][0] = '{names}' + sufix if is_init else ''
+            sufix = separator + obj['paths'][0]
+            obj['paths'][0] = '{paths}' + sufix if is_init else ''
+            sufix = separator + obj['relative_paths'][0]
+            obj['relative_paths'][0] = '{rel_paths}' + sufix if is_init else ''
+        add_placeholders(obj)
+        add_placeholders(init_obj, True)
+
+        assert not obj is init_obj and obj != init_obj
+
+        for configurable in configurables:
+            path = join(project_path, configurable.name)
+            assert exists(path)
+
+            content = application.get(configurable)
+            content_result = dumps(init_obj, indent=2 \
+                if configurable.name == 'multiline_package.json' else None)
+            # test configurable template content
+            assert content == content_result
+
+            content_result = dumps(obj, indent=2 \
+                if configurable.name == 'multiline_package.json' else None)
+            content_result = ('{' + content_result + '}').format(
+                names=templates_names, paths=templates_paths,
+                rel_paths=templates_relative_paths)
+            with open(path) as f:
+                content = f.read()
+
+            # test configurable content result in project
+            assert content == content_result
 
     # def test_add(self):
     # already testes on configurables fixture
