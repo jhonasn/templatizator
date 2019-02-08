@@ -374,8 +374,8 @@ class TestConfigurableApplication:
     initial_configurable_content_object = {'name': 'Test project',
                                             'version': '1.0.0'}
     configurable_content_object = {'name': 'Test project', 'version': '1.0.0',
-        'files': ['template.All.name'], 'paths': ['template.All.path'],
-        'relative_paths': ['template.All.relative_path']}
+        'files': ['[template.All.name]'], 'paths': ['[template.All.path]'],
+        'relative_paths': ['[template.All.relative_path]']}
 
     @classmethod
     def setup_method(cls):
@@ -405,12 +405,31 @@ class TestConfigurableApplication:
 
     @fixture
     def configurables(self, application, repository):
-        content_object = TestConfigurableApplication.configurable_content_object
+        obj = TestConfigurableApplication.configurable_content_object
         configurables = TestConfigurableApplication.get_configurables()
         for configurable in configurables:
             configurable.name = application.get_filename(configurable.path)
-            content = dumps(content_object, indent=2 \
+
+            content = dumps(obj, indent=2 \
                 if configurable.name == 'multiline_package.json' else None)
+
+            # apply inline template
+            # and add comma at the end of template lines on multiline_package
+            sufix = ','
+            prefix = ''
+            template = '{}"[template.All.{}]"{}'
+            replace = lambda prop: content.replace(
+                template.format('', prop, ''),
+                template.format(prefix, prop, sufix))
+
+            if configurable.name == 'package.json':
+                sufix = ', ]>'
+                prefix = '<['
+
+            content = replace('name')
+            content = replace('path')
+            content = replace('relative_path')
+
             application.add(configurable, content)
         return repository.get()
 
@@ -478,49 +497,57 @@ class TestConfigurableApplication:
             })
 
         separator = ', '
-        templates_names = separator.join(map(lambda t: '"{}"'.format(
-            t['replaced_name']), templates_mapped))
-        templates_paths = separator.join(map(lambda t: '"{}"'.format(t['path']),
-                                        templates_mapped))
-        templates_relative_paths = separator.join(map(lambda t: '"{}"'.format(
-            t['relative_path']), templates_mapped))
+        def join_templates_prop(prop, template):
+            str_join = list(map(lambda t: '"{}"'.format(t[prop]),
+                templates_mapped))
+            if template:
+                str_join.append(template)
+            return separator.join(str_join) + separator
 
-        from copy import deepcopy
-        init_obj = deepcopy(TestConfigurableApplication.\
-                            configurable_content_object)
-        obj = deepcopy(init_obj)
-        def add_placeholders(obj, is_init=False):
-            sufix = separator + obj['files'][0]
-            obj['files'][0] = '{names}' + sufix if is_init else ''
-            sufix = separator + obj['paths'][0]
-            obj['paths'][0] = '{paths}' + sufix if is_init else ''
-            sufix = separator + obj['relative_paths'][0]
-            obj['relative_paths'][0] = '{rel_paths}' + sufix if is_init else ''
-        add_placeholders(obj)
-        add_placeholders(init_obj, True)
+        def replace_content_result(content, is_inline, is_add_template):
+            template = '"[template.All.name]"'
+            tmpl = f'<[{template}]>' if is_inline else template
+            replacement = join_templates_prop('replaced_name',
+                tmpl if is_add_template else None)
+            content = content.replace(template, replacement)
 
-        assert not obj is init_obj and obj != init_obj
+            template = '"[template.All.path]"'
+            tmpl = f'<[{template}]>' if is_inline else template
+            replacement = join_templates_prop('path',
+                tmpl if is_add_template else None)
+            content = content.replace(template, replacement)
+
+            template = '"[template.All.relative_path]"'
+            tmpl = f'<[{template}]>' if is_inline else template
+            replacement = join_templates_prop('relative_path',
+                tmpl if is_add_template else None)
+            content = content.replace(template, replacement)
+
+            return content
+
+        obj = TestConfigurableApplication.configurable_content_object
 
         for configurable in configurables:
             path = join(project_path, configurable.name)
             assert exists(path)
+            is_inline = configurable.name == 'package.json'
 
             content = application.get(configurable)
-            content_result = dumps(init_obj, indent=2 \
-                if configurable.name == 'multiline_package.json' else None)
-            # test configurable template content
-            assert content == content_result
 
-            content_result = dumps(obj, indent=2 \
-                if configurable.name == 'multiline_package.json' else None)
-            content_result = ('{' + content_result + '}').format(
-                names=templates_names, paths=templates_paths,
-                rel_paths=templates_relative_paths)
+            content_result = dumps(obj, indent=None if is_inline else 2)
+
+            separator = ', ' if is_inline else ',\n    '
+
+            # test configurable template content
+            assert content == replace_content_result(content_result,
+                is_inline, True)
+
             with open(path) as f:
                 content = f.read()
 
             # test configurable content result in project
-            assert content == content_result
+            assert content == replace_content_result(content_result, is_inline,
+                False)
 
     # def test_add(self):
     # already testes on configurables fixture
