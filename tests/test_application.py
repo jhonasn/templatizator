@@ -481,51 +481,43 @@ class TestConfigurableApplication:
 
     def test_save_into_project(self, application, configurables):
         Container.project_application.save_into_project()
-        variables = Container.variable_application.get()
-        templates = TestTemplateApplication.get_templates()
-        templates_mapped = []
-        for template in templates:
-            name = template.name
-            for var in variables:
-                placeholder = f'[{var.name}]'
-                name = name.replace(placeholder, var.value)
 
-            relative_path = template.path.replace(project_path, '')[1:]
-            templates_mapped.append({
-                'name': template.name, 'replaced_name': name,
-                'path': template.path, 'relative_path': relative_path
-            })
+        expected_content = f'''{{
+  "name": "[pname]",
+  "version": "1.0.0",
+  "files": [
+    "person_application.py",
+    "person_service.py",
+    "person_repository.py",
+    "person.py",
+    <["[template.All.name]", ]>
+  ],
+  "paths": [
+    "[path]\\application\\person_application.py",
+    "[path]\\service\\person_service.py",
+    "[path]\\repository\\person_repository.py",
+    "[path]\\domain\\person.py",
+    <["[template.All.path]", ]>
+  ],
+  "relative_paths": [
+    "application\\person_application.py",
+    "service\\person_service.py",
+    "repository\\person_repository.py",
+    "domain\\person.py",
+    <["[template.All.relative_path]", ]>
+  ]
+}}'''
+        expected_content_inline = expected_content.replace('\n', '')\
+            .replace(' ', '').replace(':', ': ').replace(',', ', ')
+        expected_content = expected_content.replace('[pname]', 'Test project')
+        expected_content = expected_content.replace('[path]', project_path)
+        expected_content_inline = expected_content_inline\
+            .replace('[pname]', 'Test project')
+        expected_content_inline = expected_content_inline\
+            .replace('[path]', project_path)
+        expected_content = expected_content.replace('<[', '').replace(' ]>', '')
 
-        separator = ', '
-        def join_templates_prop(prop, template):
-            str_join = list(map(lambda t: '"{}"'.format(t[prop]),
-                templates_mapped))
-            if template:
-                str_join.append(template)
-            return separator.join(str_join) + separator
-
-        def replace_content_result(content, is_inline, is_add_template):
-            template = '"[template.All.name]"'
-            tmpl = f'<[{template}]>' if is_inline else template
-            replacement = join_templates_prop('replaced_name',
-                tmpl if is_add_template else None)
-            content = content.replace(template, replacement)
-
-            template = '"[template.All.path]"'
-            tmpl = f'<[{template}]>' if is_inline else template
-            replacement = join_templates_prop('path',
-                tmpl if is_add_template else None)
-            content = content.replace(template, replacement)
-
-            template = '"[template.All.relative_path]"'
-            tmpl = f'<[{template}]>' if is_inline else template
-            replacement = join_templates_prop('relative_path',
-                tmpl if is_add_template else None)
-            content = content.replace(template, replacement)
-
-            return content
-
-        obj = TestConfigurableApplication.configurable_content_object
+        from re import sub
 
         for configurable in configurables:
             path = join(project_path, configurable.name)
@@ -534,20 +526,22 @@ class TestConfigurableApplication:
 
             content = application.get(configurable)
 
-            content_result = dumps(obj, indent=None if is_inline else 2)
-
-            separator = ', ' if is_inline else ',\n    '
+            content_result = expected_content_inline if is_inline \
+                                                    else expected_content
 
             # test configurable template content
-            assert content == replace_content_result(content_result,
-                is_inline, True)
+            assert content == content_result
 
             with open(path) as f:
                 content = f.read()
 
+            # remove inline template
+            regex = r'\<\[.*?\]\>' if is_inline else r'\n.*?\[.*?\].*?\n'
+            replacement = '' if is_inline else '\n'
+            content_result = sub(regex, lambda m: replacement, content_result)
+
             # test configurable content result in project
-            assert content == replace_content_result(content_result, is_inline,
-                False)
+            assert content == content_result
 
     # def test_add(self):
-    # already testes on configurables fixture
+    # already tested on configurables fixture
