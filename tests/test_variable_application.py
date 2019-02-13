@@ -5,15 +5,15 @@ from tests import delete_configuration_folders, configure_paths, \
     set_configuration_path
 
 
+def add_variables():
+    var_app = Container.variable_application
+    var_app.add('name', 'person')
+    if not any(filter(lambda v: v.name == 'ext', var_app.get())):
+        Container.variable_application.add('ext', 'py')
+
+
 class TestVariableApplication:
     '''Test variable application api'''
-    @staticmethod
-    def add_variables():
-        var_app = Container.variable_application
-        var_app.add('name', 'person')
-        if not any(filter(lambda v: v.name == 'ext', var_app.get())):
-            Container.variable_application.add('ext', 'py')
-
     @fixture
     def application(self):
         configure_paths()

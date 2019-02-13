@@ -5,8 +5,8 @@ from templatizator.domain.container import Container
 from tests import configuration_path, project_path, configure_paths, \
     delete_configuration_folders
 from tests.file_application_test_helper import FileApplicationTestHelper
-from tests.test_variable_application import TestVariableApplication
-from tests.test_template_application import TestTemplateApplication
+from tests.test_variable_application import add_variables
+from tests.test_template_application import add_templates
 
 
 class TestConfigurableApplication:
@@ -30,8 +30,8 @@ class TestConfigurableApplication:
     @fixture
     def application(self):
         configure_paths()
-        TestVariableApplication.add_variables()
-        TestTemplateApplication.add_templates()
+        add_variables()
+        add_templates()
         return Container.configurable_file_application
 
     @fixture
@@ -183,6 +183,12 @@ class TestConfigurableApplication:
 
             # test configurable content result in project
             assert content == content_result
+
+    def test_not_save_into_project(self, application, configurables):
+        variables = Container.variable_application.get()
+        FileApplicationTestHelper.test_not_save_into_project(application,
+            configurables, variables,
+            Container.project_application.save_into_project)
 
     # def test_add(self):
     # already tested on configurables fixture
