@@ -112,6 +112,8 @@ class TestConfigurableApplication:
 
     def test_is_child(self, application, configurables):
         for configurable in configurables:
+            assert exists(configurable.path)
+            assert exists(join(project_path, configurable.name))
             assert application.is_child(project_path, configurable.path)
             assert not application.is_child(dirname(project_path),
                                                     configurable.path)

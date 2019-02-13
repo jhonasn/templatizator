@@ -18,13 +18,14 @@ def get_tkinter_unicode(text):
     '''Convert unicode icon to unicode pair that is readable to tkinter'''
     return _NONBMP.sub(_surrogatepair, text.upper())
 
+
 def is_unicode_available(text):
     '''Verify if unicode passed text is available to use in this os'''
     if OS.is_windows:
         return True
-        
+
     try:
         print(_NONBMP.sub(_surrogatepair, text.upper()))
-    except:
+    except UnicodeError:
         return False
     return True

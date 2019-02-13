@@ -1,7 +1,8 @@
-'''Handler for cofigurable editor window'''
+'''Handler for configurable editor window'''
 from copy import copy
 from templatizator.locales.i18n import _
 from templatizator.domain.domain import Template
+from templatizator.presentation.editor import Editor
 
 
 # as a window handler it's necessary to record lots of attributes
@@ -52,13 +53,10 @@ class ConfigurableEditor:
         self.combobox.delete(0, 'end')
 
     def cancel(self):
-        '''Cancel edition (or close the editor window): close the editor
-        window and call callback passed from main window
+        '''Cancel configurable edition (or close the editor window):
+        close the editor window and call callback passed from main window
         '''
-        if self.is_new:
-            self.node.remove()
-        self.dialog.withdraw()
-        self.call_back()
+        Editor.cancel(self)
 
     def save(self):
         '''Save the configurable calling application layer and after call

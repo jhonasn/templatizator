@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+* separated application tests into multiple files
+* finished application layer tests
+* implemented add inline templates on configurable (but no in ui yet); implemented save into project configurable test;
+* implemented two configurable files to test, one in one line, other with multiple lines; implemented configurable files tests with this two files; implemented save into project configurable files test; fixed verification if configurable file selected is child of the parent path;
+* implemented almost all configurable tests and shared common tests between configurable and template tests
+* finished implementation of templates tests; fixed template get\_path method was changing repository path; fixed warning on regex replacing at save into project method;
+* implemented all project application tests; fixed error when delete a template if it not exists;
 * added option to insert relative path to all templates in configurable files; fixed leave the last all templates placeholder on configurable files; fixed not show context menu when click in an object that is not a row;
 * implemented variable project not set test; implemented some project tests; added future testes commented
 * implemented variable project not set test; implemented some project tests; added future testes commented

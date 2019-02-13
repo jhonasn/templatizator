@@ -16,7 +16,7 @@ from templatizator.presentation.widgets import Tooltip
 from templatizator.locales.i18n import _
 
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
 class Window:
     '''Class handles for GUI main window'''
     # pylint: disable=too-many-arguments
@@ -243,7 +243,7 @@ class Window:
                 path = OS.get_default_path(path)
                 filename = self.configurable_application.get_filename(path)
                 if not self.configurable_application.is_child(self.node.path,
-                                                              filename):
+                                                              path):
                     messagebox.showwarning(
                         _('Warning'),
                         _('Select a file inside the selected folder')
@@ -300,7 +300,8 @@ class Window:
 
         if not self.node:
             return
-        elif isinstance(self.node, Directory):
+
+        if isinstance(self.node, Directory):
             self.directory_menu.post(event.x_root, event.y_root)
         elif col == '#0':
             self.file_menu.post(event.x_root, event.y_root)

@@ -1,6 +1,7 @@
 '''Handler for editor window'''
 from templatizator.locales.i18n import _
 
+
 # as a window handler it's necessary to record lots of attributes
 # pylint: disable=too-many-instance-attributes
 class Editor:
@@ -26,7 +27,8 @@ class Editor:
         # translate labels
         self.dialog.title(_('[Templatizator] Template editing'))
         self.filelabel['text'] = _('File name:')
-        builder.get_object('editor_variable_label')['text'] = _('Add variable:')
+        builder.get_object('editor_variable_label')['text'] = \
+            _('Add variable:')
         cancel_button['text'] = _('Cancel')
         save_button['text'] = _('Save')
 

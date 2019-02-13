@@ -1,11 +1,11 @@
 '''Container module that instantiate classes to accomplish IoC role'''
-from templatizator.domain.repository import ConfigurationRepository, VariableRepository, \
-    TemplateRepository, TemplateFileRepository, \
+from templatizator.domain.repository import ConfigurationRepository, \
+    VariableRepository, TemplateRepository, TemplateFileRepository, \
     ConfigurableRepository, ConfigurableFileRepository
-from templatizator.domain.service import ProjectService, ConfigurationService, \
-    VariableService, TemplateService, ConfigurableService
-from templatizator.domain.application import ProjectApplication, VariableApplication, \
-    TemplateApplication, ConfigurableFileApplication
+from templatizator.domain.service import ProjectService, \
+    ConfigurationService, VariableService, TemplateService, ConfigurableService
+from templatizator.domain.application import ProjectApplication, \
+    VariableApplication, TemplateApplication, ConfigurableFileApplication
 from templatizator.domain.helper import Event
 
 

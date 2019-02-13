@@ -1,7 +1,8 @@
 from os.path import join, exists
-from os import makedirs
+from os import makedirs, remove
 from shutil import rmtree
 from json import dumps
+from templatizator.domain.repository import ConfigurationRepository
 from templatizator.domain.container import Container
 
 Container.configure()
@@ -21,9 +22,11 @@ def configure_paths():
     set_project_path()
 
 def delete_configuration_folders():
-    rmtree(Container.project_application.configuration_path, ignore_errors=True)
     rmtree(configuration_path, ignore_errors=True)
     rmtree(project_path, ignore_errors=True)
+    configuration_file = ConfigurationRepository.pathfile
+    if exists(configuration_file):
+        remove(configuration_file)
     return (
         not exists(Container.project_application.configuration_path)
         and not exists(configuration_path)

@@ -1,6 +1,7 @@
 '''Initialize the GUI'''
 import pygubu
-from pygubu.builder import ttkstdwidgets
+# import ttkstdwidgets is necessary for building
+from pygubu.builder import ttkstdwidgets  # noqa: F401
 from templatizator.domain.helper import OS
 from templatizator.presentation.container import Container
 
@@ -13,7 +14,8 @@ def initialize():
     builder = pygubu.Builder()
 
     # use build.add_from_string to build package
-    builder.add_from_file(OS.get_path('templatizator/presentation/interface.ui'))
+    builder.add_from_file(
+        OS.get_path('templatizator/presentation/interface.ui'))
 
     root = builder.get_object('window_toplevel')
 

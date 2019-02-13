@@ -6,10 +6,9 @@ from templatizator.presentation.helper import get_tkinter_unicode, \
 from templatizator.presentation.widgets import Tooltip
 from templatizator.locales.i18n import _
 
-icons = is_unicode_available('💾')
 ADD_ICON = get_tkinter_unicode('➕')
 REMOVE_ICON = get_tkinter_unicode('❌')
-SAVE_ICON = get_tkinter_unicode('💾' if icons else '✔')
+SAVE_ICON = get_tkinter_unicode('💾' if is_unicode_available('💾') else '✔')
 
 
 # as a window section handler it's necessary to record lots of attributes
@@ -76,6 +75,7 @@ class Variables:
                 self.treeview.insert('', 'end', values=(name, value,
                                                         REMOVE_ICON))
             except ProjectNotSet:
+                # show warning in case of no project selected
                 messagebox.showwarning(
                     _('Warning'),
                     _('Select a project first')

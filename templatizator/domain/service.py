@@ -123,7 +123,8 @@ class ProjectService:
                 content = self.replace_variables(content)
 
                 self.template_file_repository.path = \
-                    self.configuration_repository.get_parent_path(template.path)
+                    self.configuration_repository.get_parent_path(
+                        template.path)
                 self.template_file_repository.name = \
                     self.replace_variables(template.name)
                 self.template_file_repository.save(content)
@@ -149,13 +150,16 @@ class ProjectService:
                     template_all_props))
 
                 found_templates = [{'found': f, 'inline': True} for f in
-                    findall(r'\<\[.*?\]\>', content)]
+                                   findall(r'\<\[.*?\]\>', content)]
                 found_templates.extend([{'found': f, 'inline': False} for f in
-                    list(filter(lambda s: '<[' not in s and ']>' not in s,
-                                findall(r'.*\[.*\].*', content)))])
+                                       list(filter(
+                                            lambda s: '<[' not in s
+                                            and ']>' not in s,
+                                            findall(r'.*\[.*\].*', content)))])
 
                 # create templates with relative_path
                 project_path = self.get_filetree().path
+
                 def map_template(template):
                     template.name = self.replace_variables(template.name)
                     template.path = self.replace_variables(OS.get_default_path(
@@ -171,8 +175,8 @@ class ProjectService:
 
                 for template_found in found_templates:
                     found, is_inline = template_found.values()
-                    templates_in = list(filter(lambda p: p['template'] in found,
-                                                template_all_props))
+                    templates_in = list(filter(
+                        lambda p: p['template'] in found, template_all_props))
                     replacement = ''
                     for prop in templates_in:
                         for template in templates:
@@ -184,8 +188,8 @@ class ProjectService:
                     replacement += found
 
                     index = content.index(found)
-                    content = content[:index] + replacement +\
-                                content[index + len(found):]
+                    content = content[:index] + replacement + \
+                        content[index + len(found):]
 
                 # save new content into the template
                 self.configurable_file_repository.name = configurable.name
@@ -198,9 +202,8 @@ class ProjectService:
                         configurable.path)
                 content = sub(r'\<\[.*?\]\>', lambda m: '', content)
                 content = sub(r'(?<=\n).*\[template\.All\.(\w+)\].*\n',
-                                lambda m: '', content)
+                              lambda m: '', content)
                 self.configurable_file_repository.save(content)
-
 
         self.configurable_file_repository.path = local_path
         self.configurable_file_repository.name = prev_name
