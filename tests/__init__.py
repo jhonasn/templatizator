@@ -49,4 +49,5 @@ def create_test_project():
                                     indent=2)
     create_file(configurable_file, configurable_content)
 
-delete_configuration_folders()
+def teardown_module(module):
+    delete_configuration_folders()
