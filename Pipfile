@@ -13,10 +13,12 @@ tox = "*"
 flake8 = "*"
 pytest-cov = "*"
 pylint = "*"
+codecov = "*"
 
 [packages]
 pygubu = "*"
 ttkthemes = "*"
+codecov = "*"
 
 [requires]
 python_version = "3.7"
