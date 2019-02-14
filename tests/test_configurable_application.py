@@ -1,4 +1,4 @@
-from os.path import join, basename, dirname, exists
+from os.path import join, basename, dirname, exists, normpath
 from json import dumps
 from pytest import fixture
 from templatizator.domain.container import Container
@@ -6,7 +6,7 @@ from tests import configuration_path, project_path, configure_paths, \
     delete_configuration_folders
 from tests.file_application_test_helper import FileApplicationTestHelper
 from tests.test_variable_application import add_variables
-from tests.test_template_application import add_templates
+from tests.test_template_application import add_templates, templates_add
 
 
 class TestConfigurableApplication:
@@ -127,36 +127,44 @@ class TestConfigurableApplication:
   "name": "[pname]",
   "version": "1.0.0",
   "files": [
-    "person_application.py",
-    "person_service.py",
-    "person_repository.py",
-    "person.py",
-    <["[template.All.name]", ]>
+[files]    <["[template.All.name]", ]>
   ],
   "paths": [
-    "[path]\\application\\person_application.py",
-    "[path]\\service\\person_service.py",
-    "[path]\\repository\\person_repository.py",
-    "[path]\\domain\\person.py",
-    <["[template.All.path]", ]>
+[paths]    <["[template.All.path]", ]>
   ],
   "relative_paths": [
-    "application\\person_application.py",
-    "service\\person_service.py",
-    "repository\\person_repository.py",
-    "domain\\person.py",
-    <["[template.All.relative_path]", ]>
+[relative_paths]    <["[template.All.relative_path]", ]>
   ]
 }}'''
+
+        indentation = '    '
+        files = {'files': '', 'paths': '', 'relative_paths': ''}
+        for template_info in templates_add:
+            directory, name = template_info.values()
+            name = name.replace('[name]', 'person').replace('[ext]', 'py')
+            path = normpath(join(project_path, directory, name))
+            rpath = normpath(join(directory, name))
+            files['files'] += f'{indentation}"{name}",\n'
+            files['paths'] += f'{indentation}"{path}",\n'
+            files['relative_paths'] += f'{indentation}"{rpath}",\n'
+
+        def replace_content(content, files, is_inline=False):
+            if is_inline:
+                files = {k: v.replace(' ', '').replace('\n', ' ')
+                    for k, v in files.items()}
+            content = content.replace('[pname]', 'Test project')
+            content = content.replace('[files]', files['files'])\
+                .replace('[paths]', files['paths'])\
+                .replace('[relative_paths]', files['relative_paths'])
+            return content
+
         expected_content_inline = expected_content.replace('\n', '')\
             .replace(' ', '').replace(':', ': ').replace(',', ', ')
-        expected_content = expected_content.replace('[pname]', 'Test project')
-        expected_content = expected_content.replace('[path]', project_path)
-        expected_content_inline = expected_content_inline\
-            .replace('[pname]', 'Test project')
-        expected_content_inline = expected_content_inline\
-            .replace('[path]', project_path)
         expected_content = expected_content.replace('<[', '').replace(' ]>', '')
+
+        expected_content = replace_content(expected_content, files)
+        expected_content_inline = replace_content(expected_content_inline,
+            files, True)
 
         from re import sub
 
