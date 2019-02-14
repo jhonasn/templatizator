@@ -1,6 +1,7 @@
 # templatizator
 ===============
 
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/jhonasn/templatizator.svg?branch=master)](https://travis-ci.org/jhonasn/templatizator)
 [![Coverage Status](https://codecov.io/gh/jhonasn/templatizator/branch/master/graph/badge.svg)](https://codecov.io/gh/jhonasn/templatizator)
