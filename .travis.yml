@@ -20,6 +20,8 @@ matrix:
       before_install:
         - brew update
         - brew upgrade python
+        - python3 -m venv venv
+        - source venv/bin/activate
     - os: linux
       python: 3.6
       env: TOX_ENV=lint
@@ -29,4 +31,4 @@ matrix:
 install:
   - pip install pipenv
   - pipenv sync
-script: pipenv run tox -e $TOX_ENV
+script: tox -e $TOX_ENV
