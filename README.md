@@ -1,9 +1,14 @@
 # templatizator
-This is desktop program to create a set of template files on some directory tree structure and save this set of files into the directory with some differences configured with variables into the application.  
+===============
+[![BSD license][license]](https://raw.githubusercontent.com/jhonasn/templatizator/master/LICENSE)
+[![Build Status][travis]](https://travis-ci.org/jhonasn/templatizator)
+[![Coverage Status][coverage]](https://codecov.io/gh/jhonasn/templatizator)
+
+This desktop app allows you to create sets of template files at some directory (that can be a project) with some differences configured with variables into the application, templatizator doesn't care about programming language or if the directory is an project.
 
 The first motivation to create this app was by using DDD/TDD where we need to create a large set of files everytime when we create a new table for example.  
 
-The app is very configurable and free from programing language that you use in your system, by the way, the program can be used in any way you want, it only creates a set of configurable templates and save them all at the directory pointed in project field.  
+The app is very configurable, the program can be used in any way you want, it only creates a set of configurable templates and save them all at the directory pointed in project field.  
 
 The app is made for windows and linux, but it can be used into mac although it's currently not tested/supported in this OS.
 
@@ -52,7 +57,8 @@ We have only two windows in this app:
   > In that way we don't need to make a new GUI nor a implementation for every type of file (for ex.: json, xml, yml, etc).
 - [x] Make all strings translatable (Added languages: en, es, fr and pt_BR)
 - [ ] ~~Diff project filetree folder structure~~
-- [x] Configure a builder script in setup.py
-- [ ] Add tests
-- [ ] Publish application into linux repository
 > Not necessary anymore since the way that templates are saved and load tree structure changed. (before the tree was saved entirely in to the program, now we just save the templates and say where they are in the tree, if the folder they are match in the tree then they are shown otherwise not)
+- [x] Configure a builder script in setup.py
+- [x] Add tests
+- [ ] Add presentation layer tests
+- [ ] Publish application into linux repository
