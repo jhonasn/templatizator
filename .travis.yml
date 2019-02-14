@@ -31,4 +31,4 @@ matrix:
 install:
   - pip install pipenv
   - pipenv sync
-script: tox -e $TOX_ENV
+script: pipenv run tox -e $TOX_ENV
