@@ -2,7 +2,7 @@
 ===============
 
 [![BSD license][license]](https://raw.githubusercontent.com/jhonasn/templatizator/master/LICENSE)
-[![Build Status][travis]](https://travis-ci.org/jhonasn/templatizator)
+[![Build Status](https://travis-ci.org/jhonasn/templatizator.svg?branch=master)](https://travis-ci.org/jhonasn/templatizator)
 [![Coverage Status][coverage]](https://codecov.io/gh/jhonasn/templatizator)
 
 This desktop app allows you to create sets of template files at some directory (that can be a project) with some differences configured with variables into the application, templatizator doesn't care about programming language or if the directory is an project.
