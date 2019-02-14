@@ -1,22 +1,28 @@
 # templatizator
-This is desktop program to create a set of template files on some directory tree structure and save this set of files into the directory with some differences configured with variables into the application.  
+===============
 
-The first motivation to create this app was by using DDD/TDD where we need to create a large set of files everytime when we create a new table for example.  
+[![BSD license][license]](https://raw.githubusercontent.com/jhonasn/templatizator/master/LICENSE)
+[![Build Status][travis]](https://travis-ci.org/jhonasn/templatizator)
+[![Coverage Status][coverage]](https://codecov.io/gh/jhonasn/templatizator)
 
-The app is very configurable and free from programing language that you use in your system, by the way, the program can be used in any way you want, it only creates a set of configurable templates and save them all at the directory pointed in project field.  
+This desktop app allows you to create sets of template files at some directory (that can be a project) with some differences configured with variables into the application, templatizator doesn't care about programming language or if the directory is an project.
+
+The first motivation to create this app was by using DDD/TDD where we need to create a large set of files everytime when we create a new table for example.
+
+The app is very configurable, the program can be used in any way you want, it only creates a set of configurable templates and save them all at the directory pointed in project field.
 
 The app is made for windows and linux, but it can be used into mac although it's currently not tested/supported in this OS.
 
 ## How this app works?
 We have only two windows in this app:
-- 1. The main window:  
+- 1. The main window:
   ![Main window picture](https://github.com/jhonasn/templatizator/raw/master/docs/resources/templatizator-window.png "Main window")
   - 1.1 Here we configure our set of templates, but first we need to choose where we'll save the templates.
   - 1.2 After that we choose the project directory, where we'll save the files of templates with variables replaced.
   - 1.3 Configure the variables that will be replaced in templates file name and content
   - 1.4 Add your templates -> go to editor window
 
-- 2. The editor window:  
+- 2. The editor window:
   ![Editor window picture](https://github.com/jhonasn/templatizator/raw/master/docs/resources/templatizator-editor.png "Main window")
   - 2.1 Add the file name, here we can use the variables placeholders just like we use in the template content
   - 2.2 With this combo we can add the variables placeholder in file name or in the content
@@ -28,10 +34,10 @@ We have only two windows in this app:
   - [x] Save opened file tree structure when templates are saved
 - [x] Change save templates in project success dialog to ask if the user wants to open the project folder
 - [x] Add linux styles
-- [x] Change configuration save method:  
-  - [x] Stop to save all in configuration json file, create a directory for every project with a unique friendly name registered in a configuration file in order to have many projects saved in the same configuration folder.  
-  - [x] Stop saving the entire tree node and save only the templates or relevant nodes in a separate file into the project folder, that way we can save a list of node object without children only pointing location with its path.  
-  - [x] Start to save variables in a separated file.  
+- [x] Change configuration save method:
+  - [x] Stop to save all in configuration json file, create a directory for every project with a unique friendly name registered in a configuration file in order to have many projects saved in the same configuration folder.
+  - [x] Stop saving the entire tree node and save only the templates or relevant nodes in a separate file into the project folder, that way we can save a list of node object without children only pointing location with its path.
+  - [x] Start to save variables in a separated file.
   - [x] Refactor the Configuration class into various files.
   - [x] Fix pylint warnings
   > The reason to do this is because when we change the project directory and return to the previous project we loose the previous project configuration mainly the templates.
@@ -52,7 +58,8 @@ We have only two windows in this app:
   > In that way we don't need to make a new GUI nor a implementation for every type of file (for ex.: json, xml, yml, etc).
 - [x] Make all strings translatable (Added languages: en, es, fr and pt_BR)
 - [ ] ~~Diff project filetree folder structure~~
-- [x] Configure a builder script in setup.py
-- [ ] Add tests
-- [ ] Publish application into linux repository
 > Not necessary anymore since the way that templates are saved and load tree structure changed. (before the tree was saved entirely in to the program, now we just save the templates and say where they are in the tree, if the folder they are match in the tree then they are shown otherwise not)
+- [x] Configure a builder script in setup.py
+- [x] Add tests
+- [ ] Add presentation layer tests
+- [ ] Publish application into linux repository
