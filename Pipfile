@@ -27,8 +27,8 @@ python_version = "3.6"
 app = "python ."
 test = "pytest -vv -s"
 cov = "pytest --cov=templatizator tests"
-flake = "flake8 templatizator"
-pylint = "pylint templatizator"
+lint = "pylint templatizator && flake8 templatizator"
+lintw = "cmd /c 'pylint templatizator && flake8 templatizator'"
 build = [
   "pyinstaller",
   "--add-data=templatizator/presentation/interface.ui;templatizator/presentation",
