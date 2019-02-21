@@ -5,6 +5,7 @@
 - Call editor window;
 - Call save files into the project action.
 '''
+from collections import namedtuple
 from tkinter import filedialog, messagebox, Menu
 from templatizator.domain.infrastructure import ProjectNotSet
 from templatizator.domain.domain import Directory, File, Template, \
@@ -14,6 +15,17 @@ from templatizator.presentation.helper import get_tkinter_unicode, \
     is_unicode_available
 from templatizator.presentation.widgets import Tooltip
 from templatizator.locales.i18n import _
+
+_IconsType = namedtuple('Icons', ['folderopened', 'folderclosed',
+                                  'template', 'configurable'])
+ICON_ADD = '➕'
+ICON_REMOVE = '❌'
+ICON_CHECKED = '☑'
+ICON_UNCHECKED = '☒'
+ICONS = _IconsType(folderopened='📂', folderclosed='📁',
+                   template='🗋', configurable='🗎')
+ICONS_UGLY = _IconsType(folderopened='⌸', folderclosed='⌹',
+                        template='⛁', configurable='⚙')
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
@@ -26,7 +38,7 @@ class Window:
         self.template_application = template_application
         self.configurable_application = configurable_application
 
-        self.icons = is_unicode_available('📂')
+        self.pretty_icons = is_unicode_available(ICONS.folderopened)
 
         # selected node
         self.node = None
@@ -95,14 +107,16 @@ class Window:
         '''Get filetree icon according the filetree node type'''
         icon = ''
         if isinstance(node, Directory):
-            if self.icons:
-                icon = '📂' if node.open else '📁'
+            if self.pretty_icons:
+                icon = ICONS.folderopened if node.open else ICONS.folderclosed
             else:
-                icon = '⌸' if node.open else '⌹'
+                icon = ICONS_UGLY.folderopened if node.open \
+                                               else ICONS_UGLY.folderclosed
         if isinstance(node, Template):
-            icon = '🗋' if self.icons else '⛁'
+            icon = ICONS.template if self.pretty_icons else ICONS_UGLY.template
         if isinstance(node, ConfigurableFile):
-            icon = '🗎' if self.icons else '⚙'
+            icon = ICONS.configurable if self.pretty_icons \
+                                      else ICONS_UGLY.configurable
         return get_tkinter_unicode(icon)
 
     @classmethod
@@ -110,7 +124,7 @@ class Window:
         '''Get filetree icon for action (include or delete)
         according the filetree node type
         '''
-        icon = '➕' if isinstance(node, Directory) else '❌'
+        icon = ICON_ADD if isinstance(node, Directory) else ICON_REMOVE
         return get_tkinter_unicode(icon)
 
     @classmethod
@@ -122,7 +136,7 @@ class Window:
         '''
         icon = ''
         if isinstance(node, File):
-            icon = '☑' if node.save else '☒'
+            icon = ICON_CHECKED if node.save else ICON_UNCHECKED
         return get_tkinter_unicode(icon)
 
     def render_treeview(self):

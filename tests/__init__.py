@@ -2,8 +2,13 @@ from os.path import join, exists
 from os import makedirs, remove
 from shutil import rmtree
 from json import dumps
+from collections import namedtuple
+from pytest import fixture
+from unittest.mock import MagicMock
 from templatizator.domain.repository import ConfigurationRepository
 from templatizator.domain.container import Container
+from templatizator.presentation.container \
+    import Container as PresentationContainer
 
 Container.configure()
 configuration_path = join(Container.project_application.home_path,
@@ -54,3 +59,15 @@ def create_test_project():
 
 def teardown_module(module):
     delete_configuration_folders()
+
+@fixture
+def container(monkeypatch):
+    '''Instatiate presentaion container replacing domain container
+    and pygubu builder by mocks'''
+    domain_container_mock = MagicMock(spec=Container)
+    monkeypatch.setattr(f'templatizator.presentation.container.DomainContainer',
+        domain_container_mock)
+    builder_mock = MagicMock()
+    PresentationContainer.configure(builder_mock)
+    ContainerType = namedtuple('container', ['domain', 'builder'])
+    return ContainerType(domain=domain_container_mock, builder=builder_mock)
