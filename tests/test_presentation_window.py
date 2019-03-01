@@ -1,3 +1,4 @@
+from unittest.mock import Mock, MagicMock
 from templatizator.presentation.container import Container
 from tests import container
 
@@ -15,8 +16,9 @@ def test_initialization(container):
     assert bool(win.treeview)
 
 def test_icons(container, monkeypatch):
-    '''test methods get_filetree_icon, get_filetree_action_icon
-    and get_filetree_checkbox'''
+    '''Test methods get_filetree_icon, get_filetree_action_icon
+    and get_filetree_checkbox
+    '''
     from templatizator.presentation.window import ICONS, ICONS_UGLY, ICON_ADD,\
         ICON_REMOVE, ICON_CHECKED, ICON_UNCHECKED
     from templatizator.domain.domain import Directory, Template, \
@@ -91,7 +93,25 @@ def test_icons(container, monkeypatch):
     assert icon == ICON_UNCHECKED
     assert icon != ICON_CHECKED
 
-#def test_render_treeview(container):
+def test_render_treeview(container):
+    from tkinter.ttk import Treeview
+    from templatizator.domain.domain import Project
+    from templatizator.presentation.window import Window
+
+    win = Container.window
+    tv = win.treeview
+    mock_win = Mock(spec=Window)
+    mock_win.treeview = MagicMock(spec=Treeview)
+    mock_win.filetree = Mock(spec=Project)
+    Window.render_treeview(mock_win)
+    mock_win.treeview.delete.assert_called_once()
+    mock_win.fill_treeview.assert_called_once()
+    mock_win.filetree = None
+    mock_win.reset_mock()
+    Window.render_treeview(mock_win)
+    mock_win.fill_treeview.assert_not_called()
+
+
 #def test_fill_treeview(container):
 #def test_select_project(container):
 #def test_project_selected(container):

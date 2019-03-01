@@ -63,7 +63,8 @@ def teardown_module(module):
 @fixture
 def container(monkeypatch):
     '''Instatiate presentaion container replacing domain container
-    and pygubu builder by mocks'''
+    and pygubu builder by mocks
+    '''
     domain_container_mock = MagicMock(spec=Container)
     monkeypatch.setattr(f'templatizator.presentation.container.DomainContainer',
         domain_container_mock)

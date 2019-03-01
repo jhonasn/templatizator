@@ -61,4 +61,5 @@ We have only two windows in this app:
 - [x] Configure a builder script in setup.py
 - [x] Add tests
 - [ ] Add presentation layer tests
+- [ ] Add inline configurable templates option
 - [ ] Publish application into linux repository
